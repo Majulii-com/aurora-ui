@@ -58,8 +58,21 @@ const DEFAULT_ROOT: UINode = {
   children: [],
 };
 
-/** Serializable action types. AI or code can emit these; playground (or app) runs them. */
+/** Built-in action types. Custom actions can be any string; register via customActionHandlers. */
 export type PlaygroundEventAction = 'log' | 'toast' | 'alert' | 'updateNode' | 'sequence' | 'setData' | 'navigate';
+
+/** Context passed to custom action handlers so they can read/write data and UI. */
+export interface ActionContext {
+  appData: Record<string, unknown>;
+  setData: (path: string, value: unknown) => void;
+  setRoute: (path: string) => void;
+  updateNode: (id: string, props: Record<string, unknown>) => void;
+  routes: Record<string, UINode>;
+  currentRoute: string;
+}
+
+/** Custom action handler for any scenario (submit, fetch, openModal, etc.). */
+export type CustomActionHandler = (payload: Record<string, unknown> | undefined, context: ActionContext) => void;
 
 export interface PlaygroundEvent {
   id: string;
@@ -67,7 +80,7 @@ export interface PlaygroundEvent {
   nodeId: string;
   componentType: string;
   eventName: string;
-  action: PlaygroundEventAction;
+  action: string;
   message?: string;
   payload?: Record<string, unknown>;
 }
@@ -100,14 +113,26 @@ export interface PlaygroundState {
   select: (id: string | null) => void;
   setSchema: (schema: UINode) => void;
   getSerializableSchema: () => UINode;
-  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => void;
+  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: string, message?: string, payload?: Record<string, unknown>) => void;
   clearPlaygroundEvents: () => void;
   clearToast: () => void;
+  /** Register a custom action handler (e.g. 'submit', 'fetch'). Enables any scenario without core changes. */
+  registerAction: (action: string, handler: CustomActionHandler) => void;
+  unregisterAction: (action: string) => void;
 }
 
 const PlaygroundContext = createContext<PlaygroundState | null>(null);
 
-export function PlaygroundProvider({ children }: { children: ReactNode }) {
+const BUILTIN_ACTIONS = new Set<string>(['log', 'toast', 'alert', 'updateNode', 'sequence', 'setData', 'navigate']);
+
+export function PlaygroundProvider({
+  children,
+  customActionHandlers: initialHandlers,
+}: {
+  children: ReactNode;
+  /** Optional custom action handlers for any scenario (submit, fetch, openModal, etc.). */
+  customActionHandlers?: Record<string, CustomActionHandler>;
+}) {
   const [schema, setSchemaState] = useState<UINode>(() => cloneNode(DEFAULT_ROOT));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [playgroundEvents, setPlaygroundEvents] = useState<PlaygroundEvent[]>([]);
@@ -116,6 +141,7 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
   const [routes, setRoutesState] = useState<Record<string, UINode>>({});
   const [defaultRoute, setDefaultRouteState] = useState<string>('/');
   const [currentRoute, setCurrentRoute] = useState<string>('/');
+  const [customHandlers, setCustomHandlers] = useState<Record<string, CustomActionHandler>>(() => ({ ...initialHandlers }));
 
   const setData = useCallback((path: string, value: unknown) => {
     setAppDataState((prev) => setAtPath(prev, path, value) as Record<string, unknown>);
@@ -233,8 +259,20 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const actionContext: ActionContext = useMemo(
+    () => ({
+      appData,
+      setData,
+      setRoute: setCurrentRoute,
+      updateNode,
+      routes,
+      currentRoute,
+    }),
+    [appData, setData, updateNode, routes, currentRoute]
+  );
+
   const emitPlaygroundEvent = useCallback(
-    (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => {
+    (nodeId: string, componentType: string, eventName: string, action: string, message?: string, payload?: Record<string, unknown>) => {
       const entry: PlaygroundEvent = {
         id: genId(),
         time: Date.now(),
@@ -247,23 +285,55 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
       };
       setPlaygroundEvents((prev) => [...prev.slice(-(MAX_EVENTS - 1)), entry]);
 
+      const custom = customHandlers[action];
+      if (custom) {
+        try {
+          custom(payload, actionContext);
+        } catch (err) {
+          console.error('[Playground] custom action error:', action, err);
+        }
+        return;
+      }
+
       if (action === 'sequence' && Array.isArray(payload?.steps)) {
         for (const step of payload.steps as Array<{ action: string; message?: string; payload?: Record<string, unknown> }>) {
-          const a = step.action as PlaygroundEventAction;
-          runOneAction(a, step.message, step.payload);
+          const a = step.action;
+          if (customHandlers[a]) {
+            try {
+              customHandlers[a](step.payload, actionContext);
+            } catch (e) {
+              console.error('[Playground] custom action error:', a, e);
+            }
+          } else {
+            runOneAction(a as PlaygroundEventAction, step.message, step.payload);
+          }
         }
-      } else if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
-        runOneAction('updateNode', undefined, payload);
-      } else if (action === 'setData' && payload?.path != null) {
-        runOneAction('setData', undefined, payload);
-      } else if (action === 'navigate' && payload?.path != null) {
-        runOneAction('navigate', undefined, payload);
-      } else {
-        runOneAction(action, message, payload);
+      } else if (BUILTIN_ACTIONS.has(action)) {
+        if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
+          runOneAction('updateNode', undefined, payload);
+        } else if (action === 'setData' && payload?.path != null) {
+          runOneAction('setData', undefined, payload);
+        } else if (action === 'navigate' && payload?.path != null) {
+          runOneAction('navigate', undefined, payload);
+        } else {
+          runOneAction(action as PlaygroundEventAction, message, payload);
+        }
       }
     },
-    [runOneAction]
+    [runOneAction, customHandlers, actionContext]
   );
+
+  const registerAction = useCallback((action: string, handler: CustomActionHandler) => {
+    setCustomHandlers((prev) => ({ ...prev, [action]: handler }));
+  }, []);
+
+  const unregisterAction = useCallback((action: string) => {
+    setCustomHandlers((prev) => {
+      const next = { ...prev };
+      delete next[action];
+      return next;
+    });
+  }, []);
 
   const clearPlaygroundEvents = useCallback(() => setPlaygroundEvents([]), []);
   const clearToast = useCallback(() => setToast(null), []);
@@ -296,6 +366,8 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         emitPlaygroundEvent,
         clearPlaygroundEvents,
         clearToast,
+        registerAction,
+        unregisterAction,
       }}
     >
       {children}

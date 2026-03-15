@@ -17,7 +17,7 @@ export interface PropFieldDef {
 const SKIP_KEYS = new Set([
   'onClick', 'onChange', 'onPageChange', 'onClose', 'onOpenChange', 'ref', 'key',
   'className', 'style', // Handled by Design section in PropertiesPanel
-  'onClickAction', 'onClickMessage', 'onClickPayload', // Handled by Events section in PropertiesPanel
+  'onClickAction', 'onClickMessage', 'onClickPayload', 'onClickCustomAction', // Handled by Events section in PropertiesPanel
 ]);
 
 function isSelectOptionsArray(value: unknown): value is Array<{ value: string | number; label: string }> {

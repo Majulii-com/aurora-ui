@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
-import type { PlaygroundEventAction } from './store';
 import { resolveBindings, collectTwoWayBindings, injectStateHandlers } from './bindings';
 import { uiRegistry } from '../ComponentRegistry';
 import { Button, cn } from '@majulii/aurora-ui';
@@ -18,7 +17,7 @@ interface EditableSchemaRendererProps {
   onDrop: (parentId: string, type: string, defaultProps: Record<string, unknown>) => void;
   onMoveNode: (nodeId: string, targetParentId: string, index?: number) => void;
   onUpdateNode: (id: string, props: Record<string, unknown>) => void;
-  onPlaygroundAction: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => void;
+  onPlaygroundAction: (nodeId: string, componentType: string, eventName: string, action: string, message?: string, payload?: Record<string, unknown>) => void;
 }
 
 const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
@@ -147,9 +146,9 @@ export function EditableSchemaRenderer({
       },
     };
   }
-  const onClickAction = node.props?.onClickAction as PlaygroundEventAction | string | undefined;
-  const knownActions: PlaygroundEventAction[] = ['log', 'toast', 'alert', 'updateNode', 'sequence', 'setData', 'navigate'];
-  if (node.id && onClickAction && knownActions.includes(onClickAction as PlaygroundEventAction)) {
+  const rawAction = node.props?.onClickAction as string | undefined;
+  const onClickAction = (rawAction === '__custom' ? (node.props?.onClickCustomAction as string) : rawAction) ?? rawAction;
+  if (node.id && onClickAction && typeof onClickAction === 'string') {
     const message = node.props?.onClickMessage as string | undefined;
     const payload = node.props?.onClickPayload as Record<string, unknown> | undefined;
     const existingOnClick = finalProps.onClick as ((e: React.MouseEvent) => void) | undefined;
@@ -157,7 +156,7 @@ export function EditableSchemaRenderer({
       ...finalProps,
       onClick: (e: React.MouseEvent) => {
         e.stopPropagation();
-        onPlaygroundAction(node.id!, node.type, 'onClick', onClickAction as PlaygroundEventAction, message, payload);
+        onPlaygroundAction(node.id!, node.type, 'onClick', onClickAction, message, payload);
         existingOnClick?.(e);
       },
     };

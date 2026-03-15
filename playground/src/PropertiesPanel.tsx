@@ -63,6 +63,7 @@ const ON_CLICK_ACTION_OPTIONS = [
   { value: 'sequence', label: 'Run multiple actions (sequence)' },
   { value: 'setData', label: 'Set data path (appData)' },
   { value: 'navigate', label: 'Navigate (route)' },
+  { value: '__custom', label: 'Custom (any registered action)' },
 ];
 
 function PropField({
@@ -355,8 +356,19 @@ export function PropertiesPanel() {
             <div className="space-y-1">
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">On click</label>
               <select
-                value={(props.onClickAction as string) ?? ''}
-                onChange={(e) => handlePropChange('onClickAction', e.target.value || undefined)}
+                value={ON_CLICK_ACTION_OPTIONS.some((o) => o.value && o.value !== '__custom' && o.value === (props.onClickAction as string))
+                  ? (props.onClickAction as string)
+                  : '__custom'}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === '__custom') {
+                    handlePropChange('onClickAction', '__custom');
+                    handlePropChange('onClickCustomAction', (props.onClickCustomAction as string) || 'submit');
+                  } else {
+                    handlePropChange('onClickAction', v || undefined);
+                    handlePropChange('onClickCustomAction', undefined);
+                  }
+                }}
                 className={cn('w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm')}
               >
                 {ON_CLICK_ACTION_OPTIONS.map((o) => (
@@ -364,6 +376,41 @@ export function PropertiesPanel() {
                 ))}
               </select>
             </div>
+            {(props.onClickAction as string) === '__custom' && (
+              <>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Custom action name</label>
+                  <input
+                    type="text"
+                    value={(props.onClickCustomAction as string) ?? 'submit'}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      handlePropChange('onClickCustomAction', name || undefined);
+                      handlePropChange('onClickAction', name || undefined);
+                    }}
+                    placeholder="e.g. submit, fetch, openModal"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Payload (JSON)</label>
+                  <textarea
+                    value={typeof (props.onClickPayload as Record<string, unknown>) === 'object' && props.onClickPayload ? JSON.stringify(props.onClickPayload, null, 2) : '{}'}
+                    onChange={(e) => {
+                      try {
+                        const payload = JSON.parse(e.target.value || '{}');
+                        handlePropChange('onClickPayload', typeof payload === 'object' && payload !== null ? payload : {});
+                      } catch {
+                        // allow typing
+                      }
+                    }}
+                    rows={3}
+                    placeholder='{ "api": "/api/order", "method": "POST" }'
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-xs font-mono"
+                  />
+                </div>
+              </>
+            )}
             {(props.onClickAction as string) === 'updateNode' && (
               <>
                 <div className="space-y-1">

@@ -110,10 +110,51 @@ import { cn, variant, createVariant } from '@majulii/aurora-ui';
 const merged = cn('base', condition && 'optional');
 ```
 
+### UI Schema & UIRenderer (AI-ready)
+
+The UI can be described by a **serializable schema object** and rendered with `UIRenderer`. This supports the Playground builder and future AI-generated UIs.
+
+```tsx
+import { UIRenderer } from '@majulii/aurora-ui';
+import type { UINode, UIRegistry } from '@majulii/aurora-ui';
+
+const schema: UINode = {
+  type: 'Page',
+  children: [
+    {
+      type: 'Grid',
+      props: { columns: 3, gap: 4 },
+      children: [
+        { type: 'Card', props: { title: 'Revenue' }, children: [] },
+        { type: 'Card', props: { title: 'Users' }, children: [] },
+      ],
+    },
+  ],
+};
+
+const registry: UIRegistry = {
+  Page: { component: Page, defaultProps: {} },
+  Grid: { component: Grid, defaultProps: {} },
+  Card: { component: Card, defaultProps: {} },
+  // ... map each schema type to a component
+};
+
+<UIRenderer schema={schema} registry={registry} />
+```
+
+The schema is **deterministic**, **JSON-serializable**, and **composable**. The Playground builds this schema visually; the same format can be produced by tools or AI.
+
 ## Components
 
 | Component   | Description                |
 |------------|----------------------------|
+| **Layout** | |
+| Page       | Full-height page wrapper   |
+| Box        | Generic div wrapper        |
+| Stack      | Flex column/row with gap   |
+| Grid       | CSS Grid (columns, gap)    |
+| Container  | Max-width centered wrapper |
+| **Content** | |
 | Button     | Buttons with variants/sizes |
 | Input      | Text input with label/error |
 | Textarea   | Multi-line text input      |
@@ -152,13 +193,14 @@ const merged = cn('base', condition && 'optional');
 ```
 aurora-ui/
 ├── src/
-│   ├── components/   # UI components
-│   ├── hooks/       # React hooks
-│   ├── icons/       # Icon components
-│   ├── theme/       # Theme provider and tokens
-│   ├── utils/       # cn, variant, dom helpers
-│   ├── styles.css   # Tailwind base
-│   └── index.ts     # Public API
+│   ├── components/   # UI components (including Page, Box, Stack, Grid, Container)
+│   ├── schema/       # UINode types, UIRenderer (AI-ready)
+│   ├── hooks/        # React hooks
+│   ├── icons/        # Icon components
+│   ├── theme/        # Theme provider and tokens
+│   ├── utils/        # cn, variant, dom helpers
+│   ├── styles.css    # Tailwind base
+│   └── index.ts      # Public API
 ├── .storybook/      # Storybook config
 ├── playground/      # Drag-and-drop UI builder
 ├── tests/           # Test setup

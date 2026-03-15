@@ -6,6 +6,15 @@ dist/
 build/
 *.tsbuildinfo
 
+# Stray declaration/build output at repo root (single source is src/)
+/components
+/hooks
+/icons
+/theme
+/utils
+/schema
+/index.d.ts
+
 # Environment
 .env
 .env.local
@@ -56,3 +65,6 @@ storybook-static/
 
 # Playground (if built)
 playground/dist/
+
+
+.idea/

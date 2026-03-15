@@ -1,2 +1,0 @@
-import type { TextareaProps } from './Textarea.types';
-export declare const Textarea: import("react").ForwardRefExoticComponent<TextareaProps & import("react").RefAttributes<HTMLTextAreaElement>>;

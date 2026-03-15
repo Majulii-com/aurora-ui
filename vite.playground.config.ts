@@ -7,10 +7,10 @@ export default defineConfig({
   root: resolve(__dirname, 'playground'),
   publicDir: false,
   resolve: {
-    alias: {
-      '@majulii/aurora-ui': resolve(__dirname, 'src/index.ts'),
-      '@majulii/aurora-ui/styles.css': resolve(__dirname, 'src/styles.css'),
-    },
+    alias: [
+      { find: '@majulii/aurora-ui/styles.css', replacement: resolve(__dirname, 'src/styles.css') },
+      { find: '@majulii/aurora-ui', replacement: resolve(__dirname, 'src/index.ts') },
+    ],
   },
   server: {
     port: 5174,

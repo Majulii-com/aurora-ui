@@ -78,6 +78,25 @@ export type {
 export { Pagination } from './components/Pagination';
 export type { PaginationProps } from './components/Pagination';
 
+export { Box } from './components/Box';
+export type { BoxProps } from './components/Box';
+
+export { Stack } from './components/Stack';
+export type { StackProps } from './components/Stack';
+
+export { Grid } from './components/Grid';
+export type { GridProps } from './components/Grid';
+
+export { Container } from './components/Container';
+export type { ContainerProps } from './components/Container';
+
+export { Page } from './components/Page';
+export type { PageProps } from './components/Page';
+
+// Schema & UI Renderer (AI-ready)
+export { UIRenderer } from './schema';
+export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';
+
 // Hooks
 export {
   useToggle,

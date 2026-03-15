@@ -57,10 +57,26 @@ const DEFAULT_ROOT: UINode = {
   children: [],
 };
 
+export type PlaygroundEventAction = 'log' | 'toast' | 'alert';
+
+export interface PlaygroundEvent {
+  id: string;
+  time: number;
+  nodeId: string;
+  componentType: string;
+  eventName: string;
+  action: PlaygroundEventAction;
+  message?: string;
+}
+
+const MAX_EVENTS = 100;
+
 export interface PlaygroundState {
   schema: UINode;
   selectedId: string | null;
   selectedNode: UINode | null;
+  playgroundEvents: PlaygroundEvent[];
+  toast: string | null;
   addNode: (parentId: string | null, node: Omit<UINode, 'id'>) => void;
   moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
   updateNode: (id: string, props: Record<string, unknown>) => void;
@@ -69,6 +85,9 @@ export interface PlaygroundState {
   select: (id: string | null) => void;
   setSchema: (schema: UINode) => void;
   getSerializableSchema: () => UINode;
+  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => void;
+  clearPlaygroundEvents: () => void;
+  clearToast: () => void;
 }
 
 const PlaygroundContext = createContext<PlaygroundState | null>(null);
@@ -76,6 +95,8 @@ const PlaygroundContext = createContext<PlaygroundState | null>(null);
 export function PlaygroundProvider({ children }: { children: ReactNode }) {
   const [schema, setSchemaState] = useState<UINode>(() => cloneNode(DEFAULT_ROOT));
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [playgroundEvents, setPlaygroundEvents] = useState<PlaygroundEvent[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
 
   const addNode = useCallback((parentId: string | null, node: Omit<UINode, 'id'>) => {
     const id = genId();
@@ -153,12 +174,40 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
 
   const selectedNode = findNode(schema, selectedId);
 
+  const emitPlaygroundEvent = useCallback(
+    (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => {
+      const entry: PlaygroundEvent = {
+        id: genId(),
+        time: Date.now(),
+        nodeId,
+        componentType,
+        eventName,
+        action,
+        message,
+      };
+      setPlaygroundEvents((prev) => [...prev.slice(-(MAX_EVENTS - 1)), entry]);
+      if (action === 'log') {
+        console.log(`[Playground] ${componentType} ${eventName}`, message ?? '');
+      } else if (action === 'toast') {
+        setToast(message ?? `${componentType} ${eventName}`);
+      } else if (action === 'alert') {
+        window.alert(message ?? `${componentType} ${eventName}`);
+      }
+    },
+    []
+  );
+
+  const clearPlaygroundEvents = useCallback(() => setPlaygroundEvents([]), []);
+  const clearToast = useCallback(() => setToast(null), []);
+
   return (
     <PlaygroundContext.Provider
       value={{
         schema,
         selectedId,
         selectedNode,
+        playgroundEvents,
+        toast,
         addNode,
         moveNode,
         updateNode,
@@ -167,6 +216,9 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         select: setSelectedId,
         setSchema,
         getSerializableSchema,
+        emitPlaygroundEvent,
+        clearPlaygroundEvents,
+        clearToast,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
+import type { PlaygroundEventAction } from './store';
 import { uiRegistry } from '../ComponentRegistry';
 import { Button, cn } from '@majulii/aurora-ui';
 
@@ -14,6 +15,7 @@ interface EditableSchemaRendererProps {
   onDrop: (parentId: string, type: string, defaultProps: Record<string, unknown>) => void;
   onMoveNode: (nodeId: string, targetParentId: string, index?: number) => void;
   onUpdateNode: (id: string, props: Record<string, unknown>) => void;
+  onPlaygroundAction: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => void;
 }
 
 const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
@@ -28,6 +30,7 @@ export function EditableSchemaRenderer({
   onDrop,
   onMoveNode,
   onUpdateNode,
+  onPlaygroundAction,
 }: EditableSchemaRendererProps) {
   const isSelected = selectedId === node.id;
   const isLayout = LAYOUT_TYPES.has(node.type);
@@ -99,6 +102,7 @@ export function EditableSchemaRenderer({
       onDrop={onDrop}
       onMoveNode={onMoveNode}
       onUpdateNode={onUpdateNode}
+      onPlaygroundAction={onPlaygroundAction}
     />
   ));
 
@@ -121,6 +125,19 @@ export function EditableSchemaRenderer({
       checked,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         onUpdateNode(node.id!, { checked: e.target.checked });
+      },
+    };
+  }
+  const onClickAction = node.props?.onClickAction as PlaygroundEventAction | string | undefined;
+  if (node.id && onClickAction && (onClickAction === 'log' || onClickAction === 'toast' || onClickAction === 'alert')) {
+    const message = node.props?.onClickMessage as string | undefined;
+    const existingOnClick = finalProps.onClick as ((e: React.MouseEvent) => void) | undefined;
+    finalProps = {
+      ...finalProps,
+      onClick: (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onPlaygroundAction(node.id!, node.type, 'onClick', onClickAction as PlaygroundEventAction, message);
+        existingOnClick?.(e);
       },
     };
   }

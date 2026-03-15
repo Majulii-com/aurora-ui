@@ -54,6 +54,13 @@ const PADDING_OPTIONS = [
   { value: 'p-10', label: '2.5rem' },
 ];
 
+const ON_CLICK_ACTION_OPTIONS = [
+  { value: '', label: 'None' },
+  { value: 'log', label: 'Log to console' },
+  { value: 'toast', label: 'Show toast' },
+  { value: 'alert', label: 'Browser alert' },
+];
+
 function PropField({
   def,
   value,
@@ -302,6 +309,35 @@ export function PropertiesPanel() {
                   <option value={paddingClass}>Custom ({paddingClass})</option>
                 )}
               </select>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Events</h4>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Configure what happens when the user interacts. Stored in schema as serializable action types.</p>
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">On click</label>
+              <select
+                value={(props.onClickAction as string) ?? ''}
+                onChange={(e) => handlePropChange('onClickAction', e.target.value || undefined)}
+                className={cn('w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm')}
+              >
+                {ON_CLICK_ACTION_OPTIONS.map((o) => (
+                  <option key={o.value || 'none'} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Message (toast / alert)</label>
+              <input
+                type="text"
+                value={(props.onClickMessage as string) ?? ''}
+                onChange={(e) => handlePropChange('onClickMessage', e.target.value || undefined)}
+                placeholder="Optional message"
+                className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
+              />
             </div>
           </div>
         </section>

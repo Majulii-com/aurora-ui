@@ -41,8 +41,17 @@ export function findNode(root: UINode, id: string | null): UINode | null {
   return null;
 }
 
+/** Returns true if targetId is the same as node or a descendant of node */
+function isDescendantOf(node: UINode, targetId: string): boolean {
+  if (node.id === targetId) return true;
+  for (const child of node.children ?? []) {
+    if (isDescendantOf(child, targetId)) return true;
+  }
+  return false;
+}
+
 const DEFAULT_ROOT: UINode = {
-  type: 'Box',
+  type: 'Page',
   id: 'root',
   props: {},
   children: [],
@@ -53,6 +62,7 @@ export interface PlaygroundState {
   selectedId: string | null;
   selectedNode: UINode | null;
   addNode: (parentId: string | null, node: Omit<UINode, 'id'>) => void;
+  moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
   updateNode: (id: string, props: Record<string, unknown>) => void;
   setNodeProps: (id: string, props: Record<string, unknown>) => void;
   removeNode: (id: string) => void;
@@ -75,7 +85,14 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
     setSchemaState((prev) => {
       const root = cloneNode(prev);
       if (!root.children) root.children = [];
-      if (targetId === root.id || targetId === 'root') {
+      const isAddingToRoot = targetId === root.id || targetId === 'root';
+
+      // When adding Page to root that is already Page, replace root so we don't get Page > Page
+      if (isAddingToRoot && root.type === 'Page' && node.type === 'Page') {
+        return { ...newNode, id: root.id, children: root.children };
+      }
+
+      if (isAddingToRoot) {
         return { ...root, children: [...root.children, newNode] };
       }
       return mutateAt(root, targetId, (parent) => ({
@@ -83,8 +100,28 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         children: [...(parent.children ?? []), newNode],
       }));
     });
-    setSelectedId(id);
-  }, [schema.id]);
+    const isReplacingRoot = (targetId === schema.id || targetId === 'root') && schema.type === 'Page' && node.type === 'Page';
+    setSelectedId(isReplacingRoot ? schema.id : id);
+  }, [schema.id, schema.type]);
+
+  const moveNode = useCallback((nodeId: string, targetParentId: string, index?: number) => {
+    if (nodeId === targetParentId) return;
+    setSchemaState((prev) => {
+      if (prev.id === nodeId) return prev; // can't move root
+      const nodeToMove = findNode(prev, nodeId);
+      if (!nodeToMove) return prev;
+      if (isDescendantOf(nodeToMove, targetParentId)) return prev; // can't drop into own descendant
+      const rootWithoutNode = removeNodeFromTree(prev, nodeId);
+      const targetParent = findNode(rootWithoutNode, targetParentId);
+      if (!targetParent) return prev;
+      return mutateAt(rootWithoutNode, targetParentId, (parent) => {
+        const children = [...(parent.children ?? [])];
+        const insertAt = index ?? children.length;
+        children.splice(insertAt, 0, nodeToMove);
+        return { ...parent, children };
+      });
+    });
+  }, []);
 
   const updateNode = useCallback((id: string, props: Record<string, unknown>) => {
     setSchemaState((prev) => mutateAt(prev, id, (n) => ({ ...n, props: { ...n.props, ...props } })));
@@ -123,6 +160,7 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         selectedId,
         selectedNode,
         addNode,
+        moveNode,
         updateNode,
         setNodeProps,
         removeNode,

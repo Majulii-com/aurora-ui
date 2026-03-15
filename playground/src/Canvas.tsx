@@ -4,7 +4,7 @@ import { EditableSchemaRenderer } from './EditableSchemaRenderer';
 import { cn } from '@majulii/aurora-ui';
 
 export function Canvas() {
-  const { schema, selectedId, select, removeNode, addNode } = usePlayground();
+  const { schema, selectedId, select, removeNode, addNode, moveNode, updateNode } = usePlayground();
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -33,6 +33,13 @@ export function Canvas() {
     [addNode]
   );
 
+  const handleMoveNode = useCallback(
+    (nodeId: string, targetParentId: string, index?: number) => {
+      moveNode(nodeId, targetParentId, index);
+    },
+    [moveNode]
+  );
+
   return (
     <main className="flex-1 overflow-auto p-6">
       <div
@@ -49,6 +56,8 @@ export function Canvas() {
           onSelect={select}
           onRemove={removeNode}
           onDrop={handleDropOnNode}
+          onMoveNode={handleMoveNode}
+          onUpdateNode={updateNode}
         />
       </div>
     </main>

@@ -27,6 +27,33 @@ const HEIGHT_OPTIONS = [
   { value: 'min-h-screen', label: 'Full height' },
 ];
 
+const MARGIN_OPTIONS = [
+  { value: '', label: 'None' },
+  { value: 'm-0', label: '0' },
+  { value: 'm-1', label: '0.25rem' },
+  { value: 'm-2', label: '0.5rem' },
+  { value: 'm-3', label: '0.75rem' },
+  { value: 'm-4', label: '1rem' },
+  { value: 'm-5', label: '1.25rem' },
+  { value: 'm-6', label: '1.5rem' },
+  { value: 'm-8', label: '2rem' },
+  { value: 'm-10', label: '2.5rem' },
+  { value: 'm-auto', label: 'Auto' },
+];
+
+const PADDING_OPTIONS = [
+  { value: '', label: 'None' },
+  { value: 'p-0', label: '0' },
+  { value: 'p-1', label: '0.25rem' },
+  { value: 'p-2', label: '0.5rem' },
+  { value: 'p-3', label: '0.75rem' },
+  { value: 'p-4', label: '1rem' },
+  { value: 'p-5', label: '1.25rem' },
+  { value: 'p-6', label: '1.5rem' },
+  { value: 'p-8', label: '2rem' },
+  { value: 'p-10', label: '2.5rem' },
+];
+
 function PropField({
   def,
   value,
@@ -140,23 +167,41 @@ export function PropertiesPanel() {
     updateNode(selectedId, { [key]: value });
   };
 
+  const isMarginClass = (c: string) => /^(m|mx|my|mt|mr|mb|ml)(-\S+)?$/.test(c);
+  const isPaddingClass = (c: string) => /^(p|px|py|pt|pr|pb|pl)(-\S+)?$/.test(c);
   const classNameParts = (props.className as string)?.split(/\s+/) ?? [];
   const widthClass = classNameParts.find((c) => c.startsWith('w-') || c.startsWith('max-w')) ?? '';
   const heightClass = classNameParts.find((c) => c.startsWith('h-') || c.startsWith('min-h')) ?? '';
-  const otherClass = classNameParts.filter((c) => !c.startsWith('w-') && !c.startsWith('max-w') && !c.startsWith('h-') && !c.startsWith('min-h')).join(' ');
+  const marginClass = classNameParts.find(isMarginClass) ?? '';
+  const paddingClass = classNameParts.find(isPaddingClass) ?? '';
+  const otherClass = classNameParts
+    .filter(
+      (c) =>
+        !c.startsWith('w-') &&
+        !c.startsWith('max-w') &&
+        !c.startsWith('h-') &&
+        !c.startsWith('min-h') &&
+        !isMarginClass(c) &&
+        !isPaddingClass(c)
+    )
+    .join(' ');
 
-  const setWidth = (v: string) => {
-    const next = [v, heightClass, otherClass].filter(Boolean).join(' ');
-    handlePropChange('className', next || undefined);
-  };
-  const setHeight = (v: string) => {
-    const next = [widthClass, v, otherClass].filter(Boolean).join(' ');
-    handlePropChange('className', next || undefined);
-  };
-  const setCustomClass = (v: string) => {
-    const next = [widthClass, heightClass, v].filter(Boolean).join(' ');
-    handlePropChange('className', next || undefined);
-  };
+  const buildClassName = (overrides: { width?: string; height?: string; margin?: string; padding?: string; other?: string }) =>
+    [
+      overrides.width ?? widthClass,
+      overrides.height ?? heightClass,
+      overrides.margin ?? marginClass,
+      overrides.padding ?? paddingClass,
+      overrides.other ?? otherClass,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
+
+  const setWidth = (v: string) => handlePropChange('className', buildClassName({ width: v }));
+  const setHeight = (v: string) => handlePropChange('className', buildClassName({ height: v }));
+  const setMargin = (v: string) => handlePropChange('className', buildClassName({ margin: v }));
+  const setPadding = (v: string) => handlePropChange('className', buildClassName({ padding: v }));
+  const setCustomClass = (v: string) => handlePropChange('className', buildClassName({ other: v }));
 
   const setRawProps = (raw: string) => {
     if (!selectedId) return;
@@ -226,6 +271,36 @@ export function PropertiesPanel() {
                 {HEIGHT_OPTIONS.map((o) => (
                   <option key={o.value || 'default'} value={o.value}>{o.label}</option>
                 ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Margin</label>
+              <select
+                value={marginClass || ''}
+                onChange={(e) => setMargin(e.target.value)}
+                className={cn('w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm')}
+              >
+                {MARGIN_OPTIONS.map((o) => (
+                  <option key={o.value || 'none'} value={o.value}>{o.label}</option>
+                ))}
+                {marginClass && !MARGIN_OPTIONS.some((o) => o.value === marginClass) && (
+                  <option value={marginClass}>Custom ({marginClass})</option>
+                )}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Padding</label>
+              <select
+                value={paddingClass || ''}
+                onChange={(e) => setPadding(e.target.value)}
+                className={cn('w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm')}
+              >
+                {PADDING_OPTIONS.map((o) => (
+                  <option key={o.value || 'none'} value={o.value}>{o.label}</option>
+                ))}
+                {paddingClass && !PADDING_OPTIONS.some((o) => o.value === paddingClass) && (
+                  <option value={paddingClass}>Custom ({paddingClass})</option>
+                )}
               </select>
             </div>
           </div>

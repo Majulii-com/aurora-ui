@@ -3,15 +3,22 @@ import type { UINode } from '@majulii/aurora-ui';
 import { uiRegistry } from '../ComponentRegistry';
 import { Button, cn } from '@majulii/aurora-ui';
 
+const MOVE_NODE_TYPE = 'application/aurora-move-node';
+const ADD_COMPONENT_TYPE = 'application/aurora-component';
+
 interface EditableSchemaRendererProps {
   node: UINode;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onRemove: (id: string) => void;
   onDrop: (parentId: string, type: string, defaultProps: Record<string, unknown>) => void;
+  onMoveNode: (nodeId: string, targetParentId: string, index?: number) => void;
+  onUpdateNode: (id: string, props: Record<string, unknown>) => void;
 }
 
 const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
+const VALUE_TYPES = new Set(['Input', 'Textarea', 'Select']);
+const CHECKED_TYPES = new Set(['Checkbox', 'Switch']);
 
 export function EditableSchemaRenderer({
   node,
@@ -19,16 +26,25 @@ export function EditableSchemaRenderer({
   onSelect,
   onRemove,
   onDrop,
+  onMoveNode,
+  onUpdateNode,
 }: EditableSchemaRendererProps) {
   const isSelected = selectedId === node.id;
   const isLayout = LAYOUT_TYPES.has(node.type);
+  const canMove = node.id && node.id !== 'root';
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      const raw = e.dataTransfer.getData('application/aurora-component');
-      if (!raw || !node.id) return;
+      if (!node.id) return;
+      const moveId = e.dataTransfer.getData(MOVE_NODE_TYPE);
+      if (moveId) {
+        if (isLayout && moveId !== node.id) onMoveNode(moveId, node.id);
+        return;
+      }
+      const raw = e.dataTransfer.getData(ADD_COMPONENT_TYPE);
+      if (!raw) return;
       try {
         const { type, defaultProps } = JSON.parse(raw);
         onDrop(node.id, type, defaultProps ?? {});
@@ -36,14 +52,29 @@ export function EditableSchemaRenderer({
         // ignore
       }
     },
-    [node.id, onDrop]
+    [node.id, isLayout, onDrop, onMoveNode]
   );
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = 'copy';
-  }, []);
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isMoving = e.dataTransfer.types.includes(MOVE_NODE_TYPE);
+      e.dataTransfer.dropEffect = isMoving && isLayout ? 'move' : 'copy';
+    },
+    [isLayout]
+  );
+
+  const handleDragStart = useCallback(
+    (e: React.DragEvent) => {
+      if (!canMove) return;
+      e.stopPropagation();
+      e.dataTransfer.setData(MOVE_NODE_TYPE, node.id!);
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', node.type);
+    },
+    [canMove, node.id, node.type]
+  );
 
   const entry = uiRegistry[node.type];
   if (!entry) {
@@ -66,10 +97,33 @@ export function EditableSchemaRenderer({
       onSelect={onSelect}
       onRemove={onRemove}
       onDrop={onDrop}
+      onMoveNode={onMoveNode}
+      onUpdateNode={onUpdateNode}
     />
   ));
 
   const { children: _propChildren, ...restProps } = props;
+  let finalProps = restProps as Record<string, unknown>;
+  if (node.id && VALUE_TYPES.has(node.type)) {
+    const value = (node.props?.value as string) ?? '';
+    finalProps = {
+      ...finalProps,
+      value,
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        onUpdateNode(node.id!, { value: e.target.value });
+      },
+    };
+  }
+  if (node.id && CHECKED_TYPES.has(node.type)) {
+    const checked = (node.props?.checked as boolean) ?? false;
+    finalProps = {
+      ...finalProps,
+      checked,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        onUpdateNode(node.id!, { checked: e.target.checked });
+      },
+    };
+  }
   const children = renderedChildren.length > 0 ? renderedChildren : (props.children as React.ReactNode);
 
   if (isLayout && childNodes.length === 0) {
@@ -83,7 +137,11 @@ export function EditableSchemaRenderer({
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        <div className="flex items-center gap-1 mb-0.5 opacity-0 hover:opacity-100">
+        <div
+          className={cn('flex items-center gap-1 mb-0.5 opacity-0 hover:opacity-100', canMove && 'cursor-grab active:cursor-grabbing')}
+          draggable={canMove}
+          onDragStart={handleDragStart}
+        >
           <span className="text-xs font-medium text-gray-500">{node.type}</span>
           {node.id && node.id !== 'root' && (
             <Button size="sm" variant="ghost" className="!p-0.5 min-w-0 h-6 text-red-500" onClick={(e) => { e.stopPropagation(); onRemove(node.id!); }}>Remove</Button>
@@ -105,7 +163,11 @@ export function EditableSchemaRenderer({
       onDrop={isLayout ? handleDrop : undefined}
       onDragOver={isLayout ? handleDragOver : undefined}
     >
-      <div className="flex items-center gap-1 mb-0.5 opacity-0 hover:opacity-100 focus-within:opacity-100 group">
+      <div
+        className={cn('flex items-center gap-1 mb-0.5 opacity-0 hover:opacity-100 focus-within:opacity-100 group', canMove && 'cursor-grab active:cursor-grabbing')}
+        draggable={canMove}
+        onDragStart={handleDragStart}
+      >
         <span className="text-xs font-medium text-gray-500 truncate">{node.type}</span>
         {node.id && node.id !== 'root' && (
           <Button
@@ -119,7 +181,7 @@ export function EditableSchemaRenderer({
         )}
       </div>
       <div className="rounded">
-        <Component {...restProps}>
+        <Component {...finalProps}>
           {children}
         </Component>
       </div>

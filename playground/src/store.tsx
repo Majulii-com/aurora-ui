@@ -31,8 +31,18 @@ function removeNodeFromTree(root: UINode, id: string): UINode {
   };
 }
 
+export function findNode(root: UINode, id: string | null): UINode | null {
+  if (!id) return null;
+  if (root.id === id) return root;
+  for (const child of root.children ?? []) {
+    const found = findNode(child, id);
+    if (found) return found;
+  }
+  return null;
+}
+
 const DEFAULT_ROOT: UINode = {
-  type: 'Page',
+  type: 'Box',
   id: 'root',
   props: {},
   children: [],
@@ -41,8 +51,10 @@ const DEFAULT_ROOT: UINode = {
 export interface PlaygroundState {
   schema: UINode;
   selectedId: string | null;
+  selectedNode: UINode | null;
   addNode: (parentId: string | null, node: Omit<UINode, 'id'>) => void;
   updateNode: (id: string, props: Record<string, unknown>) => void;
+  setNodeProps: (id: string, props: Record<string, unknown>) => void;
   removeNode: (id: string) => void;
   select: (id: string | null) => void;
   setSchema: (schema: UINode) => void;
@@ -78,6 +90,10 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
     setSchemaState((prev) => mutateAt(prev, id, (n) => ({ ...n, props: { ...n.props, ...props } })));
   }, []);
 
+  const setNodeProps = useCallback((id: string, props: Record<string, unknown>) => {
+    setSchemaState((prev) => mutateAt(prev, id, (n) => ({ ...n, props: { ...props } })));
+  }, []);
+
   const removeNode = useCallback((id: string) => {
     setSchemaState((prev) => {
       if (id === prev.id) return cloneNode(DEFAULT_ROOT);
@@ -98,13 +114,17 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
     return stripIds(cloneNode(schema));
   }, [schema]);
 
+  const selectedNode = findNode(schema, selectedId);
+
   return (
     <PlaygroundContext.Provider
       value={{
         schema,
         selectedId,
+        selectedNode,
         addNode,
         updateNode,
+        setNodeProps,
         removeNode,
         select: setSelectedId,
         setSchema,

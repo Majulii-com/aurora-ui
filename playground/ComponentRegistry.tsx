@@ -23,13 +23,20 @@ import {
   Page,
 } from '@majulii/aurora-ui';
 import type { UIRegistry } from '@majulii/aurora-ui';
+import type { PropFieldDef } from './src/propSchema';
 
+/**
+ * Registry item: one entry per component.
+ * - defaultProps: used for inference when propSchema is omitted (scalable: new components get props panel for free).
+ * - propSchema: optional override for custom labels, select options, or to hide props. Omit for inference.
+ */
 export interface RegistryItem {
   id: string;
   name: string;
   component: React.ComponentType<Record<string, unknown>>;
   defaultProps: Record<string, unknown>;
   category?: 'layout' | 'content';
+  propSchema?: PropFieldDef[];
 }
 
 const registryList: RegistryItem[] = [
@@ -38,7 +45,18 @@ const registryList: RegistryItem[] = [
   { id: 'Stack', name: 'Stack', component: Stack as React.ComponentType<Record<string, unknown>>, defaultProps: { gap: 2 }, category: 'layout' },
   { id: 'Grid', name: 'Grid', component: Grid as React.ComponentType<Record<string, unknown>>, defaultProps: { columns: 3, gap: 4 }, category: 'layout' },
   { id: 'Container', name: 'Container', component: Container as React.ComponentType<Record<string, unknown>>, defaultProps: { maxWidth: 'lg' }, category: 'layout' },
-  { id: 'Button', name: 'Button', component: Button as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Button', variant: 'primary', size: 'md' }, category: 'content' },
+  {
+    id: 'Button',
+    name: 'Button',
+    component: Button as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { children: 'Button', variant: 'primary', size: 'md' },
+    category: 'content',
+    propSchema: [
+      { key: 'children', label: 'Label', type: 'text' },
+      { key: 'variant', label: 'Variant', type: 'select', options: [{ value: 'primary', label: 'Primary' }, { value: 'secondary', label: 'Secondary' }, { value: 'ghost', label: 'Ghost' }, { value: 'outline', label: 'Outline' }, { value: 'danger', label: 'Danger' }, { value: 'success', label: 'Success' }] },
+      { key: 'size', label: 'Size', type: 'select', options: [{ value: 'sm', label: 'Small' }, { value: 'md', label: 'Medium' }, { value: 'lg', label: 'Large' }] },
+    ],
+  },
   { id: 'Input', name: 'Input', component: Input as React.ComponentType<Record<string, unknown>>, defaultProps: { placeholder: 'Placeholder' }, category: 'content' },
   { id: 'Textarea', name: 'Textarea', component: Textarea as React.ComponentType<Record<string, unknown>>, defaultProps: { placeholder: 'Placeholder', rows: 3 }, category: 'content' },
   { id: 'Checkbox', name: 'Checkbox', component: Checkbox as React.ComponentType<Record<string, unknown>>, defaultProps: { label: 'Checkbox' }, category: 'content' },

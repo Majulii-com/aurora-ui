@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
+import { setAtPath } from './bindings';
 
 function genId(): string {
   return `n-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -57,7 +58,8 @@ const DEFAULT_ROOT: UINode = {
   children: [],
 };
 
-export type PlaygroundEventAction = 'log' | 'toast' | 'alert';
+/** Serializable action types. AI or code can emit these; playground (or app) runs them. */
+export type PlaygroundEventAction = 'log' | 'toast' | 'alert' | 'updateNode' | 'sequence' | 'setData' | 'navigate';
 
 export interface PlaygroundEvent {
   id: string;
@@ -67,12 +69,25 @@ export interface PlaygroundEvent {
   eventName: string;
   action: PlaygroundEventAction;
   message?: string;
+  payload?: Record<string, unknown>;
 }
 
 const MAX_EVENTS = 100;
 
 export interface PlaygroundState {
   schema: UINode;
+  /** Data context for __bind and setData (COMPLEX_COMPONENTS / FULL_SITE_ARCHITECTURE) */
+  appData: Record<string, unknown>;
+  setData: (path: string, value: unknown) => void;
+  setAppData: (data: Record<string, unknown>) => void;
+  /** When set, render routes[currentRoute] instead of schema (site schema mode) */
+  routes: Record<string, UINode>;
+  defaultRoute: string;
+  currentRoute: string;
+  setRoute: (path: string) => void;
+  setRoutes: (routes: Record<string, UINode>, defaultRoute?: string) => void;
+  /** Schema to render: single schema or routes[currentRoute] when routes are set */
+  effectiveSchema: UINode;
   selectedId: string | null;
   selectedNode: UINode | null;
   playgroundEvents: PlaygroundEvent[];
@@ -85,7 +100,7 @@ export interface PlaygroundState {
   select: (id: string | null) => void;
   setSchema: (schema: UINode) => void;
   getSerializableSchema: () => UINode;
-  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => void;
+  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => void;
   clearPlaygroundEvents: () => void;
   clearToast: () => void;
 }
@@ -97,6 +112,30 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [playgroundEvents, setPlaygroundEvents] = useState<PlaygroundEvent[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [appData, setAppDataState] = useState<Record<string, unknown>>(() => ({}));
+  const [routes, setRoutesState] = useState<Record<string, UINode>>({});
+  const [defaultRoute, setDefaultRouteState] = useState<string>('/');
+  const [currentRoute, setCurrentRoute] = useState<string>('/');
+
+  const setData = useCallback((path: string, value: unknown) => {
+    setAppDataState((prev) => setAtPath(prev, path, value) as Record<string, unknown>);
+  }, []);
+
+  const setAppData = useCallback((data: Record<string, unknown>) => {
+    setAppDataState(() => ({ ...data }));
+  }, []);
+
+  const setRoutes = useCallback((newRoutes: Record<string, UINode>, newDefaultRoute?: string) => {
+    setRoutesState(newRoutes);
+    if (newDefaultRoute != null) setDefaultRouteState(newDefaultRoute);
+  }, []);
+
+  const effectiveSchema = useMemo(() => {
+    const routeKeys = Object.keys(routes);
+    if (routeKeys.length === 0) return schema;
+    const node = routes[currentRoute] ?? routes[defaultRoute];
+    return node ?? schema;
+  }, [routes, currentRoute, defaultRoute, schema]);
 
   const addNode = useCallback((parentId: string | null, node: Omit<UINode, 'id'>) => {
     const id = genId();
@@ -173,9 +212,29 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
   }, [schema]);
 
   const selectedNode = findNode(schema, selectedId);
+  const selectedNodeFromEffective = findNode(effectiveSchema, selectedId);
+
+  const runOneAction = useCallback(
+    (action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => {
+      if (action === 'log') {
+        console.log('[Playground]', message ?? '');
+      } else if (action === 'toast') {
+        setToast(message ?? '');
+      } else if (action === 'alert') {
+        window.alert(message ?? '');
+      } else if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
+        setSchemaState((prev) => mutateAt(prev, String(payload.nodeId), (n) => ({ ...n, props: { ...n.props, ...(payload!.props as Record<string, unknown>) } })));
+      } else if (action === 'setData' && payload?.path != null) {
+        setAppDataState((prev) => setAtPath(prev, String(payload.path), payload.value) as Record<string, unknown>);
+      } else if (action === 'navigate' && payload?.path != null) {
+        setCurrentRoute(String(payload.path));
+      }
+    },
+    []
+  );
 
   const emitPlaygroundEvent = useCallback(
-    (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => {
+    (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => {
       const entry: PlaygroundEvent = {
         id: genId(),
         time: Date.now(),
@@ -184,17 +243,26 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         eventName,
         action,
         message,
+        payload,
       };
       setPlaygroundEvents((prev) => [...prev.slice(-(MAX_EVENTS - 1)), entry]);
-      if (action === 'log') {
-        console.log(`[Playground] ${componentType} ${eventName}`, message ?? '');
-      } else if (action === 'toast') {
-        setToast(message ?? `${componentType} ${eventName}`);
-      } else if (action === 'alert') {
-        window.alert(message ?? `${componentType} ${eventName}`);
+
+      if (action === 'sequence' && Array.isArray(payload?.steps)) {
+        for (const step of payload.steps as Array<{ action: string; message?: string; payload?: Record<string, unknown> }>) {
+          const a = step.action as PlaygroundEventAction;
+          runOneAction(a, step.message, step.payload);
+        }
+      } else if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
+        runOneAction('updateNode', undefined, payload);
+      } else if (action === 'setData' && payload?.path != null) {
+        runOneAction('setData', undefined, payload);
+      } else if (action === 'navigate' && payload?.path != null) {
+        runOneAction('navigate', undefined, payload);
+      } else {
+        runOneAction(action, message, payload);
       }
     },
-    []
+    [runOneAction]
   );
 
   const clearPlaygroundEvents = useCallback(() => setPlaygroundEvents([]), []);
@@ -204,8 +272,17 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
     <PlaygroundContext.Provider
       value={{
         schema,
+        appData,
+        setData,
+        setAppData,
+        routes,
+        defaultRoute,
+        currentRoute,
+        setRoute: setCurrentRoute,
+        setRoutes,
+        effectiveSchema,
         selectedId,
-        selectedNode,
+        selectedNode: selectedNodeFromEffective ?? selectedNode,
         playgroundEvents,
         toast,
         addNode,

@@ -41,6 +41,18 @@ export function EventLog() {
                   {ev.message != null && ev.message !== '' && (
                     <span className="text-gray-600 dark:text-gray-400">“{ev.message}”</span>
                   )}
+                  {ev.action === 'updateNode' && ev.payload?.nodeId != null && (
+                    <span className="text-gray-500">→ {String(ev.payload.nodeId)}</span>
+                  )}
+                  {ev.action === 'sequence' && Array.isArray(ev.payload?.steps) && (
+                    <span className="text-gray-500">({(ev.payload.steps as unknown[]).length} steps)</span>
+                  )}
+                  {ev.action === 'setData' && ev.payload?.path != null && (
+                    <span className="text-gray-500">→ {String(ev.payload.path)}</span>
+                  )}
+                  {ev.action === 'navigate' && ev.payload?.path != null && (
+                    <span className="text-gray-500">→ {String(ev.payload.path)}</span>
+                  )}
                 </li>
               ))
             )}

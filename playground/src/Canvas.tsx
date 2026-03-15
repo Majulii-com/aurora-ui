@@ -4,7 +4,7 @@ import { EditableSchemaRenderer } from './EditableSchemaRenderer';
 import { cn } from '@majulii/aurora-ui';
 
 export function Canvas() {
-  const { schema, selectedId, select, removeNode, addNode, moveNode, updateNode, emitPlaygroundEvent } = usePlayground();
+  const { effectiveSchema, appData, setData, selectedId, select, removeNode, addNode, moveNode, updateNode, emitPlaygroundEvent } = usePlayground();
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -51,8 +51,10 @@ export function Canvas() {
         )}
       >
         <EditableSchemaRenderer
-          node={schema}
+          node={effectiveSchema}
           selectedId={selectedId}
+          appData={appData}
+          setData={setData}
           onSelect={select}
           onRemove={removeNode}
           onDrop={handleDropOnNode}

@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
 import type { PlaygroundEventAction } from './store';
+import { resolveBindings, collectTwoWayBindings, injectStateHandlers } from './bindings';
 import { uiRegistry } from '../ComponentRegistry';
 import { Button, cn } from '@majulii/aurora-ui';
 
@@ -10,12 +11,14 @@ const ADD_COMPONENT_TYPE = 'application/aurora-component';
 interface EditableSchemaRendererProps {
   node: UINode;
   selectedId: string | null;
+  appData: Record<string, unknown>;
+  setData: (path: string, value: unknown) => void;
   onSelect: (id: string) => void;
   onRemove: (id: string) => void;
   onDrop: (parentId: string, type: string, defaultProps: Record<string, unknown>) => void;
   onMoveNode: (nodeId: string, targetParentId: string, index?: number) => void;
   onUpdateNode: (id: string, props: Record<string, unknown>) => void;
-  onPlaygroundAction: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string) => void;
+  onPlaygroundAction: (nodeId: string, componentType: string, eventName: string, action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => void;
 }
 
 const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
@@ -25,6 +28,8 @@ const CHECKED_TYPES = new Set(['Checkbox', 'Switch']);
 export function EditableSchemaRenderer({
   node,
   selectedId,
+  appData,
+  setData,
   onSelect,
   onRemove,
   onDrop,
@@ -89,7 +94,19 @@ export function EditableSchemaRenderer({
   }
 
   const { component: Component, defaultProps = {} } = entry;
-  const props = { ...defaultProps, ...node.props } as Record<string, unknown>;
+  const rawProps = { ...defaultProps, ...node.props } as Record<string, unknown>;
+
+  const resolvedProps = useMemo(
+    () => resolveBindings(rawProps, appData) as Record<string, unknown>,
+    [rawProps, appData]
+  );
+  const twoWayBindings = useMemo(() => collectTwoWayBindings(node.props as Record<string, unknown>), [node.props]);
+  const propsWithHandlers = useMemo(
+    () => injectStateHandlers(resolvedProps, twoWayBindings, setData),
+    [resolvedProps, twoWayBindings, setData]
+  );
+
+  const props = propsWithHandlers;
   const childNodes = node.children ?? [];
 
   const renderedChildren = childNodes.map((child) => (
@@ -97,6 +114,8 @@ export function EditableSchemaRenderer({
       key={child.id}
       node={child}
       selectedId={selectedId}
+      appData={appData}
+      setData={setData}
       onSelect={onSelect}
       onRemove={onRemove}
       onDrop={onDrop}
@@ -108,8 +127,8 @@ export function EditableSchemaRenderer({
 
   const { children: _propChildren, ...restProps } = props;
   let finalProps = restProps as Record<string, unknown>;
-  if (node.id && VALUE_TYPES.has(node.type)) {
-    const value = (node.props?.value as string) ?? '';
+  if (node.id && VALUE_TYPES.has(node.type) && !twoWayBindings.value) {
+    const value = (node.props?.value as string) ?? (resolvedProps.value as string) ?? '';
     finalProps = {
       ...finalProps,
       value,
@@ -118,8 +137,8 @@ export function EditableSchemaRenderer({
       },
     };
   }
-  if (node.id && CHECKED_TYPES.has(node.type)) {
-    const checked = (node.props?.checked as boolean) ?? false;
+  if (node.id && CHECKED_TYPES.has(node.type) && !twoWayBindings.checked) {
+    const checked = (node.props?.checked as boolean) ?? (resolvedProps.checked as boolean) ?? false;
     finalProps = {
       ...finalProps,
       checked,
@@ -129,14 +148,16 @@ export function EditableSchemaRenderer({
     };
   }
   const onClickAction = node.props?.onClickAction as PlaygroundEventAction | string | undefined;
-  if (node.id && onClickAction && (onClickAction === 'log' || onClickAction === 'toast' || onClickAction === 'alert')) {
+  const knownActions: PlaygroundEventAction[] = ['log', 'toast', 'alert', 'updateNode', 'sequence', 'setData', 'navigate'];
+  if (node.id && onClickAction && knownActions.includes(onClickAction as PlaygroundEventAction)) {
     const message = node.props?.onClickMessage as string | undefined;
+    const payload = node.props?.onClickPayload as Record<string, unknown> | undefined;
     const existingOnClick = finalProps.onClick as ((e: React.MouseEvent) => void) | undefined;
     finalProps = {
       ...finalProps,
       onClick: (e: React.MouseEvent) => {
         e.stopPropagation();
-        onPlaygroundAction(node.id!, node.type, 'onClick', onClickAction as PlaygroundEventAction, message);
+        onPlaygroundAction(node.id!, node.type, 'onClick', onClickAction as PlaygroundEventAction, message, payload);
         existingOnClick?.(e);
       },
     };

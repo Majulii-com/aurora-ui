@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { usePlayground } from './store';
 import { registry } from '../ComponentRegistry';
 import { resolvePropFields } from './propSchema';
@@ -59,6 +59,10 @@ const ON_CLICK_ACTION_OPTIONS = [
   { value: 'log', label: 'Log to console' },
   { value: 'toast', label: 'Show toast' },
   { value: 'alert', label: 'Browser alert' },
+  { value: 'updateNode', label: 'Update another component' },
+  { value: 'sequence', label: 'Run multiple actions (sequence)' },
+  { value: 'setData', label: 'Set data path (appData)' },
+  { value: 'navigate', label: 'Navigate (route)' },
 ];
 
 function PropField({
@@ -157,9 +161,29 @@ function PropField({
   );
 }
 
+function collectNodeIds(
+  node: { id?: string; type: string; children?: unknown[] },
+  list: { id: string; type: string; label: string }[]
+): void {
+  if (node.id) list.push({ id: node.id, type: node.type, label: `${node.type} (${node.id})` });
+  (node.children as { id?: string; type: string; children?: unknown[] }[] | undefined)?.forEach((c) => collectNodeIds(c, list));
+}
+
 export function PropertiesPanel() {
-  const { selectedId, selectedNode, updateNode, setNodeProps, select } = usePlayground();
+  const { schema, selectedId, selectedNode, updateNode, setNodeProps, select } = usePlayground();
   const [rawOpen, setRawOpen] = useState(false);
+  const [updateNodePropsDraft, setUpdateNodePropsDraft] = useState('');
+  const [sequenceStepsDraft, setSequenceStepsDraft] = useState('');
+  const nodeIdOptions = useMemo(() => {
+    const list: { id: string; type: string; label: string }[] = [];
+    collectNodeIds(schema, list);
+    return list.filter((n) => n.id !== selectedId);
+  }, [schema, selectedId]);
+
+  useEffect(() => {
+    setUpdateNodePropsDraft('');
+    setSequenceStepsDraft('');
+  }, [selectedId]);
 
   const propDefs = useMemo(() => {
     if (!selectedNode) return [];
@@ -168,6 +192,17 @@ export function PropertiesPanel() {
   }, [selectedNode?.type]);
 
   const props = selectedNode?.props ?? {};
+  const payload = (props.onClickPayload as Record<string, unknown>) ?? {};
+  const updateNodePayload = (props.onClickAction as string) === 'updateNode' ? payload : null;
+  const sequencePayload = (props.onClickAction as string) === 'sequence' ? payload : null;
+  const updateNodePropsJson = useMemo(
+    () => (updateNodePayload?.props != null ? JSON.stringify(updateNodePayload.props, null, 2) : '{}'),
+    [selectedId, updateNodePayload?.props]
+  );
+  const sequenceStepsJson = useMemo(
+    () => (Array.isArray(sequencePayload?.steps) ? JSON.stringify(sequencePayload.steps, null, 2) : '[]'),
+    [selectedId, sequencePayload?.steps]
+  );
 
   const handlePropChange = (key: string, value: unknown) => {
     if (!selectedId) return;
@@ -315,7 +350,7 @@ export function PropertiesPanel() {
 
         <section>
           <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Events</h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Configure what happens when the user interacts. Stored in schema as serializable action types.</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Configure what happens when the user interacts. Stored in schema as serializable action types (AI-friendly).</p>
           <div className="space-y-2">
             <div className="space-y-1">
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">On click</label>
@@ -329,16 +364,136 @@ export function PropertiesPanel() {
                 ))}
               </select>
             </div>
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Message (toast / alert)</label>
-              <input
-                type="text"
-                value={(props.onClickMessage as string) ?? ''}
-                onChange={(e) => handlePropChange('onClickMessage', e.target.value || undefined)}
-                placeholder="Optional message"
-                className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
-              />
-            </div>
+            {(props.onClickAction as string) === 'updateNode' && (
+              <>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Target component</label>
+                  <select
+                    value={((props.onClickPayload as Record<string, unknown>)?.nodeId as string) ?? ''}
+                    onChange={(e) => {
+                      const nodeId = e.target.value;
+                      const prev = (props.onClickPayload as Record<string, unknown>) ?? {};
+                      handlePropChange('onClickPayload', { ...prev, nodeId, props: prev.props ?? {} });
+                    }}
+                    className={cn('w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm')}
+                  >
+                    <option value="">Select node…</option>
+                    {nodeIdOptions.map((o) => (
+                      <option key={o.id} value={o.id}>{o.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Props to set (JSON)</label>
+                  <textarea
+                    value={updateNodePropsDraft || updateNodePropsJson}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setUpdateNodePropsDraft(v);
+                      try {
+                        const propsToSet = JSON.parse(v || '{}');
+                        const prev = (props.onClickPayload as Record<string, unknown>) ?? {};
+                        handlePropChange('onClickPayload', { ...prev, props: propsToSet });
+                      } catch {
+                        // allow typing invalid JSON; draft stays
+                      }
+                    }}
+                    onBlur={() => setUpdateNodePropsDraft('')}
+                    rows={3}
+                    placeholder='{ "children": "Done!", "disabled": true }'
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-xs font-mono"
+                  />
+                </div>
+              </>
+            )}
+            {(props.onClickAction as string) === 'sequence' && (
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Steps (JSON)</label>
+                <textarea
+                  value={sequenceStepsDraft || sequenceStepsJson}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setSequenceStepsDraft(v);
+                    try {
+                      const steps = JSON.parse(v || '[]');
+                      handlePropChange('onClickPayload', { steps: Array.isArray(steps) ? steps : [] });
+                    } catch {
+                      // allow typing
+                    }
+                  }}
+                  onBlur={() => setSequenceStepsDraft('')}
+                  rows={6}
+                  placeholder={JSON.stringify([
+                    { action: 'updateNode', payload: { nodeId: '<id>', props: { children: 'Loading…' } } },
+                    { action: 'toast', message: 'Done!' },
+                  ], null, 2)}
+                  className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-xs font-mono"
+                />
+                <p className="text-xs text-gray-500">Each step: {"{ action: 'log'|'toast'|'alert'|'updateNode', message?, payload? }"}</p>
+              </div>
+            )}
+            {['log', 'toast', 'alert'].includes((props.onClickAction as string) ?? '') && (
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Message (toast / alert / log)</label>
+                <input
+                  type="text"
+                  value={(props.onClickMessage as string) ?? ''}
+                  onChange={(e) => handlePropChange('onClickMessage', e.target.value || undefined)}
+                  placeholder="Optional message"
+                  className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
+                />
+              </div>
+            )}
+            {(props.onClickAction as string) === 'setData' && (
+              <>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Data path</label>
+                  <input
+                    type="text"
+                    value={((props.onClickPayload as Record<string, unknown>)?.path as string) ?? ''}
+                    onChange={(e) => {
+                      const prev = (props.onClickPayload as Record<string, unknown>) ?? {};
+                      handlePropChange('onClickPayload', { ...prev, path: e.target.value, value: prev.value });
+                    }}
+                    placeholder="e.g. table.page or form.email"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Value (JSON)</label>
+                  <input
+                    type="text"
+                    value={typeof (props.onClickPayload as Record<string, unknown>)?.value === 'string' ? (props.onClickPayload as Record<string, unknown>).value as string : JSON.stringify((props.onClickPayload as Record<string, unknown>)?.value ?? '')}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      const prev = (props.onClickPayload as Record<string, unknown>) ?? {};
+                      try {
+                        handlePropChange('onClickPayload', { ...prev, value: JSON.parse(v || 'null') });
+                      } catch {
+                        handlePropChange('onClickPayload', { ...prev, value: v });
+                      }
+                    }}
+                    placeholder="e.g. 1 or &quot;hello&quot;"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm font-mono"
+                  />
+                </div>
+              </>
+            )}
+            {(props.onClickAction as string) === 'navigate' && (
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">Route path</label>
+                <input
+                  type="text"
+                  value={((props.onClickPayload as Record<string, unknown>)?.path as string) ?? ''}
+                  onChange={(e) => {
+                    const prev = (props.onClickPayload as Record<string, unknown>) ?? {};
+                    handlePropChange('onClickPayload', { ...prev, path: e.target.value });
+                  }}
+                  placeholder="e.g. / or /dashboard"
+                  className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm font-mono"
+                />
+              </div>
+            )}
           </div>
         </section>
 

@@ -1,0 +1,13 @@
+import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
+export interface TableProps extends HTMLAttributes<HTMLTableElement> {
+}
+export interface TableHeadProps extends HTMLAttributes<HTMLTableSectionElement> {
+}
+export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
+}
+export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+}
+export interface TableHeaderCellProps extends ThHTMLAttributes<HTMLTableCellElement> {
+}
+export interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {
+}

@@ -54,10 +54,15 @@ Example:
 
 ---
 
-## 3. Available component types
+## 3. Available component types (full coverage for real-world UIs)
 
-**Layout:** `Page`, `Box`, `Stack`, `Grid`, `Container`, `ShowWhen`  
-**Content:** `Button`, `Input`, `Textarea`, `Checkbox`, `Radio`, `Select`, `Switch`, `Card`, `Badge`, `Avatar`, `Spinner`, `Alert`, `Pagination`, `Modal`, `Tooltip`, `Dropdown`, `DropdownItem`, `Tabs`, `TabList`, `Tab`, `TabPanel`, `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell`, `TableCell`.
+**Layout:** `Page`, `Box`, `Stack`, `Grid`, `Container`, `ShowWhen`, `Divider`, `SplitPane`  
+**Forms & input:** `Button`, `Input`, `Textarea`, `Checkbox`, `Radio`, `Select`, `Switch`, `Slider`, `Label`, `IconButton`  
+**Overlay & feedback:** `Modal`, `Drawer`, `Tooltip`, `Dropdown`, `DropdownItem`, `Popover`, `Alert`, `Spinner`, `Progress`, `Skeleton`  
+**Data display:** `Card`, `CardHeader`, `CardBody`, `CardFooter`, `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell`, `TableCell`, `Badge`, `Avatar`, `Image`, `Pagination`, `EmptyState`  
+**Analytics & charts:** `StatCard`, `BarChart`, `LineChart`, `PieChart`  
+**Navigation:** `Tabs`, `TabList`, `Tab`, `TabPanel`, `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `Breadcrumb`, `BreadcrumbItem`, `Link`, `TreeView`  
+**Typography & code:** `Code`, `CodeBlock`, `Kbd`, `Icon`
 
 Use **ShowWhen** with `when: { "__bind": "path" }` to show/hide blocks based on store state (e.g. button sets path to `true` → table appears). For **wizard/stepper** (show content when a path equals a value), use **equality binding**: `when: { "__bind": "wizard.step", "__eq": 1 }` — the runtime resolves this to `true` only when `state.wizard.step === 1`.
 

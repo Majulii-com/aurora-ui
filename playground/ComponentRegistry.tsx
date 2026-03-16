@@ -39,6 +39,30 @@ import {
   TableRow,
   TableHeaderCell,
   TableCell,
+  ShowWhen,
+  Divider,
+  Progress,
+  Skeleton,
+  Drawer,
+  Breadcrumb,
+  BreadcrumbItem,
+  Link,
+  Image,
+  Kbd,
+  Code,
+  EmptyState,
+  Slider,
+  Label,
+  TreeView,
+  SplitPane,
+  Popover,
+  IconButton,
+  CodeBlock,
+  Icon,
+  StatCard,
+  BarChart,
+  LineChart,
+  PieChart,
 } from '@majulii/aurora-ui';
 import type { UIRegistry } from '@majulii/aurora-ui';
 import type { PropFieldDef } from './src/propSchema';
@@ -172,6 +196,124 @@ const registryList: RegistryItem[] = [
   { id: 'TableRow', name: 'Table row', component: TableRow as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
   { id: 'TableHeaderCell', name: 'Table header cell', component: TableHeaderCell as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Header' }, category: 'content' },
   { id: 'TableCell', name: 'Table cell', component: TableCell as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Cell' }, category: 'content' },
+  { id: 'ShowWhen', name: 'Show when', component: ShowWhen as React.ComponentType<Record<string, unknown>>, defaultProps: { when: true }, category: 'layout' },
+  { id: 'Divider', name: 'Divider', component: Divider as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'layout' },
+  { id: 'Progress', name: 'Progress', component: Progress as React.ComponentType<Record<string, unknown>>, defaultProps: { value: 60, max: 100, showValue: true }, category: 'content' },
+  { id: 'Skeleton', name: 'Skeleton', component: Skeleton as React.ComponentType<Record<string, unknown>>, defaultProps: { variant: 'rect' }, category: 'content' },
+  { id: 'Drawer', name: 'Drawer', component: Drawer as React.ComponentType<Record<string, unknown>>, defaultProps: { isOpen: false, title: 'Drawer', placement: 'right' }, category: 'content' },
+  { id: 'Breadcrumb', name: 'Breadcrumb', component: Breadcrumb as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'BreadcrumbItem', name: 'Breadcrumb item', component: BreadcrumbItem as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Item' }, category: 'content' },
+  { id: 'Link', name: 'Link', component: Link as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Link', href: '#' }, category: 'content' },
+  { id: 'Image', name: 'Image', component: Image as React.ComponentType<Record<string, unknown>>, defaultProps: { src: 'https://picsum.photos/400/200', alt: 'Placeholder' }, category: 'content' },
+  { id: 'Kbd', name: 'Kbd', component: Kbd as React.ComponentType<Record<string, unknown>>, defaultProps: { children: '⌘' }, category: 'content' },
+  { id: 'Code', name: 'Code', component: Code as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'code' }, category: 'content' },
+  { id: 'EmptyState', name: 'Empty state', component: EmptyState as React.ComponentType<Record<string, unknown>>, defaultProps: { title: 'No data', description: 'Nothing to show here.' }, category: 'content' },
+  { id: 'Slider', name: 'Slider', component: Slider as React.ComponentType<Record<string, unknown>>, defaultProps: { min: 0, max: 100, value: 50, showValue: true }, category: 'content' },
+  { id: 'Label', name: 'Label', component: Label as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Label' }, category: 'content' },
+  {
+    id: 'TreeView',
+    name: 'Tree view',
+    component: TreeView as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      items: [
+        { id: '1', label: 'Folder 1', children: [{ id: '1-1', label: 'Item 1-1' }, { id: '1-2', label: 'Item 1-2' }] },
+        { id: '2', label: 'Folder 2', children: [] },
+      ],
+    },
+    category: 'content',
+  },
+  {
+    id: 'SplitPane',
+    name: 'Split pane',
+    component: ((props: Record<string, unknown>) => (
+      <SplitPane direction="horizontal" defaultSize={0.4}>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800">Left pane</div>
+        <div className="p-4 bg-gray-50 dark:bg-gray-700">Right pane</div>
+      </SplitPane>
+    )) as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {},
+    category: 'layout',
+  },
+  {
+    id: 'Popover',
+    name: 'Popover',
+    component: (({ triggerLabel, content, ...p }: Record<string, unknown>) => (
+      <Popover trigger={<Button size="sm" variant="outline">{(triggerLabel as string) ?? 'Open'}</Button>} {...p}>
+        {(content as string) ?? 'Popover content'}
+      </Popover>
+    )) as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { triggerLabel: 'Open', content: 'Popover content' },
+    category: 'content',
+  },
+  {
+    id: 'IconButton',
+    name: 'Icon button',
+    component: ((props: Record<string, unknown>) => (
+      <IconButton aria-label="Action" {...props}>
+        <Icon name="add" size={20} />
+      </IconButton>
+    )) as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {},
+    category: 'content',
+  },
+  {
+    id: 'CodeBlock',
+    name: 'Code block',
+    component: CodeBlock as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { code: 'SELECT * FROM users;\nWHERE id = 1;', showLineNumbers: true },
+    category: 'content',
+  },
+  { id: 'Icon', name: 'Icon', component: Icon as React.ComponentType<Record<string, unknown>>, defaultProps: { name: 'search' }, category: 'content' },
+  {
+    id: 'StatCard',
+    name: 'Stat card',
+    component: StatCard as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { title: 'Revenue', value: '$42.5k', trend: 'up', trendLabel: '+12% vs last month' },
+    category: 'content',
+  },
+  {
+    id: 'BarChart',
+    name: 'Bar chart',
+    component: BarChart as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { label: 'Jan', value: 40 },
+        { label: 'Feb', value: 65 },
+        { label: 'Mar', value: 52 },
+      ],
+      height: 200,
+    },
+    category: 'content',
+  },
+  {
+    id: 'LineChart',
+    name: 'Line chart',
+    component: LineChart as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { x: 'Jan', y: 30 },
+        { x: 'Feb', y: 45 },
+        { x: 'Mar', y: 38 },
+        { x: 'Apr', y: 55 },
+      ],
+      height: 200,
+    },
+    category: 'content',
+  },
+  {
+    id: 'PieChart',
+    name: 'Pie chart',
+    component: PieChart as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { label: 'A', value: 35 },
+        { label: 'B', value: 45 },
+        { label: 'C', value: 20 },
+      ],
+      donut: false,
+    },
+    category: 'content',
+  },
 ];
 
 export const registry = registryList;

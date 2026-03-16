@@ -93,6 +93,75 @@ export type { ContainerProps } from './components/Container';
 export { Page } from './components/Page';
 export type { PageProps } from './components/Page';
 
+export { ShowWhen } from './components/ShowWhen';
+export type { ShowWhenProps } from './components/ShowWhen';
+
+export { Divider } from './components/Divider';
+export type { DividerProps } from './components/Divider';
+
+export { Progress } from './components/Progress';
+export type { ProgressProps, ProgressVariant, ProgressSize } from './components/Progress';
+
+export { Skeleton } from './components/Skeleton';
+export type { SkeletonProps } from './components/Skeleton';
+
+export { Drawer } from './components/Drawer';
+export type { DrawerProps, DrawerPlacement, DrawerSize } from './components/Drawer';
+
+export { Breadcrumb, BreadcrumbItem } from './components/Breadcrumb';
+export type { BreadcrumbProps, BreadcrumbItemProps } from './components/Breadcrumb';
+
+export { Link } from './components/Link';
+export type { LinkProps, LinkVariant } from './components/Link';
+
+export { Image } from './components/Image';
+export type { ImageProps } from './components/Image';
+
+export { Kbd } from './components/Kbd';
+export type { KbdProps } from './components/Kbd';
+
+export { Code } from './components/Code';
+export type { CodeProps } from './components/Code';
+
+export { EmptyState } from './components/EmptyState';
+export type { EmptyStateProps } from './components/EmptyState';
+
+export { Slider } from './components/Slider';
+export type { SliderProps, SliderSize } from './components/Slider';
+
+export { Label } from './components/Label';
+export type { LabelProps } from './components/Label';
+
+export { TreeView } from './components/TreeView';
+export type { TreeViewProps, TreeNodeData, TreeNodeProps } from './components/TreeView';
+
+export { SplitPane } from './components/SplitPane';
+export type { SplitPaneProps, SplitPaneDirection } from './components/SplitPane';
+
+export { Popover } from './components/Popover';
+export type { PopoverProps, PopoverPlacement } from './components/Popover';
+
+export { IconButton } from './components/IconButton';
+export type { IconButtonProps, IconButtonVariant, IconButtonSize } from './components/IconButton';
+
+export { CodeBlock } from './components/CodeBlock';
+export type { CodeBlockProps } from './components/CodeBlock';
+
+export { Icon } from './components/Icon';
+export type { IconPropsWithName, IconName } from './components/Icon';
+
+export { StatCard } from './components/StatCard';
+export type { StatCardProps, StatCardTrend } from './components/StatCard';
+
+export { BarChart } from './components/BarChart';
+export type { BarChartProps, BarChartDatum, BarChartDirection } from './components/BarChart';
+
+export { LineChart } from './components/LineChart';
+export type { LineChartProps, LineChartDatum, LineChartSeries } from './components/LineChart';
+
+export { PieChart } from './components/PieChart';
+export type { PieChartProps, PieChartDatum } from './components/PieChart';
+
 // Schema & UI Renderer (AI-ready)
 export { UIRenderer } from './schema';
 export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';

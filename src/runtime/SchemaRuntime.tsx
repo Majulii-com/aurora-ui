@@ -9,6 +9,7 @@ import {
 
 const VALUE_TYPES = new Set(['Input', 'Textarea', 'Select']);
 const CHECKED_TYPES = new Set(['Checkbox', 'Switch']);
+const SLIDER_TYPES = new Set(['Slider']);
 
 export interface SchemaRuntimeProps {
   /** Schema tree to render (e.g. current page from AI or backend). */
@@ -115,6 +116,21 @@ function SchemaRuntimeInner({
       checked,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         setData(fallbackPath, e.target.checked);
+      },
+    };
+  }
+  if (node.id && SLIDER_TYPES.has(node.type) && !twoWayBindings.value) {
+    const fallbackPath = `_input.${node.id}`;
+    const num =
+      (getAtPath(appData, fallbackPath) as number) ??
+      (resolvedProps.value as number) ??
+      (node.props?.min as number) ??
+      0;
+    finalProps = {
+      ...finalProps,
+      value: num,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        setData(fallbackPath, e.target.valueAsNumber ?? Number(e.target.value));
       },
     };
   }

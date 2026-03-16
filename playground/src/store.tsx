@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useReducer, useCallback, useMemo, type ReactNode } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
 import { setAtPath } from './bindings';
+import { defaultAppReducer, INITIAL_APP_STATE, type AppState, type AppAction } from './appStore';
 
 function genId(): string {
   return `n-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -125,30 +126,45 @@ const PlaygroundContext = createContext<PlaygroundState | null>(null);
 
 const BUILTIN_ACTIONS = new Set<string>(['log', 'toast', 'alert', 'updateNode', 'sequence', 'setData', 'navigate']);
 
+/** Optional custom reducer for domain actions (OPEN_MODAL, TOGGLE_TABLE, etc.). Runs before defaultAppReducer. */
+export type CustomAppReducer = (state: AppState, action: AppAction) => AppState;
+
 export function PlaygroundProvider({
   children,
   customActionHandlers: initialHandlers,
+  customReducer,
 }: {
   children: ReactNode;
   /** Optional custom action handlers for any scenario (submit, fetch, openModal, etc.). */
   customActionHandlers?: Record<string, CustomActionHandler>;
+  /** Optional custom reducer for domain actions. If it returns a new state, that is used; else defaultAppReducer runs. */
+  customReducer?: CustomAppReducer;
 }) {
+  const appReducer = useMemo(() => {
+    if (!customReducer) return defaultAppReducer;
+    return (state: AppState, action: AppAction): AppState => {
+      const next = customReducer(state, action);
+      if (next !== state) return next;
+      return defaultAppReducer(state, action);
+    };
+  }, [customReducer]);
+
   const [schema, setSchemaState] = useState<UINode>(() => cloneNode(DEFAULT_ROOT));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [playgroundEvents, setPlaygroundEvents] = useState<PlaygroundEvent[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [appData, setAppDataState] = useState<Record<string, unknown>>(() => ({}));
+  const [appData, dispatchApp] = useReducer(appReducer, INITIAL_APP_STATE);
   const [routes, setRoutesState] = useState<Record<string, UINode>>({});
   const [defaultRoute, setDefaultRouteState] = useState<string>('/');
   const [currentRoute, setCurrentRoute] = useState<string>('/');
   const [customHandlers, setCustomHandlers] = useState<Record<string, CustomActionHandler>>(() => ({ ...initialHandlers }));
 
   const setData = useCallback((path: string, value: unknown) => {
-    setAppDataState((prev) => setAtPath(prev, path, value) as Record<string, unknown>);
+    dispatchApp({ type: 'SET_PATH', payload: { path, value } });
   }, []);
 
   const setAppData = useCallback((data: Record<string, unknown>) => {
-    setAppDataState(() => ({ ...data }));
+    dispatchApp({ type: 'REPLACE_STATE', payload: data });
   }, []);
 
   const setRoutes = useCallback((newRoutes: Record<string, UINode>, newDefaultRoute?: string) => {
@@ -251,7 +267,7 @@ export function PlaygroundProvider({
       } else if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
         setSchemaState((prev) => mutateAt(prev, String(payload.nodeId), (n) => ({ ...n, props: { ...n.props, ...(payload!.props as Record<string, unknown>) } })));
       } else if (action === 'setData' && payload?.path != null) {
-        setAppDataState((prev) => setAtPath(prev, String(payload.path), payload.value) as Record<string, unknown>);
+        dispatchApp({ type: 'SET_PATH', payload: { path: String(payload.path), value: payload.value } });
       } else if (action === 'navigate' && payload?.path != null) {
         setCurrentRoute(String(payload.path));
       }

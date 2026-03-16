@@ -1,6 +1,7 @@
 /**
- * Data binding utilities for the generic runtime (COMPLEX_COMPONENTS + FULL_SITE_ARCHITECTURE).
- * Resolves __bind from a data context and injects two-way state handlers (setData).
+ * Data binding utilities for schema-driven UIs (host app runtime).
+ * Resolves __bind from app data and supports __eq for wizard/step visibility.
+ * Use with SchemaRuntime or your own renderer.
  */
 
 export function getAtPath(data: Record<string, unknown>, path: string): unknown {
@@ -26,9 +27,10 @@ export function setAtPath(
   const [head, ...rest] = keys;
   const restPath = rest.join('.');
   const existing = (data[head] as Record<string, unknown>) ?? {};
-  const child = typeof existing === 'object' && existing !== null && !Array.isArray(existing)
-    ? setAtPath(existing as Record<string, unknown>, restPath, value)
-    : setAtPath({}, restPath, value);
+  const child =
+    typeof existing === 'object' && existing !== null && !Array.isArray(existing)
+      ? setAtPath(existing as Record<string, unknown>, restPath, value)
+      : setAtPath({}, restPath, value);
   return { ...data, [head]: child };
 }
 
@@ -45,10 +47,6 @@ export function isTwoWayBinding(value: unknown): boolean {
   return isBindingObject(value) && (value as { __bindDir?: string }).__bindDir === 'twoWay';
 }
 
-/**
- * Binding with __eq: show when path value equals __eq (e.g. wizard step, active tab id).
- * Used by ShowWhen: when: { "__bind": "wizard.step", "__eq": 1 } → true only when state.wizard.step === 1.
- */
 function isEqualityBinding(value: unknown): value is { __bind: string; __eq: unknown } {
   return (
     isBindingObject(value) &&
@@ -57,11 +55,6 @@ function isEqualityBinding(value: unknown): value is { __bind: string; __eq: unk
   );
 }
 
-/**
- * Recursively resolve __bind in props/values. Replaces { __bind: "path" } with value from data.
- * If __eq is present, returns (getAtPath(data, path) === __eq) for wizard/step-style visibility.
- * Does not mutate; returns new object/array where needed.
- */
 export function resolveBindings(value: unknown, data: Record<string, unknown>): unknown {
   if (isEqualityBinding(value)) {
     const pathValue = getAtPath(data, value.__bind);
@@ -83,10 +76,9 @@ export function resolveBindings(value: unknown, data: Record<string, unknown>): 
   return value;
 }
 
-/**
- * Collect prop keys that are two-way bindings and their paths.
- */
-export function collectTwoWayBindings(props: Record<string, unknown> | undefined): Record<string, string> {
+export function collectTwoWayBindings(
+  props: Record<string, unknown> | undefined
+): Record<string, string> {
   if (!props) return {};
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(props)) {
@@ -97,10 +89,6 @@ export function collectTwoWayBindings(props: Record<string, unknown> | undefined
   return out;
 }
 
-/**
- * Handler names for common state props (COMPLEX_COMPONENTS convention).
- * Prop "page" -> onPageChange, "value" -> onChange, etc.
- */
 export const STATE_HANDLER_NAMES: Record<string, string> = {
   value: 'onChange',
   checked: 'onChange',
@@ -113,11 +101,6 @@ export const STATE_HANDLER_NAMES: Record<string, string> = {
   isOpen: 'onClose',
 };
 
-/**
- * Inject state update handlers for two-way bindings. Each handler calls setData(path, newValue).
- * For "value"/"checked" we pass (e) => setData(path, e.target.value / e.target.checked).
- * For others (page, sort, filter, search) we pass (newValue) => setData(path, newValue).
- */
 export function injectStateHandlers(
   resolvedProps: Record<string, unknown>,
   twoWayBindings: Record<string, string>,
@@ -125,9 +108,13 @@ export function injectStateHandlers(
 ): Record<string, unknown> {
   let out = { ...resolvedProps };
   for (const [propKey, path] of Object.entries(twoWayBindings)) {
-    const handlerName = STATE_HANDLER_NAMES[propKey] ?? `on${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}Change`;
+    const handlerName =
+      STATE_HANDLER_NAMES[propKey] ??
+      `on${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}Change`;
     if (propKey === 'value' || propKey === 'checked') {
-      (out as Record<string, unknown>)[handlerName] = (e: { target: { value?: string; checked?: boolean } }) => {
+      (out as Record<string, unknown>)[handlerName] = (
+        e: { target: { value?: string; checked?: boolean } }
+      ) => {
         const val = propKey === 'checked' ? e.target.checked : e.target.value;
         setData(path, val);
       };

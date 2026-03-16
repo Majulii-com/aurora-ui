@@ -1,6 +1,6 @@
 # Platform capabilities: any web app, any complex scenario
 
-This platform is designed to **create any web app for any complex scenario**—dashboards, e‑commerce, SaaS, forms, wizards, data tables, charts, maps, and anything else—without changing the core schema format or runtime. You extend via **components**, **data**, and **actions**.
+This platform is designed so **AI (or developers) can come up with any possible UI, interaction, and design** and build **any real-life complex platform on the fly** from a single **UI definition** (schema + state + actions). It supports **all possible real-life scenarios**—dashboards, e‑commerce, SaaS, admin panels, forms, wizards, data tables, CRUD, auth, settings, multi-step flows, and any combination—without changing the core schema format or runtime. You extend via **components**, **data**, and **actions**.
 
 ---
 
@@ -63,5 +63,7 @@ The platform can create **any web app for any complex scenario** because:
 3. **Behavior** = built-in actions + **custom action registry** (any new action type).
 4. **Screens** = routes + navigate (any number of pages).
 5. **Complex widgets** = state bindings + injected handlers (tables, charts, editors, etc.).
+
+**Reducer + store:** App data is updated only by **dispatching actions** through a **reducer** (see `REDUCER_STORE_ARCHITECTURE.md`). So state is a single source of truth; schema and UI bind to it; interactions dispatch actions (e.g. SET_PATH) and the UI updates accordingly. **For AI:** see `AI_UI_GENERATION_GUIDE.md` to generate any UI and any interaction from schema + initial state + action payloads. **Real-life coverage:** see `REAL_LIFE_SCENARIOS.md` for a catalog of scenarios (visibility, forms, tables, wizards, dashboards, e‑commerce, auth, CRUD, etc.) and how each is expressed with the same definition format—so any complex platform can be built on the fly.
 
 See `FULL_SITE_ARCHITECTURE.md` and `COMPLEX_COMPONENTS.md` for implementation details.

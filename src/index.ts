@@ -97,6 +97,18 @@ export type { PageProps } from './components/Page';
 export { UIRenderer } from './schema';
 export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';
 
+// Runtime (bindings + SchemaRuntime for host apps)
+export {
+  getAtPath,
+  setAtPath,
+  resolveBindings,
+  collectTwoWayBindings,
+  injectStateHandlers,
+  STATE_HANDLER_NAMES,
+} from './runtime/bindings';
+export { SchemaRuntime } from './runtime/SchemaRuntime';
+export type { SchemaRuntimeProps } from './runtime/SchemaRuntime';
+
 // Hooks
 export {
   useToggle,

@@ -162,6 +162,29 @@ export type { LineChartProps, LineChartDatum, LineChartSeries } from './componen
 export { PieChart } from './components/PieChart';
 export type { PieChartProps, PieChartDatum } from './components/PieChart';
 
+export {
+  Chat,
+  ChatHeader,
+  ChatMessages,
+  ChatMessage,
+  ChatInput,
+  ChatOptionCard,
+  ChatSuggestions,
+  ChatWelcome,
+} from './components/Chat';
+export type {
+  ChatProps,
+  ChatHeaderProps,
+  ChatMessagesProps,
+  ChatMessageProps,
+  ChatInputProps,
+  ChatOptionCardProps,
+  ChatSuggestionsProps,
+  ChatMessageData,
+  ChatMessageRole,
+} from './components/Chat';
+export type { ChatWelcomeProps } from './components/Chat';
+
 // Schema & UI Renderer (AI-ready)
 export { UIRenderer } from './schema';
 export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';

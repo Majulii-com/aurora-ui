@@ -63,6 +63,14 @@ import {
   BarChart,
   LineChart,
   PieChart,
+  Chat,
+  ChatHeader,
+  ChatMessages,
+  ChatMessage,
+  ChatInput,
+  ChatOptionCard,
+  ChatSuggestions,
+  ChatWelcome,
 } from '@majulii/aurora-ui';
 import type { UIRegistry } from '@majulii/aurora-ui';
 import type { PropFieldDef } from './src/propSchema';
@@ -314,6 +322,34 @@ const registryList: RegistryItem[] = [
     },
     category: 'content',
   },
+  {
+    id: 'Chat',
+    name: 'Chat',
+    component: ((props: Record<string, unknown>) => (
+      <Chat height={400} {...props}>
+        <ChatHeader title="AI Assist" subtitle="Ask anything" />
+        <ChatMessages
+          messages={[]}
+          emptyContent={
+            <ChatWelcome prompt="What would you like to explore?">
+              <ChatOptionCard title="Re-engineer" description="Transform this for the future." onClick={() => {}} />
+              <ChatOptionCard title="Pivot" description="Explore a new direction." onClick={() => {}} />
+            </ChatWelcome>
+          }
+        />
+        <ChatInput onSend={() => {}} placeholder="Type a message..." />
+      </Chat>
+    )) as React.ComponentType<Record<string, unknown>>,
+    defaultProps: {},
+    category: 'content',
+  },
+  { id: 'ChatHeader', name: 'Chat header', component: ChatHeader as React.ComponentType<Record<string, unknown>>, defaultProps: { title: 'Chat' }, category: 'content' },
+  { id: 'ChatMessages', name: 'Chat messages', component: ChatMessages as React.ComponentType<Record<string, unknown>>, defaultProps: { messages: [] }, category: 'content' },
+  { id: 'ChatMessage', name: 'Chat message', component: ChatMessage as React.ComponentType<Record<string, unknown>>, defaultProps: { message: { id: '1', role: 'user', content: 'Hello' } }, category: 'content' },
+  { id: 'ChatInput', name: 'Chat input', component: ChatInput as React.ComponentType<Record<string, unknown>>, defaultProps: { placeholder: 'Type a message...' }, category: 'content' },
+  { id: 'ChatOptionCard', name: 'Chat option card', component: ChatOptionCard as React.ComponentType<Record<string, unknown>>, defaultProps: { title: 'Option', description: 'Description' }, category: 'content' },
+  { id: 'ChatSuggestions', name: 'Chat suggestions', component: ChatSuggestions as React.ComponentType<Record<string, unknown>>, defaultProps: { items: [{ label: 'Yes' }, { label: 'No' }] }, category: 'content' },
+  { id: 'ChatWelcome', name: 'Chat welcome', component: ChatWelcome as React.ComponentType<Record<string, unknown>>, defaultProps: { prompt: 'What would you like to explore?' }, category: 'content' },
 ];
 
 export const registry = registryList;

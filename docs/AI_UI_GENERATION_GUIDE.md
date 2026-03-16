@@ -62,7 +62,8 @@ Example:
 **Data display:** `Card`, `CardHeader`, `CardBody`, `CardFooter`, `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell`, `TableCell`, `Badge`, `Avatar`, `Image`, `Pagination`, `EmptyState`  
 **Analytics & charts:** `StatCard`, `BarChart`, `LineChart`, `PieChart`  
 **Navigation:** `Tabs`, `TabList`, `Tab`, `TabPanel`, `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `Breadcrumb`, `BreadcrumbItem`, `Link`, `TreeView`  
-**Typography & code:** `Code`, `CodeBlock`, `Kbd`, `Icon`
+**Typography & code:** `Code`, `CodeBlock`, `Kbd`, `Icon`  
+**Chat / AI assist:** `Chat`, `ChatHeader`, `ChatMessages`, `ChatMessage`, `ChatInput`, `ChatOptionCard`, `ChatSuggestions`, `ChatWelcome`
 
 Use **ShowWhen** with `when: { "__bind": "path" }` to show/hide blocks based on store state (e.g. button sets path to `true` → table appears). For **wizard/stepper** (show content when a path equals a value), use **equality binding**: `when: { "__bind": "wizard.step", "__eq": 1 }` — the runtime resolves this to `true` only when `state.wizard.step === 1`.
 

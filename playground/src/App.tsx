@@ -6,6 +6,7 @@ import { SchemaPanel } from './SchemaPanel';
 import { EventLog } from './EventLog';
 import { DataPanel } from './DataPanel';
 import { PropertiesPanel } from './PropertiesPanel';
+import { ChatPanel } from './ChatPanel';
 import { PlaygroundProvider, usePlayground } from './store';
 
 function PlaygroundLayout() {
@@ -35,7 +36,14 @@ function PlaygroundLayout() {
             </div>
           </div>
         </div>
-        <PropertiesPanel />
+        <aside className="w-[420px] flex flex-col border-l border-gray-200 dark:border-gray-700 shrink-0 bg-gray-50 dark:bg-gray-900/50">
+          <div className="min-h-0 shrink-0 flex flex-col" style={{ maxHeight: '45%' }}>
+            <ChatPanel />
+          </div>
+          <div className="flex-1 min-h-[240px] flex flex-col border-t border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
+            <PropertiesPanel />
+          </div>
+        </aside>
       </div>
       {toast && (
         <div

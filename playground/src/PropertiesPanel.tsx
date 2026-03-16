@@ -258,21 +258,21 @@ export function PropertiesPanel() {
 
   if (!selectedId || !selectedNode) {
     return (
-      <aside className="w-72 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 text-sm p-4">
+      <aside className="w-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 text-sm p-4">
         Select a component to edit its props and design.
       </aside>
     );
   }
 
   return (
-    <aside className="w-72 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col overflow-hidden">
-      <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{selectedNode.type}</h3>
+    <aside className="w-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between shrink-0">
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{selectedNode.type}</h3>
         <Button size="sm" variant="ghost" className="!p-1" onClick={() => select(null)} aria-label="Close panel">
           ×
         </Button>
       </div>
-      <div className="flex-1 overflow-auto p-3 space-y-4">
+      <div className="flex-1 overflow-auto overflow-x-hidden p-4 pb-8 space-y-4">
         {propDefs.length > 0 && (
           <section>
             <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Props</h4>
@@ -351,7 +351,7 @@ export function PropertiesPanel() {
 
         <section>
           <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Events</h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Configure what happens when the user interacts. Stored in schema as serializable action types (AI-friendly).</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 break-words">Configure what happens when the user interacts. Stored in schema as serializable action types (AI-friendly).</p>
           <div className="space-y-2">
             <div className="space-y-1">
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400">On click</label>

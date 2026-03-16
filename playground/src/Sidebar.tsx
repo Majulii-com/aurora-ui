@@ -2,14 +2,11 @@ import { registry } from '../ComponentRegistry';
 import { usePlayground } from './store';
 import { cn } from '@majulii/aurora-ui';
 
-const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
-
 export function Sidebar() {
   const { addNode, selectedId } = usePlayground();
 
   const handleAdd = (type: string, defaultProps: Record<string, unknown>) => {
-    const parentId = selectedId && LAYOUT_TYPES.has(selectedId) ? selectedId : null;
-    addNode(parentId, { type, props: { ...defaultProps } });
+    addNode(selectedId ?? null, { type, props: { ...defaultProps } });
   };
 
   return (

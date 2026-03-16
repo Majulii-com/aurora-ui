@@ -197,8 +197,8 @@ export function EditableSchemaRenderer({
         isSelected && 'ring-2 ring-primary-500 ring-offset-1'
       )}
       onClick={(e) => { e.stopPropagation(); if (node.id) onSelect(node.id); }}
-      onDrop={isLayout ? handleDrop : undefined}
-      onDragOver={isLayout ? handleDragOver : undefined}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
     >
       <div
         className={cn('flex items-center gap-1 mb-0.5 opacity-0 hover:opacity-100 focus-within:opacity-100 group', canMove && 'cursor-grab active:cursor-grabbing')}

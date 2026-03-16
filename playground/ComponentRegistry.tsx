@@ -21,6 +21,24 @@ import {
   Grid,
   Container,
   Page,
+  Modal,
+  Tooltip,
+  Dropdown,
+  DropdownItem,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeaderCell,
+  TableCell,
 } from '@majulii/aurora-ui';
 import type { UIRegistry } from '@majulii/aurora-ui';
 import type { PropFieldDef } from './src/propSchema';
@@ -80,7 +98,80 @@ const registryList: RegistryItem[] = [
   { id: 'Avatar', name: 'Avatar', component: Avatar as React.ComponentType<Record<string, unknown>>, defaultProps: { name: 'JD' }, category: 'content' },
   { id: 'Spinner', name: 'Spinner', component: Spinner as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
   { id: 'Alert', name: 'Alert', component: Alert as React.ComponentType<Record<string, unknown>>, defaultProps: { title: 'Alert', children: 'Alert message.', variant: 'info' }, category: 'content' },
-  { id: 'Pagination', name: 'Pagination', component: Pagination as React.ComponentType<Record<string, unknown>>, defaultProps: { page: 1, totalPages: 10, onPageChange: () => {} }, category: 'content' },
+  { id: 'Pagination', name: 'Pagination', component: Pagination as React.ComponentType<Record<string, unknown>>, defaultProps: { page: 1, totalPages: 10 }, category: 'content' },
+  {
+    id: 'Modal',
+    name: 'Modal',
+    component: Modal as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { isOpen: false, title: 'Modal', size: 'md', closeOnOverlayClick: true, showCloseButton: true },
+    category: 'content',
+    propSchema: [
+      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'size', label: 'Size', type: 'select', options: [{ value: 'sm', label: 'Small' }, { value: 'md', label: 'Medium' }, { value: 'lg', label: 'Large' }, { value: 'full', label: 'Full' }] },
+    ],
+  },
+  {
+    id: 'Tooltip',
+    name: 'Tooltip',
+    component: Tooltip as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { content: 'Tooltip text', placement: 'top' },
+    category: 'content',
+    propSchema: [
+      { key: 'content', label: 'Content', type: 'text' },
+      { key: 'placement', label: 'Placement', type: 'select', options: [{ value: 'top', label: 'Top' }, { value: 'bottom', label: 'Bottom' }, { value: 'left', label: 'Left' }, { value: 'right', label: 'Right' }] },
+    ],
+  },
+  {
+    id: 'Dropdown',
+    name: 'Dropdown',
+    component: (({ triggerLabel, children, ...p }: Record<string, unknown>) => (
+      <Dropdown
+        {...p}
+        trigger={<Button size="sm" variant="outline">{(triggerLabel as string) ?? 'Menu'}</Button>}
+      >
+        {children as React.ReactNode}
+      </Dropdown>
+    )) as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { triggerLabel: 'Menu', placement: 'bottom-start' },
+    category: 'content',
+  },
+  {
+    id: 'DropdownItem',
+    name: 'Dropdown item',
+    component: DropdownItem as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { children: 'Item' },
+    category: 'content',
+  },
+  {
+    id: 'Tabs',
+    name: 'Tabs',
+    component: Tabs as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { value: '1' },
+    category: 'content',
+  },
+  { id: 'TabList', name: 'Tab list', component: TabList as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'Tab', name: 'Tab', component: Tab as React.ComponentType<Record<string, unknown>>, defaultProps: { value: '1', children: 'Tab 1' }, category: 'content' },
+  { id: 'TabPanel', name: 'Tab panel', component: TabPanel as React.ComponentType<Record<string, unknown>>, defaultProps: { value: '1', children: 'Panel content' }, category: 'content' },
+  {
+    id: 'Accordion',
+    name: 'Accordion',
+    component: Accordion as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { variant: 'default', allowMultiple: false },
+    category: 'content',
+    propSchema: [
+      { key: 'variant', label: 'Variant', type: 'select', options: [{ value: 'default', label: 'Default' }, { value: 'bordered', label: 'Bordered' }, { value: 'separated', label: 'Separated' }] },
+      { key: 'allowMultiple', label: 'Allow multiple', type: 'boolean' },
+    ],
+  },
+  { id: 'AccordionItem', name: 'Accordion item', component: AccordionItem as React.ComponentType<Record<string, unknown>>, defaultProps: { value: '1' }, category: 'content' },
+  { id: 'AccordionTrigger', name: 'Accordion trigger', component: AccordionTrigger as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Section' }, category: 'content' },
+  { id: 'AccordionContent', name: 'Accordion content', component: AccordionContent as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Content' }, category: 'content' },
+  { id: 'Table', name: 'Table', component: Table as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'TableHead', name: 'Table head', component: TableHead as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'TableBody', name: 'Table body', component: TableBody as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'TableRow', name: 'Table row', component: TableRow as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
+  { id: 'TableHeaderCell', name: 'Table header cell', component: TableHeaderCell as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Header' }, category: 'content' },
+  { id: 'TableCell', name: 'Table cell', component: TableCell as React.ComponentType<Record<string, unknown>>, defaultProps: { children: 'Cell' }, category: 'content' },
 ];
 
 export const registry = registryList;

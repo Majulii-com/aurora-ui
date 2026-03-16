@@ -93,6 +93,7 @@ export const STATE_HANDLER_NAMES: Record<string, string> = {
   filter: 'onFilterChange',
   search: 'onSearchChange',
   selection: 'onSelectionChange',
+  isOpen: 'onClose',
 };
 
 /**
@@ -113,6 +114,9 @@ export function injectStateHandlers(
         const val = propKey === 'checked' ? e.target.checked : e.target.value;
         setData(path, val);
       };
+    } else if (propKey === 'isOpen') {
+      (out as Record<string, unknown>)[handlerName] = () => setData(path, false);
+      (out as Record<string, unknown>)['onOpenChange'] = (v: boolean) => setData(path, v);
     } else {
       (out as Record<string, unknown>)[handlerName] = (newValue: unknown) => {
         setData(path, newValue);

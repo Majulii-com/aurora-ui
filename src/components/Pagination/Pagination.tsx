@@ -11,7 +11,7 @@ function range(start: number, end: number): number[] {
 export function Pagination({
   page,
   totalPages,
-  onPageChange,
+  onPageChange = () => {},
   siblingCount = 1,
   showFirstLast = true,
   className,

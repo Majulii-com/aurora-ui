@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@majulii/aurora-ui';
 import { Sidebar } from './Sidebar';
 import { Canvas } from './Canvas';
@@ -7,10 +7,28 @@ import { EventLog } from './EventLog';
 import { DataPanel } from './DataPanel';
 import { PropertiesPanel } from './PropertiesPanel';
 import { ChatPanel } from './ChatPanel';
+import { GenDSLPanel } from './GenDSLPanel';
 import { PlaygroundProvider, usePlayground } from './store';
 
 function PlaygroundLayout() {
+  const [mode, setMode] = useState<'canvas' | 'gen'>(() => {
+    try {
+      const v = localStorage.getItem('aurora-playground-mode');
+      return v === 'gen' ? 'gen' : 'canvas';
+    } catch {
+      return 'canvas';
+    }
+  });
+
   const { toast, clearToast } = usePlayground();
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('aurora-playground-mode', mode);
+    } catch {
+      /* ignore */
+    }
+  }, [mode]);
 
   useEffect(() => {
     if (!toast) return;
@@ -18,9 +36,22 @@ function PlaygroundLayout() {
     return () => clearTimeout(t);
   }, [toast, clearToast]);
 
+  if (mode === 'gen') {
+    return <GenDSLPanel onBack={() => setMode('canvas')} />;
+  }
+
   return (
     <>
-      <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="relative flex h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="absolute top-2 right-2 z-50 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setMode('gen')}
+            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 shadow"
+          >
+            Generative JSON DSL
+          </button>
+        </div>
         <Sidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <Canvas />

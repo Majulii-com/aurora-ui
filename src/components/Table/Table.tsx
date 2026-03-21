@@ -10,8 +10,8 @@ import type {
 } from './Table.types';
 
 export const Table = forwardRef<HTMLTableElement, TableProps>(
-  ({ className, ...rest }, ref) => (
-    <div className="overflow-x-auto">
+  ({ className, wrapperClassName, ...rest }, ref) => (
+    <div className={cn('overflow-x-auto', wrapperClassName)}>
       <table ref={ref} className={cn('w-full border-collapse', className)} {...rest} />
     </div>
   )

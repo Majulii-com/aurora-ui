@@ -17,4 +17,14 @@ describe('ShowWhen', () => {
     render(<ShowWhen>Maybe visible</ShowWhen>);
     expect(screen.queryByText('Maybe visible')).not.toBeInTheDocument();
   });
+
+  it('wraps children in a div when className is set', () => {
+    const { container } = render(
+      <ShowWhen when={true} className="p-4 rounded-lg border">
+        Wrapped
+      </ShowWhen>
+    );
+    expect(screen.getByText('Wrapped')).toBeInTheDocument();
+    expect(container.querySelector('.p-4.rounded-lg.border')).toBeTruthy();
+  });
 });

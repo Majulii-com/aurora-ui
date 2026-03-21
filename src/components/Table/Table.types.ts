@@ -1,6 +1,9 @@
 import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
 
-export interface TableProps extends HTMLAttributes<HTMLTableElement> {}
+export interface TableProps extends HTMLAttributes<HTMLTableElement> {
+  /** Tailwind/classes for the scroll wrapper around `<table>` (not the table element). */
+  wrapperClassName?: string;
+}
 export interface TableHeadProps extends HTMLAttributes<HTMLTableSectionElement> {}
 export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {}
 export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {}

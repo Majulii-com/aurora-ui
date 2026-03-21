@@ -2,12 +2,14 @@ import React, { useCallback, useMemo } from 'react';
 import type { UINode } from '@majulii/aurora-ui';
 import { resolveBindings, collectTwoWayBindings, injectStateHandlers } from './bindings';
 import { uiRegistry } from '../ComponentRegistry';
-import { Button, cn } from '@majulii/aurora-ui';
+import { Accordion, AccordionItem, AccordionTrigger, Button, cn } from '@majulii/aurora-ui';
 
 const MOVE_NODE_TYPE = 'application/aurora-move-node';
 const ADD_COMPONENT_TYPE = 'application/aurora-component';
 
 interface EditableSchemaRendererProps {
+  /** Parent component `type` in the schema tree (used to auto-wrap compound Accordion parts in the playground). */
+  parentType?: string;
   node: UINode;
   selectedId: string | null;
   appData: Record<string, unknown>;
@@ -24,7 +26,44 @@ const LAYOUT_TYPES = new Set(['Page', 'Box', 'Stack', 'Grid', 'Container']);
 const VALUE_TYPES = new Set(['Input', 'Textarea', 'Select']);
 const CHECKED_TYPES = new Set(['Checkbox', 'Switch']);
 
+/**
+ * Accordion subcomponents require Accordion (+ AccordionItem) ancestors.
+ * When users drop only an AccordionItem/Trigger/Content on the canvas, wrap so the preview doesn’t throw.
+ */
+function wrapAccordionForPlayground(
+  type: string,
+  parentType: string | undefined,
+  finalProps: Record<string, unknown>,
+  inner: React.ReactElement
+): React.ReactElement {
+  if (type === 'AccordionItem' && parentType !== 'Accordion') {
+    const v = String(finalProps.value ?? '1');
+    return <Accordion defaultValue={v}>{inner}</Accordion>;
+  }
+  if (type === 'AccordionTrigger' && parentType !== 'AccordionItem') {
+    const v = '1';
+    return (
+      <Accordion defaultValue={v}>
+        <AccordionItem value={v}>{inner}</AccordionItem>
+      </Accordion>
+    );
+  }
+  if (type === 'AccordionContent' && parentType !== 'AccordionItem') {
+    const v = '1';
+    return (
+      <Accordion defaultValue={v}>
+        <AccordionItem value={v}>
+          <AccordionTrigger>Section</AccordionTrigger>
+          {inner}
+        </AccordionItem>
+      </Accordion>
+    );
+  }
+  return inner;
+}
+
 export function EditableSchemaRenderer({
+  parentType,
   node,
   selectedId,
   appData,
@@ -111,6 +150,7 @@ export function EditableSchemaRenderer({
   const renderedChildren = childNodes.map((child) => (
     <EditableSchemaRenderer
       key={child.id}
+      parentType={node.type}
       node={child}
       selectedId={selectedId}
       appData={appData}
@@ -218,9 +258,12 @@ export function EditableSchemaRenderer({
         )}
       </div>
       <div className="rounded">
-        <Component {...finalProps}>
-          {children}
-        </Component>
+        {wrapAccordionForPlayground(
+          node.type,
+          parentType,
+          finalProps,
+          <Component {...finalProps}>{children}</Component>
+        )}
       </div>
     </div>
   );

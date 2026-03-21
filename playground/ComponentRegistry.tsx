@@ -130,7 +130,13 @@ const registryList: RegistryItem[] = [
   { id: 'Avatar', name: 'Avatar', component: Avatar as React.ComponentType<Record<string, unknown>>, defaultProps: { name: 'JD' }, category: 'content' },
   { id: 'Spinner', name: 'Spinner', component: Spinner as React.ComponentType<Record<string, unknown>>, defaultProps: {}, category: 'content' },
   { id: 'Alert', name: 'Alert', component: Alert as React.ComponentType<Record<string, unknown>>, defaultProps: { title: 'Alert', children: 'Alert message.', variant: 'info' }, category: 'content' },
-  { id: 'Pagination', name: 'Pagination', component: Pagination as React.ComponentType<Record<string, unknown>>, defaultProps: { page: 1, totalPages: 10 }, category: 'content' },
+  {
+    id: 'Pagination',
+    name: 'Pagination',
+    component: Pagination as React.ComponentType<Record<string, unknown>>,
+    defaultProps: { page: 1, totalPages: 10, onPageChange: () => {} },
+    category: 'content',
+  },
   {
     id: 'Modal',
     name: 'Modal',

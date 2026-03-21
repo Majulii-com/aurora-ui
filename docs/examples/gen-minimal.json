@@ -1,0 +1,41 @@
+{
+  "version": "1",
+  "state": {
+    "name": "",
+    "greeted": false
+  },
+  "actions": {
+    "greet": {
+      "type": "MERGE_STATE",
+      "patch": { "greeted": true }
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": { "gap": 4 },
+    "children": [
+      {
+        "type": "Text",
+        "props": { "children": "Generative UI (minimal)", "variant": "title" }
+      },
+      {
+        "type": "Input",
+        "props": { "bind": "name", "placeholder": "Your name" }
+      },
+      {
+        "type": "Button",
+        "props": { "children": "Submit", "onClickAction": "greet" }
+      },
+      {
+        "type": "ShowWhen",
+        "props": { "when": "{{state.greeted}}" },
+        "children": [
+          {
+            "type": "Text",
+            "props": { "children": "Thanks — state.greeted is true", "variant": "muted" }
+          }
+        ]
+      }
+    ]
+  }
+}

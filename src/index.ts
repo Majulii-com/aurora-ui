@@ -126,6 +126,16 @@ export type { CodeProps } from './components/Code';
 export { EmptyState } from './components/EmptyState';
 export type { EmptyStateProps } from './components/EmptyState';
 
+export { GenDataTable } from './components/GenDataTable/GenDataTable';
+export type { GenTableColumn, GenDataTableDSLProps } from './components/GenDataTable/GenDataTable';
+export { GenText } from './components/GenText/GenText';
+export type { GenTextProps, GenTextVariant } from './components/GenText';
+export { GenSpinner } from './components/GenSpinner/GenSpinner';
+export type { GenSpinnerProps } from './components/GenSpinner';
+
+/** Shared typings for DSL-stylable Aurora components (see `docs/COMPONENT_DSL_CONVENTIONS.md`). */
+export type { AuroraDslRootDiv, AuroraDslRootSpan } from './types/auroraDslComponent';
+
 export { Slider } from './components/Slider';
 export type { SliderProps, SliderSize } from './components/Slider';
 
@@ -188,6 +198,17 @@ export type { ChatWelcomeProps } from './components/Chat';
 // Schema & UI Renderer (AI-ready)
 export { UIRenderer } from './schema';
 export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';
+export type {
+  GenUINode,
+  GenUIDocument,
+  UIState,
+  ActionDef,
+  ActionChainDef,
+  ActionType,
+  ExpressionContext,
+} from './schema';
+export { ACTION_TYPES, GenUIDocumentSchema, parseGenUIDocument } from './schema';
+export type { ValidatedGenDocument } from './schema';
 
 // Runtime (bindings + SchemaRuntime for host apps)
 export {
@@ -200,6 +221,40 @@ export {
 } from './runtime/bindings';
 export { SchemaRuntime } from './runtime/SchemaRuntime';
 export type { SchemaRuntimeProps } from './runtime/SchemaRuntime';
+
+// Generative JSON DSL runtime (Zod → GenUIRenderer → Zustand → declarative actions)
+export {
+  resolveValue,
+  resolveDeep,
+  sanitizeForLog,
+  resolveNamedBindingMap,
+} from './runtime/expressions';
+export { createRuntimeStore } from './runtime/genStore';
+export type { GenRuntimeStore, GenRuntimeState, GenRuntimeActions } from './runtime/genStore';
+export type { GenRuntimeStore as RuntimeStore } from './runtime/genStore';
+export type { GenRuntimeState as RuntimeStoreState } from './runtime/genStore';
+export type { GenRuntimeActions as RuntimeActions } from './runtime/genStore';
+export { setAtPathImmutable } from './runtime/genPaths';
+export { runAction, runChain } from './runtime/genInterpreter';
+export type {
+  InterpreterOptions,
+  NavigateHandler,
+  CustomHandler,
+} from './runtime/genInterpreter';
+export {
+  GenUIProvider,
+  useGenUI,
+  useGenUIDocument,
+  useGenUIState,
+  useRunAction,
+} from './runtime/GenUIProvider';
+export { GenUIRenderer } from './runtime/GenUIRenderer';
+export { auroraGenUIRegistry, auroraGenUIRegistryTypes } from './runtime/auroraGenRegistry';
+export type { GenRegistryEntry } from './runtime/auroraGenRegistry';
+export { lintGenUIDocument, parseAndLintGenUIDocument } from './runtime/genLint';
+export type { GenLintIssue, GenLintResult, GenLintLevel, ParseAndLintResult } from './runtime/genLint';
+export { DEFAULT_GEN_LIMITS } from './runtime/genLimits';
+export type { GenDocumentLimits } from './runtime/genLimits';
 
 // Hooks
 export {

@@ -1,0 +1,87 @@
+/** See docs/examples/gen-api-table.json — requires network (jsonplaceholder). */
+export const GEN_API_TABLE_SAMPLE = `{
+  "version": "1",
+  "state": {
+    "table": {
+      "rows": [],
+      "sortKey": "name",
+      "sortDir": "asc",
+      "filter": ""
+    }
+  },
+  "actions": {
+    "loadUsers": {
+      "type": "API_CALL",
+      "id": "usersApi",
+      "url": "https://jsonplaceholder.typicode.com/users",
+      "method": "GET",
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "table.rows",
+            "value": "{{response}}"
+          }
+        ]
+      }
+    },
+    "applySort": {
+      "type": "SET_STATE",
+      "path": "table.sortKey",
+      "value": "{{event.column}}"
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+    },
+    "children": [
+      {
+        "type": "Text",
+        "props": {
+          "children": "Users (public demo API)",
+          "variant": "title",
+          "className": "mb-1"
+        }
+      },
+      {
+        "type": "Button",
+        "props": {
+          "children": "Load users",
+          "onClickAction": "loadUsers",
+          "className": "w-full sm:w-auto"
+        }
+      },
+      {
+        "type": "ShowWhen",
+        "props": { "loadingKey": "usersApi" },
+        "children": [
+          {
+            "type": "Spinner",
+            "props": { "className": "text-primary-500" }
+          }
+        ]
+      },
+      {
+        "type": "Table",
+        "props": {
+          "columns": [
+            { "key": "id", "label": "ID", "sortable": true },
+            { "key": "name", "label": "Name", "sortable": true },
+            { "key": "email", "label": "Email", "sortable": true }
+          ],
+          "rows": "{{state.table.rows}}",
+          "sortKey": "{{state.table.sortKey}}",
+          "sortDir": "{{state.table.sortDir}}",
+          "onSortAction": "applySort",
+          "filterBind": "table.filter",
+          "className": "mt-2",
+          "filterClassName": "shadow-sm",
+          "tableWrapperClassName": "rounded-lg border border-slate-200 dark:border-slate-700"
+        }
+      }
+    ]
+  }
+}`;

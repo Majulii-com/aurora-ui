@@ -2,6 +2,8 @@
 
 The **playground is for testing**. In production, this library lives inside a **bigger application** where **AI generates complex UIs and user interactions**. This doc describes how that application should integrate the lib so AI-driven schema + state + actions work end-to-end.
 
+**Runnable example (multi-page DSL JSON):** from the repo root run `npm run example:dsl-host` and open the **DSL host example** (`examples/dsl-host-app/`). It mirrors how a host app loads AI-shaped `GenUIDocument` JSON and wires `navigate` / `onCustom`.
+
 ---
 
 ## 1. Roles

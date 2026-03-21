@@ -184,6 +184,7 @@ The schema is **deterministic**, **JSON-serializable**, and **composable**. The 
 | `pnpm test`       | Run Vitest               |
 | `pnpm storybook`  | Start Storybook          |
 | `pnpm playground` | Start drag-and-drop playground |
+| `pnpm example:dsl-host` | **Generative JSON DSL** host example (multi-page AI-shaped JSON) |
 | `pnpm lint`       | Run ESLint               |
 | `pnpm format`     | Format with Prettier     |
 | `pnpm release`    | Build and publish to npm |
@@ -203,6 +204,7 @@ aurora-ui/
 │   └── index.ts      # Public API
 ├── .storybook/      # Storybook config
 ├── playground/      # Drag-and-drop UI builder
+├── examples/dsl-host-app/  # Example host app: `GenUIDocument` JSON pages + GenUIRenderer
 ├── tests/           # Test setup
 └── .github/workflows/release.yml  # CI/CD
 ```

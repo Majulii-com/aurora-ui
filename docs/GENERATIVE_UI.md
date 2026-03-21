@@ -8,6 +8,12 @@ This document lists **only behavior that is implemented today** in `aurora-ui` (
 
 ---
 
+## 0. Host example app
+
+Inside this repo, **`examples/dsl-host-app/`** is a small Vite app that switches between several **full `GenUIDocument` JSON files** (dashboard, support table, marketing, API table, settings tabs). Run from package root: `npm run example:dsl-host`. It uses the same `GenUIProvider` + `GenUIRenderer` pipeline as a production host; see `examples/dsl-host-app/README.md`.
+
+---
+
 ## 1. Pipeline
 
 ```

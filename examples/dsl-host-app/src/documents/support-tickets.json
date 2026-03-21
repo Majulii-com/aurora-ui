@@ -1,0 +1,67 @@
+{
+  "version": "1",
+  "state": {
+    "table": {
+      "rows": [
+        { "id": "1042", "title": "Login timeout on mobile", "status": "open", "assignee": "Sam" },
+        { "id": "1041", "title": "Invoice PDF blank pages", "status": "in_progress", "assignee": "Alex" },
+        { "id": "1038", "title": "Webhook retries", "status": "closed", "assignee": "Jordan" },
+        { "id": "1035", "title": "Dark mode contrast in tables", "status": "open", "assignee": "Sam" }
+      ],
+      "sortKey": "title",
+      "sortDir": "asc",
+      "filter": ""
+    }
+  },
+  "actions": {
+    "sortTickets": {
+      "type": "SET_STATE",
+      "path": "table.sortKey",
+      "value": "{{event.column}}"
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+    },
+    "children": [
+      {
+        "type": "Text",
+        "props": {
+          "children": "Support queue (data in state — AI would emit rows + columns)",
+          "variant": "title",
+          "className": "mb-1"
+        }
+      },
+      {
+        "type": "Text",
+        "props": {
+          "variant": "muted",
+          "children": "Sortable columns, client filter — same pattern as API-loaded tables."
+        }
+      },
+      {
+        "type": "Table",
+        "props": {
+          "columns": [
+            { "key": "id", "label": "ID", "sortable": true },
+            { "key": "title", "label": "Title", "sortable": true },
+            { "key": "status", "label": "Status", "sortable": true },
+            { "key": "assignee", "label": "Assignee", "sortable": true }
+          ],
+          "rows": "{{state.table.rows}}",
+          "sortKey": "{{state.table.sortKey}}",
+          "sortDir": "{{state.table.sortDir}}",
+          "onSortAction": "sortTickets",
+          "filterBind": "table.filter",
+          "filterPlaceholder": "Filter by title, status, assignee…",
+          "className": "mt-2",
+          "filterClassName": "shadow-sm",
+          "tableWrapperClassName": "rounded-lg border border-slate-200 dark:border-slate-700"
+        }
+      }
+    ]
+  }
+}

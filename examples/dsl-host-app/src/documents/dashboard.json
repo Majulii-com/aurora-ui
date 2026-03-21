@@ -1,0 +1,181 @@
+{
+  "version": "1",
+  "state": {
+    "banner": { "show": true },
+    "ops": {
+      "incidents": 2,
+      "lastRefresh": "09:42 UTC",
+      "queue": 14
+    }
+  },
+  "actions": {
+    "hideBanner": {
+      "type": "SET_STATE",
+      "path": "banner.show",
+      "value": false
+    },
+    "pingHost": {
+      "type": "CUSTOM",
+      "name": "pingHost",
+      "payload": { "surface": "dashboard" }
+    }
+  },
+  "ui": {
+    "type": "Container",
+    "props": { "maxWidth": "xl", "className": "py-6" },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "gap": 6 },
+        "children": [
+          {
+            "type": "Text",
+            "props": {
+              "variant": "title",
+              "children": "Operations overview",
+              "className": "text-slate-900 dark:text-slate-100"
+            }
+          },
+          {
+            "type": "Text",
+            "props": {
+              "variant": "muted",
+              "children": "Static + conditional blocks — typical AI dashboard shell."
+            }
+          },
+          {
+            "type": "ShowWhen",
+            "props": { "when": "{{state.banner.show}}" },
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "gap": 3, "className": "w-full" },
+                "children": [
+                  {
+                    "type": "Alert",
+                    "props": {
+                      "variant": "warning",
+                      "title": "Deploy window",
+                      "children": "Production freeze in 2h — coordinate releases.",
+                      "className": "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40"
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "children": "Dismiss banner",
+                      "variant": "secondary",
+                      "size": "sm",
+                      "onClickAction": "hideBanner",
+                      "className": "self-start"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Grid",
+            "props": { "columns": 3, "gap": 4, "className": "w-full" },
+            "children": [
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "Open incidents",
+                      "className": "text-xs uppercase tracking-wide"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "children": "{{state.ops.incidents}}",
+                      "className": "mt-1 text-3xl font-bold text-slate-900 dark:text-slate-50"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "Queue depth",
+                      "className": "text-xs uppercase tracking-wide"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "children": "{{state.ops.queue}}",
+                      "className": "mt-1 text-3xl font-bold text-slate-900 dark:text-slate-50"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "Last refresh",
+                      "className": "text-xs uppercase tracking-wide"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "body",
+                      "children": "{{state.ops.lastRefresh}}",
+                      "className": "mt-2 font-mono text-sm text-slate-800 dark:text-slate-200"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "props": { "gap": 3, "className": "flex-wrap" },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Host action (CUSTOM)",
+                  "onClickAction": "pingHost",
+                  "className": "shadow-sm"
+                }
+              },
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "muted",
+                  "children": "Opens your app’s onCustom() — wire payments, auth, etc.",
+                  "className": "max-w-md"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

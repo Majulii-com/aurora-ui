@@ -66,5 +66,8 @@ storybook-static/
 # Playground (if built)
 playground/dist/
 
+# Example apps (if built)
+examples/dsl-host-app/dist/
+
 
 .idea/

@@ -1,0 +1,181 @@
+{
+  "version": "1",
+  "state": {
+    "cta": { "clicked": false }
+  },
+  "actions": {
+    "goPricing": {
+      "type": "NAVIGATE",
+      "path": "/pricing"
+    },
+    "goDocs": {
+      "type": "NAVIGATE",
+      "path": "/docs"
+    },
+    "markCta": {
+      "type": "SET_STATE",
+      "path": "cta.clicked",
+      "value": true
+    }
+  },
+  "ui": {
+    "type": "Container",
+    "props": { "maxWidth": "xl", "className": "py-10" },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "gap": 10 },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "gap": 4, "className": "text-center" },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "title",
+                  "children": "Ship AI-driven UI from JSON",
+                  "className": "text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl"
+                }
+              },
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "body",
+                  "children": "This page is 100% GenUIDocument — NAVIGATE actions are handled by the host example app (toast).",
+                  "className": "mx-auto max-w-2xl text-slate-600 dark:text-slate-300"
+                }
+              },
+              {
+                "type": "Row",
+                "props": { "gap": 3, "className": "justify-center" },
+                "children": [
+                  {
+                    "type": "Button",
+                    "props": {
+                      "children": "View pricing",
+                      "onClickAction": "goPricing",
+                      "className": "shadow-md"
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "children": "Documentation",
+                      "variant": "secondary",
+                      "onClickAction": "goDocs"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Grid",
+            "props": { "columns": 3, "gap": 4, "className": "w-full" },
+            "children": [
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "children": "Declarative",
+                      "className": "text-lg"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "Layout, forms, tables, and actions without hand-written React trees."
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "children": "Host-owned",
+                      "className": "text-lg"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "Router, fetch policy, and CUSTOM hooks stay in your application."
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "props": {
+                  "className": "rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "children": "Tailwind-ready",
+                      "className": "text-lg"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "className strings in JSON compose with Aurora components via cn()."
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "props": { "gap": 3, "className": "items-center" },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Track CTA (SET_STATE)",
+                  "variant": "outline",
+                  "size": "sm",
+                  "onClickAction": "markCta"
+                }
+              },
+              {
+                "type": "ShowWhen",
+                "props": { "when": "{{state.cta.clicked}}" },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "children": "cta.clicked is true — funnel analytics would fire in the host.",
+                      "className": "text-center"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

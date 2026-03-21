@@ -222,6 +222,32 @@ export {
 export { SchemaRuntime } from './runtime/SchemaRuntime';
 export type { SchemaRuntimeProps } from './runtime/SchemaRuntime';
 
+// Visual schema playground host (drag-drop canvas, appData, routes — consume like any host app)
+export { PlaygroundProvider, usePlayground, findNodeInSchema } from './runtime/schemaPlaygroundStore';
+export type {
+  SchemaPlaygroundState,
+  SchemaPlaygroundEvent,
+  SchemaPlaygroundActionContext,
+  SchemaPlaygroundCustomHandler,
+  PlaygroundEventAction,
+  CustomAppReducer,
+  PlaygroundState,
+  PlaygroundEvent,
+  ActionContext,
+  CustomActionHandler,
+} from './runtime/schemaPlaygroundStore';
+export { defaultAppReducer, INITIAL_APP_STATE } from './runtime/appReducer';
+export type { AppState, AppAction } from './runtime/appReducer';
+export { EditableSchemaRenderer } from './runtime/EditableSchemaRenderer';
+export type { EditableSchemaRendererProps } from './runtime/EditableSchemaRenderer';
+export {
+  SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
+  SCHEMA_PLAYGROUND_DRAG_MOVE_TYPE,
+} from './runtime/schemaDndConstants';
+export { fetchGenDslChatReply } from './runtime/genDslChatClient';
+export type { GenDslChatContext } from './runtime/genDslChatClient';
+export { useJsonPreviewPane } from './runtime/useJsonPreviewPane';
+
 // Generative JSON DSL runtime (Zod → GenUIRenderer → Zustand → declarative actions)
 export {
   resolveValue,

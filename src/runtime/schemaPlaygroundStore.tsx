@@ -1,7 +1,14 @@
-import { createContext, useContext, useState, useReducer, useCallback, useMemo, type ReactNode } from 'react';
-import type { UINode } from '@majulii/aurora-ui';
-import { setAtPath } from './bindings';
-import { defaultAppReducer, INITIAL_APP_STATE, type AppState, type AppAction } from './appStore';
+import {
+  createContext,
+  useContext,
+  useState,
+  useReducer,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from 'react';
+import type { UINode } from '../schema/types';
+import { defaultAppReducer, INITIAL_APP_STATE, type AppState, type AppAction } from './appReducer';
 
 function genId(): string {
   return `n-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -33,17 +40,16 @@ function removeNodeFromTree(root: UINode, id: string): UINode {
   };
 }
 
-export function findNode(root: UINode, id: string | null): UINode | null {
+export function findNodeInSchema(root: UINode, id: string | null): UINode | null {
   if (!id) return null;
   if (root.id === id) return root;
   for (const child of root.children ?? []) {
-    const found = findNode(child, id);
+    const found = findNodeInSchema(child, id);
     if (found) return found;
   }
   return null;
 }
 
-/** Returns true if targetId is the same as node or a descendant of node */
 function isDescendantOf(node: UINode, targetId: string): boolean {
   if (node.id === targetId) return true;
   for (const child of node.children ?? []) {
@@ -59,11 +65,16 @@ const DEFAULT_ROOT: UINode = {
   children: [],
 };
 
-/** Built-in action types. Custom actions can be any string; register via customActionHandlers. */
-export type PlaygroundEventAction = 'log' | 'toast' | 'alert' | 'updateNode' | 'sequence' | 'setData' | 'navigate';
+export type PlaygroundEventAction =
+  | 'log'
+  | 'toast'
+  | 'alert'
+  | 'updateNode'
+  | 'sequence'
+  | 'setData'
+  | 'navigate';
 
-/** Context passed to custom action handlers so they can read/write data and UI. */
-export interface ActionContext {
+export interface SchemaPlaygroundActionContext {
   appData: Record<string, unknown>;
   setData: (path: string, value: unknown) => void;
   setRoute: (path: string) => void;
@@ -72,10 +83,12 @@ export interface ActionContext {
   currentRoute: string;
 }
 
-/** Custom action handler for any scenario (submit, fetch, openModal, etc.). */
-export type CustomActionHandler = (payload: Record<string, unknown> | undefined, context: ActionContext) => void;
+export type SchemaPlaygroundCustomHandler = (
+  payload: Record<string, unknown> | undefined,
+  context: SchemaPlaygroundActionContext
+) => void;
 
-export interface PlaygroundEvent {
+export interface SchemaPlaygroundEvent {
   id: string;
   time: number;
   nodeId: string;
@@ -88,23 +101,20 @@ export interface PlaygroundEvent {
 
 const MAX_EVENTS = 100;
 
-export interface PlaygroundState {
+export interface SchemaPlaygroundState {
   schema: UINode;
-  /** Data context for __bind and setData (COMPLEX_COMPONENTS / FULL_SITE_ARCHITECTURE) */
   appData: Record<string, unknown>;
   setData: (path: string, value: unknown) => void;
   setAppData: (data: Record<string, unknown>) => void;
-  /** When set, render routes[currentRoute] instead of schema (site schema mode) */
   routes: Record<string, UINode>;
   defaultRoute: string;
   currentRoute: string;
   setRoute: (path: string) => void;
   setRoutes: (routes: Record<string, UINode>, defaultRoute?: string) => void;
-  /** Schema to render: single schema or routes[currentRoute] when routes are set */
   effectiveSchema: UINode;
   selectedId: string | null;
   selectedNode: UINode | null;
-  playgroundEvents: PlaygroundEvent[];
+  playgroundEvents: SchemaPlaygroundEvent[];
   toast: string | null;
   addNode: (parentId: string | null, node: Omit<UINode, 'id'>) => void;
   moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
@@ -114,19 +124,32 @@ export interface PlaygroundState {
   select: (id: string | null) => void;
   setSchema: (schema: UINode) => void;
   getSerializableSchema: () => UINode;
-  emitPlaygroundEvent: (nodeId: string, componentType: string, eventName: string, action: string, message?: string, payload?: Record<string, unknown>) => void;
+  emitPlaygroundEvent: (
+    nodeId: string,
+    componentType: string,
+    eventName: string,
+    action: string,
+    message?: string,
+    payload?: Record<string, unknown>
+  ) => void;
   clearPlaygroundEvents: () => void;
   clearToast: () => void;
-  /** Register a custom action handler (e.g. 'submit', 'fetch'). Enables any scenario without core changes. */
-  registerAction: (action: string, handler: CustomActionHandler) => void;
+  registerAction: (action: string, handler: SchemaPlaygroundCustomHandler) => void;
   unregisterAction: (action: string) => void;
 }
 
-const PlaygroundContext = createContext<PlaygroundState | null>(null);
+const SchemaPlaygroundContext = createContext<SchemaPlaygroundState | null>(null);
 
-const BUILTIN_ACTIONS = new Set<string>(['log', 'toast', 'alert', 'updateNode', 'sequence', 'setData', 'navigate']);
+const BUILTIN_ACTIONS = new Set<string>([
+  'log',
+  'toast',
+  'alert',
+  'updateNode',
+  'sequence',
+  'setData',
+  'navigate',
+]);
 
-/** Optional custom reducer for domain actions (OPEN_MODAL, TOGGLE_TABLE, etc.). Runs before defaultAppReducer. */
 export type CustomAppReducer = (state: AppState, action: AppAction) => AppState;
 
 export function PlaygroundProvider({
@@ -135,9 +158,7 @@ export function PlaygroundProvider({
   customReducer,
 }: {
   children: ReactNode;
-  /** Optional custom action handlers for any scenario (submit, fetch, openModal, etc.). */
-  customActionHandlers?: Record<string, CustomActionHandler>;
-  /** Optional custom reducer for domain actions. If it returns a new state, that is used; else defaultAppReducer runs. */
+  customActionHandlers?: Record<string, SchemaPlaygroundCustomHandler>;
   customReducer?: CustomAppReducer;
 }) {
   const appReducer = useMemo(() => {
@@ -151,13 +172,15 @@ export function PlaygroundProvider({
 
   const [schema, setSchemaState] = useState<UINode>(() => cloneNode(DEFAULT_ROOT));
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [playgroundEvents, setPlaygroundEvents] = useState<PlaygroundEvent[]>([]);
+  const [playgroundEvents, setPlaygroundEvents] = useState<SchemaPlaygroundEvent[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [appData, dispatchApp] = useReducer(appReducer, INITIAL_APP_STATE);
   const [routes, setRoutesState] = useState<Record<string, UINode>>({});
   const [defaultRoute, setDefaultRouteState] = useState<string>('/');
   const [currentRoute, setCurrentRoute] = useState<string>('/');
-  const [customHandlers, setCustomHandlers] = useState<Record<string, CustomActionHandler>>(() => ({ ...initialHandlers }));
+  const [customHandlers, setCustomHandlers] = useState<Record<string, SchemaPlaygroundCustomHandler>>(
+    () => ({ ...initialHandlers })
+  );
 
   const setData = useCallback((path: string, value: unknown) => {
     dispatchApp({ type: 'SET_PATH', payload: { path, value } });
@@ -179,42 +202,45 @@ export function PlaygroundProvider({
     return node ?? schema;
   }, [routes, currentRoute, defaultRoute, schema]);
 
-  const addNode = useCallback((parentId: string | null, node: Omit<UINode, 'id'>) => {
-    const id = genId();
-    const newNode: UINode = { ...node, id, children: node.children ?? [] };
-    const targetId = parentId ?? schema.id ?? 'root';
+  const addNode = useCallback(
+    (parentId: string | null, node: Omit<UINode, 'id'>) => {
+      const id = genId();
+      const newNode: UINode = { ...node, id, children: node.children ?? [] };
+      const targetId = parentId ?? schema.id ?? 'root';
 
-    setSchemaState((prev) => {
-      const root = cloneNode(prev);
-      if (!root.children) root.children = [];
-      const isAddingToRoot = targetId === root.id || targetId === 'root';
+      setSchemaState((prev) => {
+        const root = cloneNode(prev);
+        if (!root.children) root.children = [];
+        const isAddingToRoot = targetId === root.id || targetId === 'root';
 
-      // When adding Page to root that is already Page, replace root so we don't get Page > Page
-      if (isAddingToRoot && root.type === 'Page' && node.type === 'Page') {
-        return { ...newNode, id: root.id, children: root.children };
-      }
+        if (isAddingToRoot && root.type === 'Page' && node.type === 'Page') {
+          return { ...newNode, id: root.id, children: root.children };
+        }
 
-      if (isAddingToRoot) {
-        return { ...root, children: [...root.children, newNode] };
-      }
-      return mutateAt(root, targetId, (parent) => ({
-        ...parent,
-        children: [...(parent.children ?? []), newNode],
-      }));
-    });
-    const isReplacingRoot = (targetId === schema.id || targetId === 'root') && schema.type === 'Page' && node.type === 'Page';
-    setSelectedId(isReplacingRoot ? schema.id : id);
-  }, [schema.id, schema.type]);
+        if (isAddingToRoot) {
+          return { ...root, children: [...root.children, newNode] };
+        }
+        return mutateAt(root, targetId, (parent) => ({
+          ...parent,
+          children: [...(parent.children ?? []), newNode],
+        }));
+      });
+      const isReplacingRoot =
+        (targetId === schema.id || targetId === 'root') && schema.type === 'Page' && node.type === 'Page';
+      setSelectedId(isReplacingRoot ? (schema.id ?? 'root') : id);
+    },
+    [schema.id, schema.type]
+  );
 
   const moveNode = useCallback((nodeId: string, targetParentId: string, index?: number) => {
     if (nodeId === targetParentId) return;
     setSchemaState((prev) => {
-      if (prev.id === nodeId) return prev; // can't move root
-      const nodeToMove = findNode(prev, nodeId);
+      if (prev.id === nodeId) return prev;
+      const nodeToMove = findNodeInSchema(prev, nodeId);
       if (!nodeToMove) return prev;
-      if (isDescendantOf(nodeToMove, targetParentId)) return prev; // can't drop into own descendant
+      if (isDescendantOf(nodeToMove, targetParentId)) return prev;
       const rootWithoutNode = removeNodeFromTree(prev, nodeId);
-      const targetParent = findNode(rootWithoutNode, targetParentId);
+      const targetParent = findNodeInSchema(rootWithoutNode, targetParentId);
       if (!targetParent) return prev;
       return mutateAt(rootWithoutNode, targetParentId, (parent) => {
         const children = [...(parent.children ?? [])];
@@ -253,19 +279,29 @@ export function PlaygroundProvider({
     return stripIds(cloneNode(schema));
   }, [schema]);
 
-  const selectedNode = findNode(schema, selectedId);
-  const selectedNodeFromEffective = findNode(effectiveSchema, selectedId);
+  const selectedNode = findNodeInSchema(schema, selectedId);
+  const selectedNodeFromEffective = findNodeInSchema(effectiveSchema, selectedId);
 
   const runOneAction = useCallback(
     (action: PlaygroundEventAction, message?: string, payload?: Record<string, unknown>) => {
       if (action === 'log') {
-        console.log('[Playground]', message ?? '');
+        console.log('[SchemaPlayground]', message ?? '');
       } else if (action === 'toast') {
         setToast(message ?? '');
       } else if (action === 'alert') {
         window.alert(message ?? '');
-      } else if (action === 'updateNode' && payload?.nodeId != null && payload?.props != null && typeof payload.props === 'object') {
-        setSchemaState((prev) => mutateAt(prev, String(payload.nodeId), (n) => ({ ...n, props: { ...n.props, ...(payload!.props as Record<string, unknown>) } })));
+      } else if (
+        action === 'updateNode' &&
+        payload?.nodeId != null &&
+        payload?.props != null &&
+        typeof payload.props === 'object'
+      ) {
+        setSchemaState((prev) =>
+          mutateAt(prev, String(payload.nodeId), (n) => ({
+            ...n,
+            props: { ...n.props, ...(payload!.props as Record<string, unknown>) },
+          }))
+        );
       } else if (action === 'setData' && payload?.path != null) {
         dispatchApp({ type: 'SET_PATH', payload: { path: String(payload.path), value: payload.value } });
       } else if (action === 'navigate' && payload?.path != null) {
@@ -275,7 +311,7 @@ export function PlaygroundProvider({
     []
   );
 
-  const actionContext: ActionContext = useMemo(
+  const actionContext: SchemaPlaygroundActionContext = useMemo(
     () => ({
       appData,
       setData,
@@ -288,8 +324,15 @@ export function PlaygroundProvider({
   );
 
   const emitPlaygroundEvent = useCallback(
-    (nodeId: string, componentType: string, eventName: string, action: string, message?: string, payload?: Record<string, unknown>) => {
-      const entry: PlaygroundEvent = {
+    (
+      nodeId: string,
+      componentType: string,
+      eventName: string,
+      action: string,
+      message?: string,
+      payload?: Record<string, unknown>
+    ) => {
+      const entry: SchemaPlaygroundEvent = {
         id: genId(),
         time: Date.now(),
         nodeId,
@@ -306,19 +349,23 @@ export function PlaygroundProvider({
         try {
           custom(payload, actionContext);
         } catch (err) {
-          console.error('[Playground] custom action error:', action, err);
+          console.error('[SchemaPlayground] custom action error:', action, err);
         }
         return;
       }
 
       if (action === 'sequence' && Array.isArray(payload?.steps)) {
-        for (const step of payload.steps as Array<{ action: string; message?: string; payload?: Record<string, unknown> }>) {
+        for (const step of payload.steps as Array<{
+          action: string;
+          message?: string;
+          payload?: Record<string, unknown>;
+        }>) {
           const a = step.action;
           if (customHandlers[a]) {
             try {
               customHandlers[a](step.payload, actionContext);
             } catch (e) {
-              console.error('[Playground] custom action error:', a, e);
+              console.error('[SchemaPlayground] custom action error:', a, e);
             }
           } else {
             runOneAction(a as PlaygroundEventAction, step.message, step.payload);
@@ -339,7 +386,7 @@ export function PlaygroundProvider({
     [runOneAction, customHandlers, actionContext]
   );
 
-  const registerAction = useCallback((action: string, handler: CustomActionHandler) => {
+  const registerAction = useCallback((action: string, handler: SchemaPlaygroundCustomHandler) => {
     setCustomHandlers((prev) => ({ ...prev, [action]: handler }));
   }, []);
 
@@ -355,7 +402,7 @@ export function PlaygroundProvider({
   const clearToast = useCallback(() => setToast(null), []);
 
   return (
-    <PlaygroundContext.Provider
+    <SchemaPlaygroundContext.Provider
       value={{
         schema,
         appData,
@@ -387,12 +434,24 @@ export function PlaygroundProvider({
       }}
     >
       {children}
-    </PlaygroundContext.Provider>
+    </SchemaPlaygroundContext.Provider>
   );
 }
 
-export function usePlayground() {
-  const ctx = useContext(PlaygroundContext);
+export function usePlayground(): SchemaPlaygroundState {
+  const ctx = useContext(SchemaPlaygroundContext);
   if (!ctx) throw new Error('usePlayground must be used within PlaygroundProvider');
   return ctx;
 }
+
+/** @deprecated Use {@link SchemaPlaygroundState} */
+export type PlaygroundState = SchemaPlaygroundState;
+
+/** @deprecated Use {@link SchemaPlaygroundEvent} */
+export type PlaygroundEvent = SchemaPlaygroundEvent;
+
+/** @deprecated Use {@link SchemaPlaygroundActionContext} */
+export type ActionContext = SchemaPlaygroundActionContext;
+
+/** @deprecated Use {@link SchemaPlaygroundCustomHandler} */
+export type CustomActionHandler = SchemaPlaygroundCustomHandler;

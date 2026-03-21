@@ -54,6 +54,8 @@ export interface ChatInputProps {
   /** Trailing slot (e.g. attach button) */
   trailing?: React.ReactNode;
   className?: string;
+  /** Classes for the inner `<textarea>` (e.g. `resize-y min-h-[48px] max-h-[min(40vh,320px)]`). */
+  textareaClassName?: string;
 }
 
 export interface ChatOptionCardProps {

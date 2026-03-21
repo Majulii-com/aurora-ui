@@ -1,6 +1,5 @@
 import { registry } from '../ComponentRegistry';
-import { usePlayground } from './store';
-import { cn } from '@majulii/aurora-ui';
+import { SCHEMA_PLAYGROUND_DRAG_ADD_TYPE, usePlayground, cn } from '@majulii/aurora-ui';
 
 export function Sidebar() {
   const { addNode, selectedId } = usePlayground();
@@ -25,7 +24,10 @@ export function Sidebar() {
                   type="button"
                   draggable
                   onDragStart={(e) => {
-                    e.dataTransfer.setData('application/aurora-component', JSON.stringify({ type: item.id, defaultProps: item.defaultProps }));
+                    e.dataTransfer.setData(
+                      SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
+                      JSON.stringify({ type: item.id, defaultProps: item.defaultProps })
+                    );
                   }}
                   onClick={() => handleAdd(item.id, item.defaultProps)}
                   className={cn(
@@ -49,7 +51,10 @@ export function Sidebar() {
                   type="button"
                   draggable
                   onDragStart={(e) => {
-                    e.dataTransfer.setData('application/aurora-component', JSON.stringify({ type: item.id, defaultProps: item.defaultProps }));
+                    e.dataTransfer.setData(
+                      SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
+                      JSON.stringify({ type: item.id, defaultProps: item.defaultProps })
+                    );
                   }}
                   onClick={() => handleAdd(item.id, item.defaultProps)}
                   className={cn(

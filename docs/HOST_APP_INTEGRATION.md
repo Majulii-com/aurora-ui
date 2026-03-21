@@ -51,7 +51,7 @@ So: **state** drives what’s on screen; **schema** describes the tree; **setDat
 
 - One **app state** object (e.g. `{ ui: {}, form: {}, ... }`).  
 - **setData(path, value)**  
-  - Either: `dispatch({ type: 'SET_PATH', payload: { path, value } })` with a reducer that uses `setAtPath` (you can copy the reducer from the lib or use `defaultAppReducer` from the playground’s `appStore` pattern).  
+  - Either: `dispatch({ type: 'SET_PATH', payload: { path, value } })` with a reducer that uses `setAtPath` (use **`defaultAppReducer`** from `@majulii/aurora-ui`, or your own).  
   - Or: update your Redux/Zustand store so that a path-based update is exposed as `setData(path, value)`.  
 - **Replace state** (e.g. when loading a new AI definition): set entire state from `initialState`.
 

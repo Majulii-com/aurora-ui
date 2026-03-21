@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { usePlayground } from './store';
+import { usePlayground } from '@majulii/aurora-ui';
 import { registry } from '../ComponentRegistry';
 import { resolvePropFields } from './propSchema';
 import type { PropFieldDef } from './propSchema';

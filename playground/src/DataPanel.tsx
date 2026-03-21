@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { usePlayground } from './store';
+import { usePlayground } from '@majulii/aurora-ui';
 import { Button, cn } from '@majulii/aurora-ui';
 import type { UINode } from '@majulii/aurora-ui';
 

@@ -1,7 +1,11 @@
 import { useCallback } from 'react';
-import { usePlayground } from './store';
-import { EditableSchemaRenderer } from './EditableSchemaRenderer';
-import { cn } from '@majulii/aurora-ui';
+import {
+  EditableSchemaRenderer,
+  SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
+  usePlayground,
+  cn,
+} from '@majulii/aurora-ui';
+import { uiRegistry } from '../ComponentRegistry';
 
 export function Canvas() {
   const { effectiveSchema, appData, setData, selectedId, select, removeNode, addNode, moveNode, updateNode, emitPlaygroundEvent } = usePlayground();
@@ -9,7 +13,7 @@ export function Canvas() {
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const raw = e.dataTransfer.getData('application/aurora-component');
+      const raw = e.dataTransfer.getData(SCHEMA_PLAYGROUND_DRAG_ADD_TYPE);
       if (!raw) return;
       try {
         const { type, defaultProps } = JSON.parse(raw);
@@ -51,6 +55,7 @@ export function Canvas() {
         )}
       >
         <EditableSchemaRenderer
+          registry={uiRegistry}
           node={effectiveSchema}
           selectedId={selectedId}
           appData={appData}

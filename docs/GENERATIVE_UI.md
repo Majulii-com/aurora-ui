@@ -223,7 +223,7 @@ Store also exposes **`lastError`** (interpreter sets on HTTP / network failure);
 | `docs/examples/gen-form-tabs.json` | `Tabs` + `tabBind`, `Label`, `Input`, `Textarea`, `SET_STATE` |
 | `docs/examples/gen-api-table.json` | `API_CALL` → `SET_STATE` rows from `{{response}}`, `ShowWhen` + `loadingKey`, `Table` + `filterBind` + `onSortAction` + `{{event.column}}` *(needs network: jsonplaceholder)* |
 
-Playground: `npm run playground` → **Generative JSON DSL** → **Load …** buttons mirror these samples.
+Playground: `npm run playground` → **Generative JSON DSL** → **Load …** buttons mirror these samples. The **DSL assistant** uses **`fetchGenDslChatReply`** from the library (mock by default); the playground passes **`chatApiUrl`** from **`VITE_GEN_DSL_CHAT_API_URL`** (see `playground/.env.example`) so a POST API can return `{ "reply": string }` with `context.document` set.
 
 ---
 

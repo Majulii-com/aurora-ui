@@ -8,7 +8,7 @@ import { DataPanel } from './DataPanel';
 import { PropertiesPanel } from './PropertiesPanel';
 import { ChatPanel } from './ChatPanel';
 import { GenDSLPanel } from './GenDSLPanel';
-import { PlaygroundProvider, usePlayground } from './store';
+import { PlaygroundProvider, usePlayground } from '@majulii/aurora-ui';
 
 function PlaygroundLayout() {
   const [mode, setMode] = useState<'canvas' | 'gen'>(() => {

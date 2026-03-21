@@ -60,9 +60,9 @@ export function ChatPanel() {
 
   const emptyContent = (
     <ChatWelcome prompt={WELCOME_PROMPT}>
-      {INITIAL_OPTIONS.map((opt, i) => (
+      {INITIAL_OPTIONS.map((opt) => (
         <ChatOptionCard
-          key={i}
+          key={opt.title}
           title={opt.title}
           description={opt.description}
           onClick={() => handleOptionClick(opt.title)}

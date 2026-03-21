@@ -13,6 +13,7 @@ export function ChatInput({
   showSendButton = true,
   trailing,
   className,
+  textareaClassName,
 }: ChatInputProps) {
   const [internalValue, setInternalValue] = useState('');
   const isControlled = controlledValue !== undefined;
@@ -60,7 +61,10 @@ export function ChatInput({
         placeholder={placeholder}
         disabled={disabled}
         rows={1}
-        className="flex-1 min-h-[40px] max-h-[120px] resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50"
+        className={cn(
+          'flex-1 min-h-[40px] max-h-[120px] resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50',
+          textareaClassName
+        )}
       />
       {showSendButton && (
         <Button
@@ -69,7 +73,7 @@ export function ChatInput({
           variant="primary"
           onClick={handleSubmit}
           disabled={disabled || !value.trim()}
-          className="shrink-0"
+          className="shrink-0 self-end"
           aria-label="Send message"
         >
           <Icon name="chevron-right" size={18} />

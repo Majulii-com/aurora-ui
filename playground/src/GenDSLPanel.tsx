@@ -1,4 +1,5 @@
 import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import { useJsonPreviewPane } from '@majulii/aurora-ui';
 import {
   parseAndLintGenUIDocument,
   GenUIProvider,
@@ -9,6 +10,7 @@ import {
 } from '@majulii/aurora-ui';
 import { GEN_FORM_TABS_SAMPLE, GEN_MINIMAL_SAMPLE } from './genSamples';
 import { GEN_API_TABLE_SAMPLE } from './genApiTableSample';
+import { GenDSLChatPanel } from './GenDSLChatPanel';
 
 function tryParseJson(text: string): unknown | null {
   try {
@@ -21,6 +23,7 @@ function tryParseJson(text: string): unknown | null {
 export function GenDSLPanel({ onBack }: { onBack: () => void }) {
   const [text, setText] = useState(GEN_MINIMAL_SAMPLE);
   const deferredText = useDeferredValue(text);
+  const { jsonPaneWidth, onSeparatorPointerDown } = useJsonPreviewPane();
 
   const parsed = useMemo(() => {
     const raw = tryParseJson(deferredText);
@@ -68,8 +71,11 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
         </div>
       </header>
 
-      <div className="flex-1 flex min-h-0">
-        <div className="w-1/2 min-w-0 flex flex-col border-r border-gray-200 dark:border-gray-700">
+      <div className="flex-1 flex min-h-0 min-w-0">
+        <div
+          className="shrink-0 flex flex-col border-r border-gray-200 dark:border-gray-700"
+          style={{ width: jsonPaneWidth }}
+        >
           <label className="sr-only" htmlFor="gen-json">
             GenUIDocument JSON
           </label>
@@ -86,7 +92,20 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
           />
         </div>
 
-        <div className="w-1/2 min-w-0 flex flex-col bg-gray-50 dark:bg-gray-900/80">
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize JSON and preview panels"
+          tabIndex={0}
+          onPointerDown={onSeparatorPointerDown}
+          className={cn(
+            'w-1.5 shrink-0 cursor-col-resize select-none z-10 touch-none',
+            'bg-gray-200 hover:bg-primary-400 dark:bg-gray-600 dark:hover:bg-primary-500',
+            'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset'
+          )}
+        />
+
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-700">
           <div className="shrink-0 p-3 border-b border-gray-200 dark:border-gray-700 space-y-2 max-h-[40%] overflow-auto">
             {parsed.kind === 'invalidJson' && (
               <div className="text-sm text-amber-700 dark:text-amber-300">{parsed.message}</div>
@@ -105,10 +124,10 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
                 {lint.issues.length === 0 ? (
                   <p className="text-green-700 dark:text-green-400">No issues.</p>
                 ) : (
-                  <ul className="list-disc pl-5 space-y-0.5">
+                  <ul className="list-outside list-disc space-y-0.5 pl-5">
                     {lint.issues.map((i, idx) => (
                       <li
-                        key={idx}
+                        key={`${i.code}-${i.path ?? 'root'}-${idx}`}
                         className={i.level === 'error' ? 'text-red-700 dark:text-red-300' : 'text-amber-800 dark:text-amber-200'}
                       >
                         [{i.code}] {i.message}
@@ -143,6 +162,10 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
               </p>
             )}
           </div>
+        </div>
+
+        <div className="w-72 shrink-0 min-w-[min(100%,18rem)] min-h-0 flex flex-col">
+          <GenDSLChatPanel documentJson={text} />
         </div>
       </div>
     </div>

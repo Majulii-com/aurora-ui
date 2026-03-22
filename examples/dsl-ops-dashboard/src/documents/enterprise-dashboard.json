@@ -5,7 +5,8 @@
     "ui": {
       "tab": "live",
       "exportOpen": false,
-      "alertVisible": true
+      "alertVisible": true,
+      "chartRegions": []
     },
     "kpis": {
       "revenue": "$2.4M",
@@ -60,6 +61,72 @@
         { "label": "Jobs", "value": 27 },
         { "label": "Web", "value": 22 },
         { "label": "Other", "value": 13 }
+      ],
+      "area": [
+        { "x": "Mon", "y": 12 },
+        { "x": "Tue", "y": 18 },
+        { "x": "Wed", "y": 15 },
+        { "x": "Thu", "y": 22 },
+        { "x": "Fri", "y": 19 }
+      ],
+      "composed": {
+        "data": [
+          { "week": "W1", "ingress": 42, "errors": 2 },
+          { "week": "W2", "ingress": 55, "errors": 1 },
+          { "week": "W3", "ingress": 48, "errors": 3 },
+          { "week": "W4", "ingress": 62, "errors": 1 }
+        ],
+        "indexKey": "week",
+        "series": [
+          { "type": "bar", "dataKey": "ingress", "name": "Ingress (k rps)" },
+          { "type": "line", "dataKey": "errors", "name": "Errors" }
+        ]
+      },
+      "scatter": [
+        { "x": 12, "y": 24, "label": "edge-1", "z": 120 },
+        { "x": 28, "y": 11, "label": "edge-2", "z": 200 },
+        { "x": 35, "y": 32, "label": "core-a", "z": 90 },
+        { "x": 44, "y": 18, "label": "core-b", "z": 160 }
+      ],
+      "radar": [
+        { "subject": "SLO", "prod": 88, "staging": 92 },
+        { "subject": "Latency", "prod": 75, "staging": 80 },
+        { "subject": "Errors", "prod": 90, "staging": 85 },
+        { "subject": "Cost", "prod": 70, "staging": 65 }
+      ],
+      "funnel": [
+        { "name": "Requests", "value": 10000 },
+        { "name": "Authenticated", "value": 7200 },
+        { "name": "Authorized", "value": 5400 },
+        { "name": "Succeeded", "value": 5100 }
+      ],
+      "treemap": {
+        "name": "Infrastructure",
+        "children": [
+          { "name": "Compute", "size": 420 },
+          { "name": "Storage", "size": 180 },
+          { "name": "Network", "size": 95 },
+          { "name": "Support", "size": 120 }
+        ]
+      },
+      "sankey": {
+        "nodes": [
+          { "name": "Ingest" },
+          { "name": "Stream" },
+          { "name": "Batch" },
+          { "name": "Warehouse" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 35 },
+          { "source": 0, "target": 2, "value": 20 },
+          { "source": 1, "target": 3, "value": 30 },
+          { "source": 2, "target": 3, "value": 18 }
+        ]
+      },
+      "radialBar": [
+        { "name": "Web", "value": 45 },
+        { "name": "API", "value": 32 },
+        { "name": "Workers", "value": 23 }
       ]
     },
     "feed": {
@@ -323,7 +390,7 @@
                       "variant": "info",
                       "title": "Composite dashboard",
                       "className": "border-primary-200 bg-primary-50/90 dark:border-primary-900 dark:bg-primary-950/40",
-                      "children": "JSON drives Tabs, SplitPane, API-backed Table + Pagination, regional Table with column filters, charts, Accordion, TreeView, Modal, and host hooks — no repeat/map node; arrays live in state."
+                      "children": "JSON drives Tabs, SplitPane, API-backed Table + Pagination, regional Table with column filters, Recharts gallery (area, composed, scatter, radar, funnel, treemap, sankey, radial bar, bar, line, pie) with tooltips and legend toggles, MultiSelect-bound state, Accordion, TreeView, Modal, and host hooks — no repeat/map node; arrays live in state."
                     }
                   },
                   {
@@ -411,7 +478,7 @@
                         "type": "Text",
                         "props": {
                           "variant": "muted",
-                          "children": "Traffic mix (bars) + error budget (line)",
+                          "children": "Traffic mix (bars) + error budget (line) — hover tooltips; click legend to filter series",
                           "className": "text-xs uppercase tracking-wide"
                         }
                       },
@@ -532,6 +599,10 @@
                       {
                         "type": "Tab",
                         "props": { "value": "topology", "children": "Topology & playbooks" }
+                      },
+                      {
+                        "type": "Tab",
+                        "props": { "value": "charts", "children": "Chart gallery" }
                       }
                     ]
                   },
@@ -832,6 +903,257 @@
                                         ]
                                       }
                                     ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TabPanel",
+                    "props": { "value": "charts", "className": "pt-4" },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 4 },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "body",
+                              "children": "Recharts-backed primitives: tooltips, legend clicks to show or hide series, and the same state-driven data as the split pane above. The multi-select mirrors host-side filters you might bind to regional rollups.",
+                              "className": "text-slate-600 dark:text-slate-400"
+                            }
+                          },
+                          {
+                            "type": "MultiSelect",
+                            "props": {
+                              "label": "Focus regions (demo state)",
+                              "placeholder": "Pick regions…",
+                              "searchable": true,
+                              "searchPlaceholder": "Filter options…",
+                              "bind": "ui.chartRegions",
+                              "options": [
+                                { "value": "us-east", "label": "US-East" },
+                                { "value": "eu-west", "label": "EU-West" },
+                                { "value": "apac", "label": "APAC" },
+                                { "value": "us-west", "label": "US-West" },
+                                { "value": "latam", "label": "LATAM" },
+                                { "value": "mea", "label": "MEA" },
+                                { "value": "ca", "label": "CA" },
+                                { "value": "uk", "label": "UK" }
+                              ],
+                              "className": "max-w-lg"
+                            }
+                          },
+                          {
+                            "type": "Grid",
+                            "props": { "columns": 2, "gap": 4, "className": "max-lg:grid-cols-1" },
+                            "children": [
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Area (single series)",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "AreaChart",
+                                    "props": {
+                                      "data": "{{state.charts.area}}",
+                                      "height": 220,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Composed (bar + line)",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "ComposedChart",
+                                    "props": {
+                                      "data": "{{state.charts.composed.data}}",
+                                      "indexKey": "week",
+                                      "series": "{{state.charts.composed.series}}",
+                                      "height": 240,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Scatter",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "ScatterChart",
+                                    "props": {
+                                      "data": "{{state.charts.scatter}}",
+                                      "height": 220,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Radar (prod vs staging)",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "RadarChart",
+                                    "props": {
+                                      "data": "{{state.charts.radar}}",
+                                      "subjectKey": "subject",
+                                      "height": 260,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Funnel",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "FunnelChart",
+                                    "props": {
+                                      "data": "{{state.charts.funnel}}",
+                                      "height": 240,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Treemap",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "TreemapChart",
+                                    "props": {
+                                      "data": "{{state.charts.treemap}}",
+                                      "height": 240,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Sankey",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "SankeyChart",
+                                    "props": {
+                                      "nodes": "{{state.charts.sankey.nodes}}",
+                                      "links": "{{state.charts.sankey.links}}",
+                                      "height": 240,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Stack",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "min-w-0 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Radial bar",
+                                      "className": "text-xs uppercase tracking-wide"
+                                    }
+                                  },
+                                  {
+                                    "type": "RadialBarChart",
+                                    "props": {
+                                      "data": "{{state.charts.radialBar}}",
+                                      "height": 240,
+                                      "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                                    }
                                   }
                                 ]
                               }

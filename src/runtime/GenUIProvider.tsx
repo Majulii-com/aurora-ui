@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import type { GenUIDocument } from '../schema/genDocumentTypes';
 import { createRuntimeStore, type GenRuntimeStore } from './genStore';
 import type { InterpreterOptions } from './genInterpreter';
@@ -42,7 +42,24 @@ export function GenUIProvider({
     [document, storeApi, navigate, onCustom]
   );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={value}>
+      <GenDocumentMountAction onMountAction={document.onMountAction} />
+      {children}
+    </Ctx.Provider>
+  );
+}
+
+/** Runs `document.onMountAction` once per mount / when the action id string changes. */
+function GenDocumentMountAction({ onMountAction }: { onMountAction?: string }) {
+  const run = useRunAction();
+  const runRef = useRef(run);
+  runRef.current = run;
+  useEffect(() => {
+    if (!onMountAction || typeof onMountAction !== 'string') return;
+    void runRef.current(onMountAction);
+  }, [onMountAction]);
+  return null;
 }
 
 export function useGenUI() {

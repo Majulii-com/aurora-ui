@@ -12,15 +12,13 @@ const variantClasses: Record<ButtonProps['variant'] & string, string> = {
   success: 'bg-green-500 text-white hover:bg-green-600 border-transparent',
 };
 
-/** Majulii brand: teal primary gradient, stone secondaries — `appearance="aurora"` only */
+/** Majulii / Aurora: solid teal primary (enterprise — avoids loud “pill gradient”) */
 const auroraVariantClasses: Record<ButtonProps['variant'] & string, string> = {
   primary:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-primary-500 via-primary-600 to-primary-700 ' +
-    'shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] ' +
-    'hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 ' +
-    'focus:ring-primary-500/90 dark:from-primary-500 dark:via-primary-600 dark:to-primary-700 ' +
-    'dark:hover:from-primary-600 dark:hover:via-primary-700 dark:hover:to-primary-800',
+    'bg-primary-600 ' +
+    'hover:bg-primary-700 active:bg-primary-800 ' +
+    'focus:ring-primary-500/90 dark:bg-primary-600 dark:hover:bg-primary-500 dark:active:bg-primary-700',
   secondary:
     'border-transparent text-slate-800 dark:text-stone-100 antialiased font-semibold tracking-wide ' +
     'bg-gradient-to-b from-stone-100 to-stone-200/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] ' +
@@ -51,11 +49,11 @@ const sizeClasses: Record<ButtonProps['size'] & string, string> = {
   lg: 'px-6 py-3 text-lg gap-2',
 };
 
-/** Compact type + pill — premium tracking */
+/** Slightly larger type — rounded-xl shells (see className merge) */
 const auroraButtonSizeClasses: Record<ButtonProps['size'] & string, string> = {
-  sm: 'px-2.5 py-1 text-[11px] gap-1 min-h-[26px] font-semibold tracking-wide',
-  md: 'px-3.5 py-1.5 text-xs gap-1.5 leading-normal min-h-[30px] font-semibold tracking-wide',
-  lg: 'px-4 py-2 text-sm gap-1.5 min-h-[36px] font-semibold tracking-wide',
+  sm: 'px-3 py-1.5 text-xs gap-1.5 min-h-[32px] font-semibold tracking-wide',
+  md: 'px-4 py-2.5 text-sm gap-2 leading-snug min-h-[38px] font-semibold tracking-wide',
+  lg: 'px-5 py-3 text-base gap-2 min-h-[44px] font-semibold tracking-wide',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -90,8 +88,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         className={cn(
           'inline-flex items-center justify-center border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
-          ent.isAurora && !plain ? 'rounded-full font-medium' : 'rounded-lg font-medium',
-          entChrome && ent.button,
+          ent.isAurora && !plain ? 'rounded-xl font-medium' : 'rounded-lg font-medium',
+          /* Primary uses only `buttonPrimary` — `button` adds a strong top inset that reads as a white “gap” on solid teal */
+          entChrome && v !== 'primary' && ent.button,
           entChrome && v === 'primary' && ent.buttonPrimary,
           variantCn,
           sizeCn,

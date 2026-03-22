@@ -29,6 +29,7 @@
     "build-storybook": "storybook build",
     "playground": "vite --config vite.playground.config.ts",
     "example:dsl-host": "vite --config examples/dsl-host-app/vite.config.ts",
+    "example:ops-dashboard": "vite --config examples/dsl-ops-dashboard/vite.config.ts",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",

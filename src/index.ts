@@ -19,6 +19,9 @@ export type { RadioProps, RadioSize } from './components/Radio';
 export { Select } from './components/Select';
 export type { SelectProps, SelectOption, SelectSize } from './components/Select';
 
+export { MultiSelect } from './components/MultiSelect';
+export type { MultiSelectProps, MultiSelectOption, MultiSelectSize } from './components/MultiSelect';
+
 export { Switch } from './components/Switch';
 export type { SwitchProps, SwitchSize } from './components/Switch';
 
@@ -128,6 +131,9 @@ export type { EmptyStateProps } from './components/EmptyState';
 
 export { GenDataTable } from './components/GenDataTable/GenDataTable';
 export type { GenTableColumn, GenDataTableDSLProps } from './components/GenDataTable/GenDataTable';
+
+export { TreeTable } from './components/TreeTable';
+export type { TreeTableProps, TreeTableRow } from './components/TreeTable';
 export { GenText } from './components/GenText/GenText';
 export type { GenTextProps, GenTextVariant } from './components/GenText';
 export { GenSpinner } from './components/GenSpinner/GenSpinner';

@@ -1,0 +1,898 @@
+{
+  "version": "1",
+  "onMountAction": "loadFeed",
+  "state": {
+    "ui": {
+      "tab": "live",
+      "exportOpen": false,
+      "alertVisible": true
+    },
+    "kpis": {
+      "revenue": "$2.4M",
+      "revenueTrend": "up",
+      "users": "18.2k",
+      "usersTrend": "up",
+      "conv": "3.8%",
+      "convTrend": "neutral",
+      "latency": "142ms",
+      "latencyTrend": "down"
+    },
+    "charts": {
+      "bar": [
+        { "label": "Mon", "value": 28 },
+        { "label": "Tue", "value": 35 },
+        { "label": "Wed", "value": 22 },
+        { "label": "Thu", "value": 41 },
+        { "label": "Fri", "value": 38 },
+        { "label": "Sat", "value": 19 },
+        { "label": "Sun", "value": 14 }
+      ],
+      "line": {
+        "series": [
+          {
+            "name": "Ingress",
+            "color": "#3b82f6",
+            "data": [
+              { "x": "00:00", "y": 12 },
+              { "x": "04:00", "y": 18 },
+              { "x": "08:00", "y": 44 },
+              { "x": "12:00", "y": 52 },
+              { "x": "16:00", "y": 39 },
+              { "x": "20:00", "y": 24 }
+            ]
+          },
+          {
+            "name": "Errors",
+            "color": "#f97316",
+            "data": [
+              { "x": "00:00", "y": 1 },
+              { "x": "04:00", "y": 0 },
+              { "x": "08:00", "y": 3 },
+              { "x": "12:00", "y": 2 },
+              { "x": "16:00", "y": 1 },
+              { "x": "20:00", "y": 0 }
+            ]
+          }
+        ]
+      },
+      "pie": [
+        { "label": "API", "value": 38 },
+        { "label": "Jobs", "value": 27 },
+        { "label": "Web", "value": 22 },
+        { "label": "Other", "value": 13 }
+      ]
+    },
+    "feed": {
+      "page": 1,
+      "totalPages": 10,
+      "rows": [],
+      "sortKey": "id",
+      "sortDir": "asc",
+      "filter": "",
+      "colFilters": {}
+    },
+    "regional": {
+      "rows": [
+        { "region": "US-East", "owner": "Jordan", "deals": 42, "health": 0.94 },
+        { "region": "EU-West", "owner": "Sam", "deals": 31, "health": 0.88 },
+        { "region": "APAC", "owner": "Alex", "deals": 27, "health": 0.91 },
+        { "region": "US-West", "owner": "Riley", "deals": 19, "health": 0.82 },
+        { "region": "LATAM", "owner": "Morgan", "deals": 14, "health": 0.76 },
+        { "region": "MEA", "owner": "Casey", "deals": 11, "health": 0.71 },
+        { "region": "CA", "owner": "Taylor", "deals": 9, "health": 0.85 },
+        { "region": "UK", "owner": "Quinn", "deals": 22, "health": 0.9 }
+      ],
+      "sortKey": "region",
+      "sortDir": "asc",
+      "filter": "",
+      "colFilters": {}
+    },
+    "progress": { "sla": 87 },
+    "tree": {
+      "items": [
+        {
+          "id": "svc",
+          "label": "Services",
+          "children": [
+            { "id": "svc-api", "label": "api-gateway", "badge": "4 pods" },
+            { "id": "svc-worker", "label": "indexer", "badge": "2 pods" }
+          ]
+        },
+        {
+          "id": "data",
+          "label": "Data plane",
+          "children": [
+            { "id": "data-pg", "label": "postgres-primary" },
+            { "id": "data-redis", "label": "redis-cache" }
+          ]
+        }
+      ]
+    }
+  },
+  "actions": {
+    "loadFeed": {
+      "type": "API_CALL",
+      "id": "postsFeed",
+      "url": "https://jsonplaceholder.typicode.com/posts?_page={{state.feed.page}}&_limit=10",
+      "method": "GET",
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "feed.rows",
+            "value": "{{response}}"
+          }
+        ]
+      }
+    },
+    "changeFeedPage": {
+      "type": "CHAIN",
+      "chain": [
+        {
+          "type": "SET_STATE",
+          "path": "feed.page",
+          "value": "{{event.page}}"
+        },
+        {
+          "type": "API_CALL",
+          "id": "postsFeed",
+          "url": "https://jsonplaceholder.typicode.com/posts?_page={{state.feed.page}}&_limit=10",
+          "method": "GET",
+          "onSuccess": {
+            "chain": [
+              {
+                "type": "SET_STATE",
+                "path": "feed.rows",
+                "value": "{{response}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "sortFeed": {
+      "type": "SET_STATE",
+      "path": "feed.sortKey",
+      "value": "{{event.column}}"
+    },
+    "sortRegional": {
+      "type": "SET_STATE",
+      "path": "regional.sortKey",
+      "value": "{{event.column}}"
+    },
+    "openExport": {
+      "type": "SET_STATE",
+      "path": "ui.exportOpen",
+      "value": true
+    },
+    "closeExport": {
+      "type": "SET_STATE",
+      "path": "ui.exportOpen",
+      "value": false
+    },
+    "dismissAlert": {
+      "type": "SET_STATE",
+      "path": "ui.alertVisible",
+      "value": false
+    },
+    "refreshAll": {
+      "type": "CUSTOM",
+      "name": "refreshAll",
+      "payload": { "source": "enterprise-dashboard" }
+    },
+    "goPricing": {
+      "type": "NAVIGATE",
+      "path": "/pricing"
+    }
+  },
+  "ui": {
+    "type": "Page",
+    "props": {
+      "className": "min-h-full bg-slate-100 dark:bg-slate-950"
+    },
+    "children": [
+      {
+        "type": "Container",
+        "props": { "maxWidth": "full", "className": "py-6 md:py-8" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "gap": 6, "className": "w-full" },
+            "children": [
+              {
+                "type": "Row",
+                "props": {
+                  "gap": 3,
+                  "className": "flex-wrap items-center justify-between"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "gap": 1 },
+                    "children": [
+                      {
+                        "type": "Breadcrumb",
+                        "props": { "className": "text-sm" },
+                        "children": [
+                          {
+                            "type": "BreadcrumbItem",
+                            "props": { "children": "Home", "href": "#" }
+                          },
+                          {
+                            "type": "BreadcrumbItem",
+                            "props": { "children": "Operations", "href": "#" }
+                          },
+                          {
+                            "type": "BreadcrumbItem",
+                            "props": { "children": "Mission control" }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Row",
+                        "props": { "gap": 2, "className": "items-center flex-wrap" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "title",
+                              "children": "Enterprise operations",
+                              "className": "text-slate-900 dark:text-slate-50"
+                            }
+                          },
+                          {
+                            "type": "Badge",
+                            "props": {
+                              "variant": "primary",
+                              "children": "Live"
+                            }
+                          },
+                          {
+                            "type": "Code",
+                            "props": {
+                              "children": "v1 DSL",
+                              "className": "text-xs"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Row",
+                    "props": { "gap": 2, "className": "flex-wrap items-center" },
+                    "children": [
+                      {
+                        "type": "Tooltip",
+                        "props": { "content": "Host can wire CUSTOM for real refresh" },
+                        "children": [
+                          {
+                            "type": "IconButton",
+                            "props": {
+                              "label": "Refresh",
+                              "onClickAction": "refreshAll",
+                              "variant": "secondary",
+                              "size": "sm"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Dropdown",
+                        "props": {
+                          "triggerLabel": "Quick actions",
+                          "placement": "bottom-end"
+                        },
+                        "children": [
+                          {
+                            "type": "DropdownItem",
+                            "props": {
+                              "children": "Pricing (NAVIGATE)",
+                              "onClickAction": "goPricing"
+                            }
+                          },
+                          {
+                            "type": "DropdownItem",
+                            "props": {
+                              "children": "Export snapshot…",
+                              "onClickAction": "openExport"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Button",
+                        "props": {
+                          "children": "Export report",
+                          "variant": "primary",
+                          "size": "sm",
+                          "onClickAction": "openExport"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "ShowWhen",
+                "props": { "when": "{{state.ui.alertVisible}}" },
+                "children": [
+                  {
+                    "type": "Alert",
+                    "props": {
+                      "variant": "info",
+                      "title": "Composite dashboard",
+                      "className": "border-primary-200 bg-primary-50/90 dark:border-primary-900 dark:bg-primary-950/40",
+                      "children": "JSON drives Tabs, SplitPane, API-backed Table + Pagination, regional Table with column filters, charts, Accordion, TreeView, Modal, and host hooks — no repeat/map node; arrays live in state."
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "children": "Dismiss",
+                      "variant": "secondary",
+                      "size": "sm",
+                      "onClickAction": "dismissAlert",
+                      "className": "mt-2"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Grid",
+                "props": {
+                  "columns": 4,
+                  "gap": 4,
+                  "className": "w-full max-md:grid-cols-1 max-lg:grid-cols-2"
+                },
+                "children": [
+                  {
+                    "type": "StatCard",
+                    "props": {
+                      "title": "ARR (proxy)",
+                      "value": "{{state.kpis.revenue}}",
+                      "trend": "{{state.kpis.revenueTrend}}",
+                      "trendLabel": "+6.2% QoQ",
+                      "subtitle": "Finance rollup",
+                      "className": "shadow-sm"
+                    }
+                  },
+                  {
+                    "type": "StatCard",
+                    "props": {
+                      "title": "Weekly actives",
+                      "value": "{{state.kpis.users}}",
+                      "trend": "{{state.kpis.usersTrend}}",
+                      "trendLabel": "+1.1%",
+                      "subtitle": "Product",
+                      "className": "shadow-sm"
+                    }
+                  },
+                  {
+                    "type": "StatCard",
+                    "props": {
+                      "title": "Trial → paid",
+                      "value": "{{state.kpis.conv}}",
+                      "trend": "{{state.kpis.convTrend}}",
+                      "trendLabel": "flat",
+                      "subtitle": "Growth",
+                      "className": "shadow-sm"
+                    }
+                  },
+                  {
+                    "type": "StatCard",
+                    "props": {
+                      "title": "p95 API",
+                      "value": "{{state.kpis.latency}}",
+                      "trend": "{{state.kpis.latencyTrend}}",
+                      "trendLabel": "−8ms",
+                      "subtitle": "Synthetics",
+                      "className": "shadow-sm"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "SplitPane",
+                "props": {
+                  "direction": "horizontal",
+                  "defaultSize": 0.58,
+                  "className": "min-h-[320px] rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900/60"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": {
+                      "gap": 4,
+                      "className": "min-h-[280px] min-w-0 p-4"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "children": "Traffic mix (bars) + error budget (line)",
+                          "className": "text-xs uppercase tracking-wide"
+                        }
+                      },
+                      {
+                        "type": "BarChart",
+                        "props": {
+                          "data": "{{state.charts.bar}}",
+                          "height": 200,
+                          "color": "#6366f1",
+                          "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                        }
+                      },
+                      {
+                        "type": "LineChart",
+                        "props": {
+                          "series": "{{state.charts.line.series}}",
+                          "height": 200,
+                          "showDots": true,
+                          "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": {
+                      "gap": 4,
+                      "className": "min-h-[280px] min-w-0 p-4"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "children": "Spend / workload (pie) + SLA progress",
+                          "className": "text-xs uppercase tracking-wide"
+                        }
+                      },
+                      {
+                        "type": "PieChart",
+                        "props": {
+                          "data": "{{state.charts.pie}}",
+                          "donut": true,
+                          "showLabels": true,
+                          "size": 200,
+                          "className": "mx-auto"
+                        }
+                      },
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 2 },
+                        "children": [
+                          {
+                            "type": "Row",
+                            "props": { "gap": 2, "className": "items-center justify-between" },
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "body",
+                                  "children": "Quarterly SLA",
+                                  "className": "text-sm font-medium"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "children": "{{state.progress.sla}}%",
+                                  "className": "text-sm tabular-nums"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Progress",
+                            "props": {
+                              "value": "{{state.progress.sla}}",
+                              "className": "h-2"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Skeleton",
+                        "props": {
+                          "className": "h-12 w-full rounded-lg"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Divider",
+                "props": { "className": "my-1" }
+              },
+              {
+                "type": "Tabs",
+                "props": {
+                  "tabBind": "ui.tab",
+                  "variant": "line",
+                  "className": "w-full"
+                },
+                "children": [
+                  {
+                    "type": "TabList",
+                    "props": { "className": "border-b border-slate-200 dark:border-slate-700" },
+                    "children": [
+                      {
+                        "type": "Tab",
+                        "props": { "value": "live", "children": "Live feed (API + table)" }
+                      },
+                      {
+                        "type": "Tab",
+                        "props": { "value": "regions", "children": "Regional pipeline" }
+                      },
+                      {
+                        "type": "Tab",
+                        "props": { "value": "topology", "children": "Topology & playbooks" }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TabPanel",
+                    "props": { "value": "live", "className": "pt-4" },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 4 },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "body",
+                              "children": "Posts from JSONPlaceholder — client sort + global filter + per-column filters. Pagination refetches that page (10 rows).",
+                              "className": "text-slate-600 dark:text-slate-400"
+                            }
+                          },
+                          {
+                            "type": "ShowWhen",
+                            "props": { "loadingKey": "postsFeed" },
+                            "children": [
+                              {
+                                "type": "Row",
+                                "props": { "gap": 3, "className": "items-center" },
+                                "children": [
+                                  {
+                                    "type": "Spinner",
+                                    "props": { "size": "md", "className": "text-primary-500" }
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "children": "Loading page {{state.feed.page}}…"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Table",
+                            "props": {
+                              "columns": [
+                                { "key": "id", "label": "ID", "sortable": true },
+                                { "key": "title", "label": "Title", "sortable": true, "filterable": true },
+                                { "key": "userId", "label": "User", "sortable": true }
+                              ],
+                              "rows": "{{state.feed.rows}}",
+                              "sortKey": "{{state.feed.sortKey}}",
+                              "sortDir": "{{state.feed.sortDir}}",
+                              "onSortAction": "sortFeed",
+                              "filterBind": "feed.filter",
+                              "columnFiltersBind": "feed.colFilters",
+                              "filterPlaceholder": "Search title, id, user…",
+                              "className": "w-full",
+                              "filterRowClassName": "max-w-xl",
+                              "filterClassName": "shadow-sm",
+                              "columnFilterClassName": "text-xs",
+                              "tableWrapperClassName": "rounded-xl border border-slate-200 dark:border-slate-700"
+                            }
+                          },
+                          {
+                            "type": "Row",
+                            "props": {
+                              "gap": 4,
+                              "className": "flex-wrap items-center justify-between border-t border-slate-200 pt-4 dark:border-slate-700"
+                            },
+                            "children": [
+                              {
+                                "type": "Pagination",
+                                "props": {
+                                  "page": "{{state.feed.page}}",
+                                  "totalPages": "{{state.feed.totalPages}}",
+                                  "onPageChangeAction": "changeFeedPage",
+                                  "showFirstLast": true,
+                                  "siblingCount": 1,
+                                  "className": "flex-wrap"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "children": "Page {{state.feed.page}} of {{state.feed.totalPages}} · 10 rows / page",
+                                  "className": "text-xs"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TabPanel",
+                    "props": { "value": "regions", "className": "pt-4" },
+                    "children": [
+                      {
+                        "type": "Card",
+                        "props": { "className": "border-slate-200 shadow-sm dark:border-slate-700" },
+                        "children": [
+                          {
+                            "type": "CardHeader",
+                            "props": {},
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "children": "Regional coverage"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "children": "Static rows in state — sort, global filter, column filters (composite table)."
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "CardBody",
+                            "props": {},
+                            "children": [
+                              {
+                                "type": "Table",
+                                "props": {
+                                  "columns": [
+                                    {
+                                      "key": "region",
+                                      "label": "Region",
+                                      "sortable": true,
+                                      "filterable": true
+                                    },
+                                    {
+                                      "key": "owner",
+                                      "label": "Owner",
+                                      "sortable": true,
+                                      "filterable": true
+                                    },
+                                    { "key": "deals", "label": "Deals", "sortable": true },
+                                    { "key": "health", "label": "Health", "sortable": true }
+                                  ],
+                                  "rows": "{{state.regional.rows}}",
+                                  "sortKey": "{{state.regional.sortKey}}",
+                                  "sortDir": "{{state.regional.sortDir}}",
+                                  "onSortAction": "sortRegional",
+                                  "filterBind": "regional.filter",
+                                  "columnFiltersBind": "regional.colFilters",
+                                  "filterPlaceholder": "Filter regions…",
+                                  "tableWrapperClassName": "rounded-lg border border-slate-200 dark:border-slate-700"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TabPanel",
+                    "props": { "value": "topology", "className": "pt-4" },
+                    "children": [
+                      {
+                        "type": "Grid",
+                        "props": { "columns": 2, "gap": 4, "className": "max-lg:grid-cols-1" },
+                        "children": [
+                          {
+                            "type": "Stack",
+                            "props": {
+                              "gap": 3,
+                              "className": "rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900/50"
+                            },
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "children": "Service tree"
+                                }
+                              },
+                              {
+                                "type": "TreeView",
+                                "props": {
+                                  "items": "{{state.tree.items}}",
+                                  "className": "max-h-64 overflow-auto rounded-lg border border-slate-100 dark:border-slate-800"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Accordion",
+                            "props": {
+                              "defaultValue": "runbooks",
+                              "className": "rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/50"
+                            },
+                            "children": [
+                              {
+                                "type": "AccordionItem",
+                                "props": { "value": "runbooks" },
+                                "children": [
+                                  {
+                                    "type": "AccordionTrigger",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": { "children": "Incident runbooks" }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "AccordionContent",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": {
+                                          "variant": "body",
+                                          "children": "Triage checklist: verify dashboards → page on-call → open bridge → link postmortem template."
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "AccordionItem",
+                                "props": { "value": "changes" },
+                                "children": [
+                                  {
+                                    "type": "AccordionTrigger",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": { "children": "Change policy" }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "AccordionContent",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": {
+                                          "variant": "body",
+                                          "children": "Freeze windows follow the banner above; hotfix path requires CUSTOM approval in your host."
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "AccordionItem",
+                                "props": { "value": "links" },
+                                "children": [
+                                  {
+                                    "type": "AccordionTrigger",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": { "children": "Handy links" }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "AccordionContent",
+                                    "props": {},
+                                    "children": [
+                                      {
+                                        "type": "Stack",
+                                        "props": { "gap": 2 },
+                                        "children": [
+                                          {
+                                            "type": "Link",
+                                            "props": {
+                                              "href": "https://jsonplaceholder.typicode.com",
+                                              "children": "JSONPlaceholder API",
+                                              "variant": "primary"
+                                            }
+                                          },
+                                          {
+                                            "type": "Link",
+                                            "props": {
+                                              "href": "#",
+                                              "children": "Internal wiki (NAVIGATE in host app)",
+                                              "onClickAction": "goPricing"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Modal",
+                "props": {
+                  "isOpen": "{{state.ui.exportOpen}}",
+                  "title": "Export workspace snapshot",
+                  "size": "md",
+                  "onCloseAction": "closeExport",
+                  "plain": true
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "gap": 3 },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "body",
+                          "children": "This modal is driven purely by JSON: open/close toggles state; wire a CUSTOM action here to call your backend export job."
+                        }
+                      },
+                      {
+                        "type": "Row",
+                        "props": { "gap": 2 },
+                        "children": [
+                          {
+                            "type": "Button",
+                            "props": {
+                              "children": "Close",
+                              "variant": "secondary",
+                              "onClickAction": "closeExport"
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "children": "Notify host (CUSTOM)",
+                              "onClickAction": "refreshAll"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

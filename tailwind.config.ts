@@ -5,6 +5,7 @@ const config: Config = {
     './src/**/*.{js,ts,jsx,tsx}',
     './playground/**/*.{js,ts,jsx,tsx}',
     './examples/dsl-host-app/**/*.{js,ts,jsx,tsx}',
+    './examples/dsl-ops-dashboard/**/*.{js,ts,jsx,tsx}',
     './.storybook/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'class',

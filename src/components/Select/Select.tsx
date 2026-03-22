@@ -4,7 +4,7 @@ import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { SelectProps } from './Select.types';
 
 const sizeClasses = { sm: 'h-8 text-sm', md: 'h-10 text-base', lg: 'h-12 text-lg' };
-const auroraSelectSizeClasses = { sm: 'h-8 text-xs', md: 'h-9 text-sm', lg: 'h-10 text-sm' };
+const auroraSelectSizeClasses = { sm: 'h-9 text-sm', md: 'h-10 text-[15px]', lg: 'h-11 text-base' };
 const variantClasses = {
   default: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800',
   outline: 'border-2 border-primary-500 bg-transparent',

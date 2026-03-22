@@ -31,6 +31,18 @@ describe('lintGenUIDocument', () => {
     expect(issues.some((i) => i.code === 'MISSING_ACTION')).toBe(true);
   });
 
+  it('warns when onMountAction references missing action id', () => {
+    const doc: GenUIDocument = {
+      state: {},
+      ui: { type: 'Stack', props: {}, children: [] },
+      actions: {},
+      onMountAction: 'missingLoad',
+    };
+    const { issues } = lintGenUIDocument(doc);
+    const m = issues.filter((i) => i.code === 'MISSING_ACTION');
+    expect(m.some((i) => i.path === '/onMountAction')).toBe(true);
+  });
+
   it('errors when tree depth exceeds limit', () => {
     let node: GenUIDocument['ui'] = { type: 'Text', props: { children: 'leaf' } };
     for (let i = 0; i < 70; i++) {

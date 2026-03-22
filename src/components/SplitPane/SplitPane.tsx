@@ -1,6 +1,11 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { Children, useState, useCallback, useRef, useEffect } from 'react';
 import { cn } from '../../utils';
 import type { SplitPaneProps } from './SplitPane.types';
+
+function clampFraction(n: number, fallback: number): number {
+  if (typeof n !== 'number' || !Number.isFinite(n)) return fallback;
+  return Math.max(0, Math.min(1, n));
+}
 
 export function SplitPane({
   direction = 'horizontal',
@@ -10,7 +15,11 @@ export function SplitPane({
   className,
   children,
 }: SplitPaneProps) {
-  const [size, setSize] = useState(defaultSize);
+  const initial = clampFraction(
+    typeof defaultSize === 'number' ? defaultSize : 0.5,
+    0.5
+  );
+  const [size, setSize] = useState(initial);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,17 +36,20 @@ export function SplitPane({
       if (!el) return size;
       const rect = el.getBoundingClientRect();
       const total = direction === 'horizontal' ? rect.width : rect.height;
+      /** Avoid pos/0 → NaN / Infinity, which produced width "NaN%" and collapsed the first pane. */
+      if (!(total > 0)) return size;
       const pos = e[axis] - (direction === 'horizontal' ? rect.left : rect.top);
       let frac = pos / total;
-      if (min !== undefined && total > 0) {
+      if (min !== undefined) {
         const minFrac = min / total;
         frac = Math.max(frac, minFrac);
       }
-      if (max !== undefined && total > 0) {
+      if (max !== undefined) {
         const maxFrac = max / total;
         frac = Math.min(frac, maxFrac);
       }
-      return Math.max(0, Math.min(1, frac));
+      const next = Math.max(0, Math.min(1, frac));
+      return Number.isFinite(next) ? next : size;
     };
     const onMove = (e: MouseEvent) => setSize(getSize(e));
     const onUp = () => setIsDragging(false);
@@ -54,7 +66,12 @@ export function SplitPane({
   }, [isDragging, direction, size, min, max]);
 
   const isHorizontal = direction === 'horizontal';
-  const firstSize = `${size * 100}%`;
+  const safeSize = clampFraction(size, initial);
+  const firstSize = `${safeSize * 100}%`;
+
+  const panes = Children.toArray(children);
+  const firstPane = panes[0];
+  const secondPane = panes[1];
 
   return (
     <div
@@ -69,11 +86,11 @@ export function SplitPane({
         className={cn('overflow-auto shrink-0', isHorizontal ? 'h-full' : 'w-full')}
         style={isHorizontal ? { width: firstSize } : { height: firstSize }}
       >
-        {children[0]}
+        {firstPane}
       </div>
       <div
         role="separator"
-        aria-valuenow={Math.round(size * 100)}
+        aria-valuenow={Math.round(safeSize * 100)}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
@@ -94,7 +111,7 @@ export function SplitPane({
         className={cn('overflow-auto flex-1 min-w-0 min-h-0', isHorizontal ? 'h-full' : 'w-full')}
         style={isHorizontal ? {} : {}}
       >
-        {children[1]}
+        {secondPane}
       </div>
     </div>
   );

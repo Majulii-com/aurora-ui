@@ -16,11 +16,14 @@ Goal: **AI JSON** should control layout and styling using **strings** (Tailwind 
 
 | `type` | Key styling / layout props |
 |--------|----------------------------|
+| **Fragment** | No DOM — use to group sibling nodes under one parent without a wrapper. `props` optional. |
 | **Box** | `className`, `p`, `m` via className |
 | **Stack** | `direction`, `gap`, `align`, `justify`, `className` |
 | **Row** | `gap`, `className` (horizontal Stack) |
 | **Grid** | `columns`, `gap`, `className` |
 | **Container** | `maxWidth`, `className` |
+| **Page** | `className` — full-page shell; put `Stack` / `Container` in `children` |
+| **SplitPane** | `direction`, `defaultSize`, `className` — **two** child nodes (left/right or top/bottom panes) |
 
 ---
 
@@ -43,6 +46,7 @@ Goal: **AI JSON** should control layout and styling using **strings** (Tailwind 
 | **Input** | `className`, `size`, `variant`, `placeholder`, `label`, `bind`, `onChangeAction` |
 | **Textarea** | same pattern |
 | **Select** | `options`, `className`, `placeholder`, `label`, `bind` |
+| **MultiSelect** | `options`, `value` / `onChange`, or **`bind`** to a state path holding **`string[]`** (same as Input `bind`, but array) |
 | **Checkbox** | `label`, `className`, `bind` |
 | **Switch** | `label`, `className`, `bind` |
 | **Button** | `variant`, `size`, `fullWidth`, `className`, `children`, `onClickAction` |
@@ -56,6 +60,7 @@ Goal: **AI JSON** should control layout and styling using **strings** (Tailwind 
 | **Alert** | `variant`, `title`, `className`, `children` |
 | **Spinner** (`GenSpinner`) | `size`, `label`, `labelClassName`, `className` (plus Stack root props: `style`, `id`, `aria-*`, …) |
 | **Table** (`GenDataTable`) | See **Table (extended)** below |
+| **TreeTable** | Hierarchical data: `columns`, `rows` with `id` + optional `parentId`, `treeColumnKey`, `defaultExpandAll`, optional `filter` / `onFilterChange` |
 
 ### Table (`GenDataTable`) — extended DSL props
 
@@ -69,6 +74,9 @@ Goal: **AI JSON** should control layout and styling using **strings** (Tailwind 
 | `tableWrapperClassName` | Horizontal scroll wrapper around `<table>` (overflow, min-width). |
 | `sortHeaderButtonClassName` | Sortable column header buttons. |
 | `columns`, `rows`, `sortKey`, `sortDir`, `filterBind`, `onSortAction` | Data + wiring (see `GENERATIVE_UI.md`). |
+| `columnFilters`, `onColumnFilterChange` | **Per-column** text filters (set `filterable: true` on a column). |
+| `columnFiltersBind` | State path to a **`Record<string, string>`**; wires `columnFilters` + `onColumnFilterChange` automatically (like `filterBind`). |
+| `columnFilterClassName` | Shared classes for column filter inputs. |
 
 ---
 

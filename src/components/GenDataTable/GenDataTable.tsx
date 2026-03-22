@@ -4,7 +4,13 @@ import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } fro
 import { cn } from '../../utils';
 import { useAuroraSurface } from '../../theme/useAuroraSurface';
 
-export type GenTableColumn = { key: string; label: string; sortable?: boolean };
+export type GenTableColumn = {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  /** Per-column filter (search) — shows a filter input under this column when `onColumnFilterChange` is set. */
+  filterable?: boolean;
+};
 
 export type GenDataTableDSLProps = {
   columns: GenTableColumn[];
@@ -14,6 +20,11 @@ export type GenDataTableDSLProps = {
   onSort?: (key: string) => void;
   filter?: string;
   onFilterChange?: (v: string) => void;
+  /** Per-column text filters (AND). Keys are column `key`s. */
+  columnFilters?: Record<string, string>;
+  onColumnFilterChange?: (columnKey: string, value: string) => void;
+  /** Optional class for each column filter `<Input>` (DSL: not easily per-column; use global `columnFilterClassName`). */
+  columnFilterClassName?: string;
   /** Root wrapper (whole block). */
   className?: string;
   /** Filter `<Input>` — Tailwind from JSON DSL. */
@@ -45,6 +56,9 @@ export function GenDataTable({
   tableClassName,
   tableWrapperClassName,
   sortHeaderButtonClassName,
+  columnFilters,
+  onColumnFilterChange,
+  columnFilterClassName,
 }: GenDataTableDSLProps) {
   const ent = useAuroraSurface();
   const safeRows = Array.isArray(rows) ? rows : [];
@@ -57,9 +71,26 @@ export function GenDataTable({
     );
   }, [safeRows, filter]);
 
+  const columnFiltered = React.useMemo(() => {
+    if (!onColumnFilterChange) return filtered;
+    const cf = columnFilters ?? {};
+    let next = filtered;
+    for (const col of columns) {
+      if (!col.filterable) continue;
+      const q = cf[col.key]?.trim();
+      if (!q) continue;
+      const ql = q.toLowerCase();
+      next = next.filter((row) => String(row[col.key] ?? '').toLowerCase().includes(ql));
+    }
+    return next;
+  }, [filtered, columns, columnFilters, onColumnFilterChange]);
+
+  const showColumnFilterRow =
+    Boolean(onColumnFilterChange) && columns.some((c) => c.filterable);
+
   const sorted = React.useMemo(() => {
-    if (!sortKey) return filtered;
-    const copy = [...filtered];
+    if (!sortKey) return columnFiltered;
+    const copy = [...columnFiltered];
     copy.sort((a, b) => {
       const av = a[sortKey];
       const bv = b[sortKey];
@@ -67,7 +98,7 @@ export function GenDataTable({
       return sortDir === 'desc' ? -cmp : cmp;
     });
     return copy;
-  }, [filtered, sortKey, sortDir]);
+  }, [columnFiltered, sortKey, sortDir]);
 
   return (
     <div className={cn('w-full min-w-0', ent.isAurora && ent.tableSurface, className)}>
@@ -108,6 +139,24 @@ export function GenDataTable({
               </TableHeaderCell>
             ))}
           </TableRow>
+          {showColumnFilterRow ? (
+            <TableRow className="bg-stone-50/80 dark:bg-stone-800/40">
+              {columns.map((c) => (
+                <TableHeaderCell key={`f-${c.key}`} className="py-2 align-top">
+                  {c.filterable ? (
+                    <Input
+                      size="sm"
+                      className={cn('w-full min-w-[6rem] text-[13px]', columnFilterClassName)}
+                      placeholder="Filter…"
+                      value={(columnFilters ?? {})[c.key] ?? ''}
+                      onChange={(e) => onColumnFilterChange?.(c.key, e.target.value)}
+                      aria-label={`Filter ${c.label}`}
+                    />
+                  ) : null}
+                </TableHeaderCell>
+              ))}
+            </TableRow>
+          ) : null}
         </TableHead>
         <TableBody>
           {sorted.map((row, i) => (

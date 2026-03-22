@@ -5,9 +5,9 @@ import type { TextareaProps } from './Textarea.types';
 
 const sizeClasses = { sm: 'py-2 px-3 text-sm', md: 'py-2.5 px-3 text-base', lg: 'py-3 px-4 text-lg' };
 const auroraTextareaSizeClasses = {
-  sm: 'py-1.5 px-2.5 text-xs min-h-[72px]',
-  md: 'py-2 px-3 text-sm min-h-[80px]',
-  lg: 'py-2.5 px-4 text-sm min-h-[96px]',
+  sm: 'py-2 px-3 text-sm min-h-[80px]',
+  md: 'py-2.5 px-3 text-[15px] min-h-[88px]',
+  lg: 'py-3 px-4 text-base min-h-[104px]',
 };
 const variantClasses = {
   default: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800',

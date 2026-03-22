@@ -11,6 +11,7 @@ import {
 } from '@majulii/aurora-ui';
 import { GEN_FORM_TABS_SAMPLE, GEN_MINIMAL_SAMPLE } from './genSamples';
 import { GEN_API_TABLE_SAMPLE } from './genApiTableSample';
+import { GEN_MULTI_TREE_SAMPLE } from './genMultiTreeSample';
 import { GenDSLChatPanel } from './GenDSLChatPanel';
 
 function tryParseJson(text: string): unknown | null {
@@ -75,6 +76,9 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
           </Button>
           <Button type="button" size="sm" variant="outline" onClick={() => setText(GEN_API_TABLE_SAMPLE)}>
             Load API + table
+          </Button>
+          <Button type="button" size="sm" variant="outline" onClick={() => setText(GEN_MULTI_TREE_SAMPLE)}>
+            Load multi + tree
           </Button>
         </div>
       </header>

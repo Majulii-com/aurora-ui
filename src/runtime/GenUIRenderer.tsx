@@ -93,6 +93,12 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
         p.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           getStore().setState(bindPath, e.target.checked);
         };
+      } else if (node.type === 'MultiSelect') {
+        const raw = getAtPath(state as Record<string, unknown>, bindPath);
+        p.value = Array.isArray(raw) ? raw.map(String) : [];
+        p.onChange = (next: string[]) => {
+          getStore().setState(bindPath, next);
+        };
       } else {
         const raw = getAtPath(state as Record<string, unknown>, bindPath);
         p.value =
@@ -129,12 +135,43 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
       };
     }
 
+    const pageChangeAction = p.onPageChangeAction as string | undefined;
+    if (pageChangeAction && typeof pageChangeAction === 'string' && node.type === 'Pagination') {
+      delete p.onPageChangeAction;
+      p.onPageChange = (page: number) => {
+        void run(pageChangeAction, { page });
+      };
+    }
+
     const filterBind = p.filterBind as string | undefined;
     if (filterBind && typeof filterBind === 'string') {
       delete p.filterBind;
       p.filter = (getAtPath(state as Record<string, unknown>, filterBind) as string) ?? '';
       p.onFilterChange = (v: string) => {
         getStore().setState(filterBind, v);
+      };
+    }
+
+    const columnFiltersBind = p.columnFiltersBind as string | undefined;
+    if (columnFiltersBind && typeof columnFiltersBind === 'string') {
+      delete p.columnFiltersBind;
+      const cur = getAtPath(state as Record<string, unknown>, columnFiltersBind);
+      p.columnFilters =
+        cur != null && typeof cur === 'object' && !Array.isArray(cur)
+          ? (cur as Record<string, string>)
+          : {};
+      p.onColumnFilterChange = (columnKey: string, value: string) => {
+        getStore().setState(`${columnFiltersBind}.${columnKey}`, value);
+      };
+    }
+
+    const closeAction = p.onCloseAction as string | undefined;
+    if (closeAction && typeof closeAction === 'string' && (node.type === 'Modal' || node.type === 'Drawer')) {
+      delete p.onCloseAction;
+      const prevClose = p.onClose as (() => void) | undefined;
+      p.onClose = () => {
+        if (typeof prevClose === 'function') prevClose();
+        void run(closeAction);
       };
     }
 
@@ -173,14 +210,20 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
   const childNodes = node.children ?? [];
 
   /**
-   * Leaf nodes (e.g. Button) put label text in `props.children` (JSON string).
-   * We must NOT render `<Component {...props}>{undefined}</>` — React treats explicit
-   * `undefined` children as overriding `props.children`, so labels disappeared.
+   * - Leaf nodes (e.g. Button) often use `props.children` as a string label from JSON.
+   * - Container nodes use `children: GenUINode[]` for nested components.
+   * - When **both** exist, merge: text/number from `props.children` first, then nested nodes
+   *   so you can compose rich labels (e.g. icon + text) or add siblings under layout primitives.
    */
   if (childNodes.length > 0) {
-    const { children: _propChildren, ...restFinal } = finalProps;
+    const { children: propChildren, ...restFinal } = finalProps;
+    const fromPropsText =
+      propChildren != null && (typeof propChildren === 'string' || typeof propChildren === 'number')
+        ? String(propChildren)
+        : null;
     return (
       <Component {...restFinal}>
+        {fromPropsText}
         {childNodes.map((child, i) => (
           <NodeRenderer key={child.id ?? `${child.type}-${i}`} node={child} registry={registry} />
         ))}

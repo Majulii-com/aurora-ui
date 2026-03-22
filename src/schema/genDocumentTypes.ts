@@ -55,6 +55,11 @@ export interface GenUIDocument {
   /** Optional named bindings — string values use {{state.*}} / {{event.*}} / {{response.*}} */
   bindings?: Record<string, string>;
   actions?: Record<string, ActionDef>;
+  /**
+   * Runs once when `GenUIProvider` mounts (after store is ready). Value is an **`actions` id**
+   * (same as `onClickAction`). Use for initial `API_CALL`, `SET_STATE`, or `CHAIN`.
+   */
+  onMountAction?: string;
 }
 
 export interface ExpressionContext {

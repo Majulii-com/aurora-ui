@@ -40,6 +40,8 @@ export const GenUIDocumentSchema = z
     state: z.record(z.unknown()),
     bindings: z.record(z.string()).optional(),
     actions: z.record(ActionDefSchema).optional(),
+    /** @see GenUIDocument.onMountAction */
+    onMountAction: z.string().min(1).max(128).optional(),
   })
   .strict();
 

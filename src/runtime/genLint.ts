@@ -21,8 +21,18 @@ export interface GenLintResult {
   };
 }
 
-/** Props that reference `document.actions` keys — must match `GenUIRenderer` wiring (see `docs/GENERATIVE_UI.md` §6). */
-const ACTION_PROP_KEYS = new Set(['onClickAction', 'onSortAction', 'onChangeAction']);
+/**
+ * Node `props` keys that reference `document.actions` ids — must match `GenUIRenderer` wiring
+ * (see `docs/GENERATIVE_UI.md` §6). Document-level `onMountAction` is checked separately in
+ * {@link lintGenUIDocument}.
+ */
+const ACTION_PROP_KEYS = new Set([
+  'onClickAction',
+  'onSortAction',
+  'onChangeAction',
+  'onCloseAction',
+  'onPageChangeAction',
+]);
 
 function walkUi(
   node: GenUINode,
@@ -96,6 +106,19 @@ export function lintGenUIDocument(
       code: 'MISSING_ACTION',
       message: `Referenced action "${ref}" is not defined in document.actions`,
       path: '/ui',
+    });
+  }
+
+  const mountId =
+    typeof doc.onMountAction === 'string' && doc.onMountAction.trim().length > 0
+      ? doc.onMountAction.trim()
+      : undefined;
+  if (mountId && !actionKeys.has(mountId)) {
+    issues.push({
+      level: 'warning',
+      code: 'MISSING_ACTION',
+      message: `Referenced action "${mountId}" is not defined in document.actions`,
+      path: '/onMountAction',
     });
   }
 

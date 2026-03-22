@@ -33,6 +33,7 @@ describe('Button', () => {
       </Button>
     );
     const btn = screen.getByRole('button');
-    expect(btn.className).toMatch(/primary-500/);
+    /* Aurora primary uses solid primary-600 */
+    expect(btn.className).toMatch(/primary-600/);
   });
 });

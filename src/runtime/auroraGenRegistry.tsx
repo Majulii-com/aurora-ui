@@ -4,22 +4,62 @@ import { Box } from '../components/Box';
 import { Stack } from '../components/Stack';
 import { Grid } from '../components/Grid';
 import { Container } from '../components/Container';
+import { Page } from '../components/Page';
 import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
 import { Select } from '../components/Select';
 import { Checkbox } from '../components/Checkbox';
+import { Radio } from '../components/Radio';
 import { Switch } from '../components/Switch';
+import { Slider } from '../components/Slider';
 import { Button } from '../components/Button';
 import { Alert } from '../components/Alert';
 import { Label } from '../components/Label';
 import { Tabs, TabList, Tab, TabPanel } from '../components/Tabs';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '../components/Accordion';
 import { Breadcrumb, BreadcrumbItem } from '../components/Breadcrumb';
 import { Link } from '../components/Link';
 import { ShowWhen } from '../components/ShowWhen';
+import { Card, CardHeader, CardBody, CardFooter } from '../components/Card';
+import { Modal } from '../components/Modal';
+import { Drawer } from '../components/Drawer';
+import { Tooltip } from '../components/Tooltip';
+import { DropdownItem } from '../components/Dropdown';
+import { Pagination } from '../components/Pagination';
+import { Badge } from '../components/Badge';
+import { Avatar } from '../components/Avatar';
+import { Divider } from '../components/Divider';
+import { Progress } from '../components/Progress';
+import { Skeleton } from '../components/Skeleton';
+import { EmptyState } from '../components/EmptyState';
+import { Image } from '../components/Image';
+import { Kbd } from '../components/Kbd';
+import { Code } from '../components/Code';
+import { CodeBlock } from '../components/CodeBlock';
+import { Icon } from '../components/Icon';
+import { TreeView } from '../components/TreeView';
+import { SplitPane } from '../components/SplitPane';
+import { StatCard } from '../components/StatCard';
+import { BarChart } from '../components/BarChart';
+import { LineChart } from '../components/LineChart';
+import { PieChart } from '../components/PieChart';
 /** Import implementation files so TS/Vite resolve without relying on `index` re-exports (avoids IDE 2307 on some setups). */
 import { GenText } from '../components/GenText/GenText';
 import { GenDataTable } from '../components/GenDataTable/GenDataTable';
 import { GenSpinner } from '../components/GenSpinner/GenSpinner';
+import { MultiSelect } from '../components/MultiSelect/MultiSelect';
+import { TreeTable } from '../components/TreeTable/TreeTable';
+import {
+  GenFragment,
+  GenDropdown,
+  GenPopover,
+  GenIconButtonAdd,
+} from './genRegistryWrappers';
 
 export type GenRegistryEntry = {
   component: ComponentType<Record<string, unknown>>;
@@ -39,22 +79,31 @@ function GenRow(props: Record<string, unknown>) {
   );
 }
 
-/** Default: DSL `type` string → Aurora component */
+/**
+ * Full default registry: **any `type` here** can be nested under **any** layout or container
+ * (`Stack`, `Box`, `Card`, `TabPanel`, `ShowWhen`, `Fragment`, …) via `children` in JSON.
+ * See `docs/GENERATIVE_UI.md` §4 and `GENERATIVE_UI_DSL_PROPS.md`.
+ */
 export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
-  Box: { component: Box as ComponentType<Record<string, unknown>> },
+  /** No DOM — group nodes for flexible composition */
+  Fragment: { component: GenFragment as unknown as ComponentType<Record<string, unknown>> },
+
+  Box: { component: Box as unknown as ComponentType<Record<string, unknown>> },
   Stack: {
-    component: Stack as ComponentType<Record<string, unknown>>,
+    component: Stack as unknown as ComponentType<Record<string, unknown>>,
     defaultProps: {
       gap: 4,
       className: 'w-full min-w-0',
     },
   },
-  Row: { component: GenRow as ComponentType<Record<string, unknown>> },
-  Grid: { component: Grid as ComponentType<Record<string, unknown>> },
-  Container: { component: Container as ComponentType<Record<string, unknown>> },
-  Text: { component: GenText as ComponentType<Record<string, unknown>> },
-  Input: { component: Input as ComponentType<Record<string, unknown>> },
-  Textarea: { component: Textarea as ComponentType<Record<string, unknown>> },
+  Row: { component: GenRow as unknown as ComponentType<Record<string, unknown>> },
+  Grid: { component: Grid as unknown as ComponentType<Record<string, unknown>> },
+  Container: { component: Container as unknown as ComponentType<Record<string, unknown>> },
+  Page: { component: Page as unknown as ComponentType<Record<string, unknown>> },
+
+  Text: { component: GenText as unknown as ComponentType<Record<string, unknown>> },
+  Input: { component: Input as unknown as ComponentType<Record<string, unknown>> },
+  Textarea: { component: Textarea as unknown as ComponentType<Record<string, unknown>> },
   Select: {
     component: Select as unknown as ComponentType<Record<string, unknown>>,
     defaultProps: {
@@ -64,27 +113,180 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
       ],
     },
   },
-  Checkbox: { component: Checkbox as ComponentType<Record<string, unknown>> },
-  Switch: { component: Switch as ComponentType<Record<string, unknown>> },
-  Label: { component: Label as ComponentType<Record<string, unknown>> },
-  Button: { component: Button as ComponentType<Record<string, unknown>> },
-  Alert: { component: Alert as ComponentType<Record<string, unknown>> },
+  MultiSelect: {
+    component: MultiSelect as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      options: [
+        { value: 'a', label: 'Option A' },
+        { value: 'b', label: 'Option B' },
+        { value: 'c', label: 'Option C' },
+      ],
+      value: [],
+      onChange: () => {},
+      placeholder: 'Choose…',
+    },
+  },
+  Checkbox: { component: Checkbox as unknown as ComponentType<Record<string, unknown>> },
+  Radio: { component: Radio as unknown as ComponentType<Record<string, unknown>>, defaultProps: { name: 'gen-radio' } },
+  Switch: { component: Switch as unknown as ComponentType<Record<string, unknown>> },
+  Slider: {
+    component: Slider as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { min: 0, max: 100, value: 50, showValue: true },
+  },
+  Label: { component: Label as unknown as ComponentType<Record<string, unknown>> },
+  Button: { component: Button as unknown as ComponentType<Record<string, unknown>> },
+
+  Card: { component: Card as unknown as ComponentType<Record<string, unknown>> },
+  CardHeader: { component: CardHeader as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Header' } },
+  CardBody: { component: CardBody as unknown as ComponentType<Record<string, unknown>> },
+  CardFooter: { component: CardFooter as unknown as ComponentType<Record<string, unknown>> },
+
+  Modal: {
+    component: Modal as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { isOpen: false, onClose: () => {}, title: 'Dialog', size: 'md' },
+  },
+  Drawer: {
+    component: Drawer as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { isOpen: false, onClose: () => {}, title: 'Drawer', placement: 'right' },
+  },
+  Tooltip: {
+    component: Tooltip as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { content: 'Tooltip' },
+  },
+  /** Uses `triggerLabel` + default Button; menu items are `children` (e.g. `DropdownItem`) */
+  Dropdown: {
+    component: GenDropdown as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { triggerLabel: 'Menu', placement: 'bottom-start' },
+  },
+  DropdownItem: { component: DropdownItem as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Item' } },
+  Popover: {
+    component: GenPopover as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { triggerLabel: 'Open', placement: 'bottom-start' },
+  },
+
+  Alert: { component: Alert as unknown as ComponentType<Record<string, unknown>> },
+  Badge: { component: Badge as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Badge', variant: 'primary' } },
+  Avatar: { component: Avatar as unknown as ComponentType<Record<string, unknown>>, defaultProps: { name: '?' } },
+  Spinner: { component: GenSpinner as unknown as ComponentType<Record<string, unknown>> },
+  Progress: { component: Progress as unknown as ComponentType<Record<string, unknown>>, defaultProps: { value: 50, max: 100 } },
+  Skeleton: { component: Skeleton as unknown as ComponentType<Record<string, unknown>> },
+  EmptyState: {
+    component: EmptyState as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { title: 'Nothing here', description: 'Add content to get started.' },
+  },
+  Divider: { component: Divider as unknown as ComponentType<Record<string, unknown>> },
+
   Tabs: {
     component: Tabs as unknown as ComponentType<Record<string, unknown>>,
     defaultProps: { value: '1', onChange: () => {} },
   },
-  TabList: { component: TabList as ComponentType<Record<string, unknown>> },
+  TabList: { component: TabList as unknown as ComponentType<Record<string, unknown>> },
   Tab: { component: Tab as unknown as ComponentType<Record<string, unknown>> },
   TabPanel: { component: TabPanel as unknown as ComponentType<Record<string, unknown>> },
-  Breadcrumb: { component: Breadcrumb as ComponentType<Record<string, unknown>> },
-  BreadcrumbItem: { component: BreadcrumbItem as ComponentType<Record<string, unknown>> },
-  Link: { component: Link as ComponentType<Record<string, unknown>> },
-  Spinner: { component: GenSpinner as ComponentType<Record<string, unknown>> },
+
+  Accordion: {
+    component: Accordion as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { variant: 'default', allowMultiple: false },
+  },
+  AccordionItem: { component: AccordionItem as unknown as ComponentType<Record<string, unknown>>, defaultProps: { value: '1' } },
+  AccordionTrigger: {
+    component: AccordionTrigger as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { children: 'Section' },
+  },
+  AccordionContent: { component: AccordionContent as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Content' } },
+
+  Breadcrumb: { component: Breadcrumb as unknown as ComponentType<Record<string, unknown>> },
+  BreadcrumbItem: { component: BreadcrumbItem as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Home' } },
+  Link: { component: Link as unknown as ComponentType<Record<string, unknown>>, defaultProps: { href: '#', children: 'Link' } },
+  Pagination: {
+    component: Pagination as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { page: 1, totalPages: 5, onPageChange: () => {} },
+  },
+
   Table: {
-    component: GenDataTable as ComponentType<Record<string, unknown>>,
+    component: GenDataTable as unknown as ComponentType<Record<string, unknown>>,
     defaultProps: { className: 'w-full min-w-0' },
   },
-  ShowWhen: { component: ShowWhen as ComponentType<Record<string, unknown>> },
+  TreeTable: {
+    component: TreeTable as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      className: 'w-full min-w-0',
+      columns: [
+        { key: 'name', label: 'Name' },
+        { key: 'role', label: 'Role' },
+      ],
+      rows: [
+        { id: '1', name: 'Engineering', role: 'Dept' },
+        { id: '2', parentId: '1', name: 'Platform', role: 'Team' },
+        { id: '3', parentId: '2', name: 'API', role: 'Squad' },
+      ],
+      defaultExpandAll: true,
+    },
+  },
+  TreeView: {
+    component: TreeView as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      items: [
+        { id: '1', label: 'Folder', children: [{ id: '1-1', label: 'File' }] },
+      ],
+    },
+  },
+  SplitPane: {
+    component: SplitPane as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { direction: 'horizontal', defaultSize: 0.4 },
+  },
+
+  Image: {
+    component: Image as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { src: 'https://picsum.photos/seed/aurora/800/400', alt: '' },
+  },
+  Kbd: { component: Kbd as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: '⌘K' } },
+  Code: { component: Code as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'code' } },
+  CodeBlock: {
+    component: CodeBlock as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { code: '// example', showLineNumbers: true },
+  },
+  Icon: { component: Icon as unknown as ComponentType<Record<string, unknown>>, defaultProps: { name: 'search' } },
+  IconButton: {
+    component: GenIconButtonAdd as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { 'aria-label': 'Action' },
+  },
+
+  StatCard: {
+    component: StatCard as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { title: 'Metric', value: '—', trend: 'neutral', trendLabel: '' },
+  },
+  BarChart: {
+    component: BarChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { label: 'A', value: 10 },
+        { label: 'B', value: 24 },
+      ],
+      height: 180,
+    },
+  },
+  LineChart: {
+    component: LineChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { x: 'Mon', y: 2 },
+        { x: 'Tue', y: 5 },
+      ],
+      height: 180,
+    },
+  },
+  PieChart: {
+    component: PieChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { label: 'A', value: 40 },
+        { label: 'B', value: 60 },
+      ],
+    },
+  },
+
+  ShowWhen: { component: ShowWhen as unknown as ComponentType<Record<string, unknown>> },
 };
 
 /** For {@link lintGenUIDocument} registry checks */

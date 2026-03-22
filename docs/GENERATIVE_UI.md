@@ -12,6 +12,8 @@ This document lists **only behavior that is implemented today** in `aurora-ui` (
 
 Inside this repo, **`examples/dsl-host-app/`** is a small Vite app that switches between several **full `GenUIDocument` JSON files** (dashboard, support table, marketing, API table, settings tabs). Run from package root: `npm run example:dsl-host`. It uses the same `GenUIProvider` + `GenUIRenderer` pipeline as a production host; see `examples/dsl-host-app/README.md`.
 
+**`examples/dsl-ops-dashboard/`** is a **single full-screen** example: one large composite **`enterprise-dashboard.json`** (charts, `SplitPane`, `Tabs`, API-backed `Table` + `Pagination` + `onMountAction`, regional table with column filters, `TreeView`, `Accordion`, `Modal`, `Dropdown`, etc.). Run: `npm run example:ops-dashboard` (see `examples/dsl-ops-dashboard/README.md`).
+
 ---
 
 ## 1. Pipeline
@@ -51,7 +53,7 @@ All of these use **composition** of registry components + **global state** + **a
 | Question | Answer |
 |----------|--------|
 | **Can JSON describe both structure and design?** | **Yes** for **registered** `type`s: nested `children` define structure; `props.className`, variants, and DSL props (see `GENERATIVE_UI_DSL_PROPS.md`) define look & feel. |
-| **Is every file under `src/components` usable from JSON by default?** | **No.** The **default registry** (`auroraGenUIRegistry`) is a **curated subset** (layout, forms, tabs, table, alerts, etc.). Other exports (`Card`, `Modal`, `Drawer`, `Pagination`, charts, `Chat`, …) require a **custom `registry`** passed to `GenUIRenderer` (and usually small wiring in `GenUIRenderer` for new `*Action` props if needed). |
+| **Is every file under `src/components` usable from JSON by default?** | **Mostly yes** for building blocks: the **default registry** (`auroraGenUIRegistry`) now includes layout, forms, **Card**, **Modal** / **Drawer**, overlays (**Tooltip**, **Dropdown**, **Popover**), **Accordion**, **Pagination**, charts, **TreeView**, **SplitPane**, media, and more (see §4). **Chat** and a few specialized widgets stay React-only unless you pass a **custom `registry`**. |
 | **Can you build “any” real app UI from JSON alone?** | **Many** dashboards, settings screens, marketing blocks, and data-heavy views — **yes**, with composition + state + actions. Patterns that need **unbounded dynamic children** from JSON (`repeat`/`map` nodes) are **not** built-in: use **arrays in `state`** passed into props like `Table`’s `rows` instead. |
 | **What always stays outside pure JSON?** | **Host wiring**: `navigate`, `onCustom`, fetch policy, and any behavior not exposed as `ActionDef` or renderer props. |
 
@@ -91,20 +93,29 @@ You **can** pass **Tailwind** (or any CSS module) classes from JSON:
 
 ## 4. Default registry (`auroraGenUIRegistry`)
 
-Pass a **custom** `registry` to `GenUIRenderer` to extend; `lintGenUIDocument(..., { registryTypes: auroraGenUIRegistryTypes })` validates against **default** keys.
+Pass a **custom** `registry` to `GenUIRenderer` to merge or override; `lintGenUIDocument(..., { registryTypes: auroraGenUIRegistryTypes })` validates against **default** keys.
+
+**Composition rule:** Any registered `type` can appear under any **container**’s `children` array — e.g. `Table` inside `Card` → `CardBody`, `Button` + `Input` inside `Stack`, `Modal` body as nested nodes, `Fragment` to group without extra DOM. Use **`Fragment`** when you need multiple roots logically grouped. If both **`props.children`** (string/number) **and** nested `children` nodes exist, the renderer **merges** them (text first, then nodes) so labels + icons stay flexible.
 
 | `type` | Role |
 |--------|------|
-| **Layout** | `Box`, `Stack`, `Row` (horizontal `Stack`), `Grid`, `Container` |
-| **Typography / chrome** | `Text` (`GenText`: `variant`: `body` \| `title` \| `muted`), `Label`, `Link`, `Breadcrumb`, `BreadcrumbItem` |
-| **Form controls** | `Input`, `Textarea`, `Select` (default demo `options` in registry), `Checkbox`, `Switch` |
-| **Actions** | `Button` |
-| **Feedback** | `Alert`, `Spinner` (`GenSpinner`) |
-| **Navigation** | `Tabs`, `TabList`, `Tab`, `TabPanel` |
-| **Data** | `Table` (`GenDataTable`: sortable columns, optional filter row) |
+| **Grouping** | `Fragment` (no wrapper DOM) |
+| **Layout** | `Box`, `Stack`, `Row`, `Grid`, `Container`, `Page`, `SplitPane` |
+| **Typography / chrome** | `Text`, `Label`, `Link`, `Breadcrumb`, `BreadcrumbItem`, `Kbd`, `Code`, `CodeBlock` |
+| **Surfaces** | `Card`, `CardHeader`, `CardBody`, `CardFooter` |
+| **Form controls** | `Input`, `Textarea`, `Select`, `MultiSelect`, `Checkbox`, `Radio`, `Switch`, `Slider` |
+| **Actions** | `Button`, `IconButton` (default icon if no child nodes), `Icon` |
+| **Feedback** | `Alert`, `Spinner`, `Badge`, `Avatar`, `Progress`, `Skeleton`, `EmptyState`, `Divider` |
+| **Overlays** | `Modal` (`onCloseAction` + `isOpen` from state), `Drawer` (same), `Tooltip` (trigger = child nodes), `Dropdown` (`triggerLabel` + `DropdownItem` children), `Popover` (`triggerLabel` + body children) |
+| **Navigation** | `Tabs`, `TabList`, `Tab`, `TabPanel`, `Pagination` |
+| **Data** | `Table` (`GenDataTable`), `TreeTable`, `TreeView` |
+| **Charts** | `StatCard`, `BarChart`, `LineChart`, `PieChart` |
+| **Media** | `Image` |
 | **Conditional** | `ShowWhen` |
 
-Component-specific props match the underlying React components (see source under `src/components/*`). **JSON cannot pass functions**; use `bind`, `*Action`, and `tabBind` (§6).
+Component-specific props match the underlying React components (see `src/components/*` and `GENERATIVE_UI_DSL_PROPS.md`). **JSON cannot pass functions**; use `bind`, `*Action`, `tabBind`, `filterBind`, `columnFiltersBind`, `onCloseAction` (§6).
+
+**Document-level:** optional **`onMountAction`** on the root document (same value shape as `onClickAction`: an `actions` id). **`GenUIProvider`** runs `runAction(id)` **once** after mount (and again if the id **string** changes). No `event` payload.
 
 ---
 
@@ -126,7 +137,7 @@ Resolved in strings via `resolveValue` / `resolveDeep`:
 
 ## 6. Renderer wiring props (`GenUIRenderer`)
 
-**Text labels on leaf components** (`Button`, `Tab`, `Text`, …): put the label in **`props.children`** (a string in JSON). If the node has **no** `children` array in JSON, that string is passed through as React `children`. *(Older builds accidentally dropped it by passing `undefined` as explicit children.)*
+**Text labels on leaf components** (`Button`, `Tab`, `Text`, …): put the label in **`props.children`** (a string in JSON). If the node has **no** `children` array in JSON, that string is passed through as React `children`. If the node has **both** a string/number **`props.children`** **and** a **`children`** array, the renderer **merges**: literal text first, then nested components (e.g. `Button` with label + `Icon`).
 
 **Optional wrapper:** pass `className` to **`GenUIRenderer`** (e.g. `max-w-3xl mx-auto p-6`) for host/preview spacing — it does not change the DSL tree.
 
@@ -135,14 +146,20 @@ Applied **after** `resolveDeep` on `props`. These keys are **consumed** by the r
 | Prop | Applies to | Behavior |
 |------|------------|----------|
 | **`bind`** | `Input`, `Textarea`, `Select` | Two-way **string** at dot-path: `value` + `onChange` → `setState` |
+| **`bind`** | `MultiSelect` | Two-way **`string[]`** at dot-path: `value` + `onChange` → `setState` |
 | **`bind`** | `Checkbox`, `Switch` | Two-way **boolean**: `checked` + `onChange` → `setState` |
 | **`tabBind`** | `Tabs` only | `value` / `onChange` bound to state path (string tab id) |
 | **`onClickAction`** | e.g. `Button`, `Link` | `onClick` → `runAction(id)` — **no `event` payload** |
 | **`onSortAction`** | `Table` | `onSort(column)` → `runAction(id, { column })` |
 | **`onChangeAction`** | After `bind` / `tabBind` | After internal `onChange`, `runAction(id, { value }` or `{ value, checked }`) |
 | **`filterBind`** | `Table` | `filter` + `onFilterChange` bound to state path (string) |
+| **`columnFiltersBind`** | `Table` | `columnFilters` + `onColumnFilterChange` bound to a state path holding **`Record<string, string>`** (use with `filterable` columns) |
+| **`onCloseAction`** | `Modal`, `Drawer` | Appended to `onClose` → `runAction(id)` after any existing close handler |
+| **`onPageChangeAction`** | `Pagination` | `onPageChange(page)` → `runAction(id, { page })` |
 | **`loadingKey`** | `ShowWhen` | **`when` is replaced**: `true` iff `loading[loadingKey] === true` (see §8). Ignores literal `when` in props. |
 | **`when`** | `ShowWhen` **without** `loadingKey` | `when` resolved then coerced with `Boolean`-like rules (`true`, `"true"`, non-zero number, etc.) |
+
+**`onMountAction`** (on **`GenUIDocument`**, not on a node): see the paragraph before §5 — handled by **`GenUIProvider`**, not `GenUIRenderer`.
 
 **`onOpenChangeAction` / `onSubmitAction`:** not interpreted by `GenUIRenderer`; use `Button` + `onClickAction` or extend the registry.
 
@@ -163,7 +180,7 @@ Registered in `actions`; referenced by string id from wiring props.
 
 `path`, `url`, `value`, `body`, etc. support `{{…}}` resolution.
 
-**`runAction(id, event?)`:** `event` is set only where the renderer passes it (`onSortAction`, `onChangeAction`). **`onClickAction` does not pass `event`.**
+**`runAction(id, event?)`:** `event` is set only where the renderer passes it (`onSortAction`, `onChangeAction`, **`onPageChangeAction`** → `{ page }`). **`onClickAction` does not pass `event`.**
 
 ---
 
@@ -192,7 +209,7 @@ Store also exposes **`lastError`** (interpreter sets on HTTP / network failure);
 ## 10. Validation & lint
 
 - **`parseGenUIDocument`**: Zod schema; invalid JSON shape rejected.
-- **`lintGenUIDocument`**: optional **warnings** (unknown `type` vs registry set; missing `actions[id]` for `onClickAction` / `onSortAction` / `onChangeAction`); **errors** for **max tree depth** and **max node count** (`DEFAULT_GEN_LIMITS` in `genLimits.ts`).
+- **`lintGenUIDocument`**: optional **warnings** (unknown `type` vs registry set; missing `actions[id]` for `onClickAction` / `onSortAction` / `onChangeAction` / `onCloseAction` / document `onMountAction`); **errors** for **max tree depth** and **max node count** (`DEFAULT_GEN_LIMITS` in `genLimits.ts`).
 - **`parseAndLintGenUIDocument`**: combines both; **`ok`** is false if Zod fails **or** lint has **error**-level issues.
 
 ---

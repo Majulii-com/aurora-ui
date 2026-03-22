@@ -2,6 +2,8 @@ import type { ActionDef } from '../schema/genDocumentTypes';
 import type { GenRuntimeStore } from './genStore';
 import { resolveValue, resolveDeep, sanitizeForLog } from './expressions';
 import type { ExpressionContext } from '../schema/genDocumentTypes';
+import type { EngineErrorHandler } from './core/engineTypes';
+import { reportEngineError } from './core/reportEngineError';
 
 export type NavigateHandler = (path: string) => void;
 export type CustomHandler = (name: string, payload: unknown) => void;
@@ -13,6 +15,11 @@ export interface InterpreterOptions {
   onCustom?: CustomHandler;
   /** Resolved `document.bindings` for `{{bindings.*}}` inside actions */
   resolvedBindings?: Record<string, unknown>;
+  /**
+   * Called when the action runner hits an unexpected error (resolver/merge bugs, invalid DSL shapes).
+   * HTTP/API failures still use `store.lastError` and `onError` chains; this is for thrown exceptions.
+   */
+  onEngineError?: EngineErrorHandler;
 }
 
 function buildCtx(
@@ -33,6 +40,18 @@ async function runOne(
   opts: InterpreterOptions,
   ctx: ExpressionContext
 ): Promise<void> {
+  try {
+    await runOneImpl(action, opts, ctx);
+  } catch (error) {
+    reportEngineError(opts, error, { phase: 'runOne', actionType: action.type });
+  }
+}
+
+async function runOneImpl(
+  action: ActionDef,
+  opts: InterpreterOptions,
+  ctx: ExpressionContext
+): Promise<void> {
   const { store, navigate, onCustom } = opts;
 
   switch (action.type) {
@@ -45,8 +64,15 @@ async function runOne(
       break;
     }
     case 'MERGE_STATE': {
-      const patch = resolveDeep(action.patch, ctx) as Record<string, unknown>;
-      store.mergeState(patch);
+      const patch = resolveDeep(action.patch, ctx);
+      if (patch != null && typeof patch === 'object' && !Array.isArray(patch)) {
+        store.mergeState(patch as Record<string, unknown>);
+      } else {
+        reportEngineError(opts, new Error('MERGE_STATE expects a plain object `patch` after resolution'), {
+          phase: 'runOne',
+          actionType: 'MERGE_STATE',
+        });
+      }
       break;
     }
     case 'API_CALL': {
@@ -138,20 +164,28 @@ export async function runAction(
   opts: InterpreterOptions,
   eventCtx?: Record<string, unknown>
 ): Promise<void> {
-  const { store, actionsRegistry } = opts;
-  let def: ActionDef | undefined;
-  if (typeof actionRef === 'string') {
-    def = actionsRegistry?.[actionRef];
-    if (!def) {
-      console.warn(`Action not found: ${actionRef}`);
-      return;
+  try {
+    const { store, actionsRegistry } = opts;
+    let def: ActionDef | undefined;
+    if (typeof actionRef === 'string') {
+      def = actionsRegistry?.[actionRef];
+      if (!def) {
+        console.warn(`Action not found: ${actionRef}`);
+        return;
+      }
+    } else {
+      def = actionRef;
     }
-  } else {
-    def = actionRef;
-  }
 
-  const ctx = buildCtx(store, { event: eventCtx }, opts.resolvedBindings);
-  await runOne(def, opts, ctx);
+    const ctx = buildCtx(store, { event: eventCtx }, opts.resolvedBindings);
+    await runOne(def, opts, ctx);
+  } catch (error) {
+    reportEngineError(opts, error, {
+      phase: 'runAction',
+      actionId: typeof actionRef === 'string' ? actionRef : undefined,
+      actionType: typeof actionRef !== 'string' ? actionRef.type : undefined,
+    });
+  }
 }
 
 export async function runChain(
@@ -159,8 +193,12 @@ export async function runChain(
   opts: InterpreterOptions,
   eventCtx?: Record<string, unknown>
 ): Promise<void> {
-  const ctx = buildCtx(opts.store, { event: eventCtx }, opts.resolvedBindings);
-  for (const step of chain) {
-    await runOne(step, opts, ctx);
+  try {
+    const ctx = buildCtx(opts.store, { event: eventCtx }, opts.resolvedBindings);
+    for (const step of chain) {
+      await runOne(step, opts, ctx);
+    }
+  } catch (error) {
+    reportEngineError(opts, error, { phase: 'runChain' });
   }
 }

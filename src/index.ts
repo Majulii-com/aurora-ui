@@ -314,6 +314,7 @@ export type {
   NavigateHandler,
   CustomHandler,
 } from './runtime/genInterpreter';
+export type { EngineActionContext, EngineActionPhase, EngineErrorHandler } from './runtime/core/engineTypes';
 export {
   GenUIProvider,
   useGenUI,

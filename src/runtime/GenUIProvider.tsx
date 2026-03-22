@@ -5,6 +5,7 @@ import type { InterpreterOptions } from './genInterpreter';
 import { runAction } from './genInterpreter';
 import type { ActionDef } from '../schema/genDocumentTypes';
 import { resolveNamedBindingMap } from './expressions';
+import type { EngineErrorHandler } from './core/engineTypes';
 
 type GenUIContextValue = {
   document: GenUIDocument;
@@ -13,6 +14,7 @@ type GenUIContextValue = {
   actions: Record<string, ActionDef>;
   navigate?: (path: string) => void;
   onCustom?: (name: string, payload: unknown) => void;
+  onEngineError?: EngineErrorHandler;
 };
 
 const Ctx = createContext<GenUIContextValue | null>(null);
@@ -22,11 +24,14 @@ export function GenUIProvider({
   children,
   navigate,
   onCustom,
+  onEngineError,
 }: {
   document: GenUIDocument;
   children: React.ReactNode;
   navigate?: (path: string) => void;
   onCustom?: (name: string, payload: unknown) => void;
+  /** Forwarded into the Gen action interpreter (unexpected throws, invalid MERGE shapes, etc.). */
+  onEngineError?: EngineErrorHandler;
 }) {
   const storeApi = useMemo(() => createRuntimeStore(document.state ?? {}), [document]);
 
@@ -38,8 +43,9 @@ export function GenUIProvider({
       actions: document.actions ?? {},
       navigate,
       onCustom,
+      onEngineError,
     }),
-    [document, storeApi, navigate, onCustom]
+    [document, storeApi, navigate, onCustom, onEngineError]
   );
 
   return (
@@ -78,7 +84,7 @@ export function useGenUIState<T>(selector: (s: GenRuntimeStore) => T): T {
 }
 
 export function useRunAction() {
-  const { getStore, actions, navigate, onCustom, document } = useGenUI();
+  const { getStore, actions, navigate, onCustom, onEngineError, document } = useGenUI();
   const state = useGenUIState((s) => s.state);
 
   const resolvedBindings = useMemo(
@@ -100,9 +106,10 @@ export function useRunAction() {
           navigate,
           onCustom,
           resolvedBindings,
+          onEngineError,
         };
         await runAction(ref, opts, event);
       },
-    [getStore, actions, navigate, onCustom, resolvedBindings]
+    [getStore, actions, navigate, onCustom, onEngineError, resolvedBindings]
   );
 }

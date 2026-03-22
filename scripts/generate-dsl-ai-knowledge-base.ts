@@ -83,7 +83,7 @@ function appendExamplesSection(lines: string[]): void {
 
   lines.push('---');
   lines.push('');
-  lines.push('## 8. Example full documents (target AI response shape)');
+  lines.push('## 9. Example full documents (target AI response shape)');
   lines.push('');
   lines.push(
     'When asked to **generate UI as JSON**, respond with **one** root object that matches `GenUIDocument`: at minimum `ui` + `state`; add `actions` when using `onClickAction`, `bind`, `tabBind`, `onMountAction`, etc. Do **not** output functions — only data. Below are **valid** examples (Zod-checked at generate time); source files live in `dsl-kb/examples/`.'
@@ -128,7 +128,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('## Purpose');
   lines.push('');
   lines.push(
-    'This file is optimized for **LLM context**: it describes the **JSON shape** (`GenUIDocument`), **expression strings**, **declarative actions**, **renderer wiring** (special prop names), **lint limits**, **every default registry component** with example `defaultProps`, and **§8 — full example documents** showing the response shape for interactive UIs.'
+    'This file is optimized for **LLM context**: it describes **§1 — responsive layout rules** (required for any generated UI), the **JSON shape** (`GenUIDocument`), **expression strings**, **declarative actions**, **renderer wiring** (special prop names), **lint limits**, **every default registry component** with example `defaultProps`, and **§9 — full example documents** showing the response shape for interactive UIs.'
   );
   lines.push('');
   lines.push('Use it together with human docs: `docs/GENERATIVE_UI.md`, `docs/GENERATIVE_UI_DSL_PROPS.md`, `docs/COMPONENT_DSL_CONVENTIONS.md`.');
@@ -137,7 +137,48 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 1. Pipeline (mental model)');
+  lines.push('## 1. Responsive layout (all viewports — required)');
+  lines.push('');
+  lines.push(
+    '**Every** generated `GenUIDocument` must read and interact correctly on **phone, tablet, desktop, and large monitors** without horizontal page overflow, clipped controls, or unusably small tap targets. Prefer **fluid** layout; avoid fixed pixel widths for page shells and main columns.'
+  );
+  lines.push('');
+  lines.push('### 1.1 Defaults you can rely on');
+  lines.push('');
+  lines.push(
+    '- **`Stack`** (registry default) includes `w-full min-w-0`; **`Row`** wraps horizontal stacks with `w-full min-w-0` so flex children can shrink inside narrow parents.'
+  );
+  lines.push(
+    '- **`Grid`** uses **mobile-first** column tracks (e.g. `columns: 3` → one column on small screens, up to three from `lg:`). Override with `props.className` if a design needs a different breakpoint ladder.'
+  );
+  lines.push(
+    '- **`Page`**, **`Box`**, **`Card`**, **`StatCard`**, **`Table`** scroll wrappers include **`min-w-0`** (and width where needed) so nested flex/grid layouts don’t force horizontal overflow.'
+  );
+  lines.push(
+    '- **Charts** use Recharts `ResponsiveContainer` where applicable; still set a sensible numeric `height` and put the chart in a parent with `className` containing `w-full min-w-0`.'
+  );
+  lines.push('');
+  lines.push('### 1.2 What the model must do in JSON (`className` / structure)');
+  lines.push('');
+  lines.push(
+    '- Use **Tailwind responsive prefixes** on layout and typography: `sm:`, `md:`, `lg:`, `xl:`, `2xl:` — e.g. `flex-col md:flex-row`, `gap-3 md:gap-6`, `text-sm md:text-base`, `p-4 lg:p-8`.'
+  );
+  lines.push(
+    '- Prefer **`Container`** + **`Stack`** / **`Grid`** for dashboards; avoid `w-[420px]`-style fixed main widths. Use `max-w-*`, `w-full`, `flex-1`, `min-w-0`, and `overflow-x-auto` on inner scroll regions (e.g. wide **`GenDataTable`** / toolbars).'
+  );
+  lines.push(
+    '- **`SplitPane`**: on small viewports side-by-side panes are often too narrow; prefer **`className`** patterns that stack or hide secondary content via **`ShowWhen`** + state, or host-specific layouts — document the intent in examples when using split layouts.'
+  );
+  lines.push(
+    '- **Forms**: full-width inputs on mobile (`w-full`), adequate vertical spacing between fields, and **`Modal`** / **`Drawer`** sizes that fit small screens (`size` + `className`).'
+  );
+  lines.push(
+    '- **Touch**: keep interactive controls at least ~44×44 CSS px where possible (padding on **`Button`**, **`IconButton`**, **`Tab`** targets).'
+  );
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+  lines.push('## 2. Pipeline (mental model)');
   lines.push('');
   lines.push('```');
   lines.push('GenUIDocument JSON');
@@ -150,7 +191,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 2. Root document shape (`GenUIDocument`)');
+  lines.push('## 3. Root document shape (`GenUIDocument`)');
   lines.push('');
   lines.push('| Field | Required | Role |');
   lines.push('|-------|----------|------|');
@@ -161,9 +202,9 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('| `version` | no | Tooling only |');
   lines.push('| `onMountAction` | no | Action id run once on mount |');
   lines.push('');
-  lines.push('### 2.1 `GenUINode`');
+  lines.push('### 3.1 `GenUINode`');
   lines.push('');
-  lines.push('- `type` — string, must be a key in the host registry (default list: **§7**).');
+  lines.push('- `type` — string, must be a key in the host registry (default list: **§8**).');
   lines.push('- `props` — object; values may contain `{{state.path}}`, `{{bindings.x}}`, `{{response}}` after API calls, etc.');
   lines.push('- `children` — nested `GenUINode[]` for composition.');
   lines.push('- `id` — optional hint for React keys.');
@@ -172,7 +213,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 3. Expression placeholders');
+  lines.push('## 4. Expression placeholders');
   lines.push('');
   lines.push('Strings in `props` are resolved with `resolveDeep`. Typical patterns:');
   lines.push('');
@@ -182,7 +223,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 4. Action types (`ActionDef`)');
+  lines.push('## 5. Action types (`ActionDef`)');
   lines.push('');
   lines.push(`Allowed \`type\` discriminator values: **${ACTION_TYPES.join('**, **')}**.`);
   lines.push('');
@@ -197,7 +238,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 5. Renderer DSL wiring (special `props`)');
+  lines.push('## 6. Renderer DSL wiring (special `props`)');
   lines.push('');
   lines.push('These props are interpreted by `GenUIRenderer` — they are **not** passed raw to React components.');
   lines.push('');
@@ -213,7 +254,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 6. Document limits (lint)');
+  lines.push('## 7. Document limits (lint)');
   lines.push('');
   lines.push('| Limit | Default |');
   lines.push('|-------|---------|');
@@ -222,7 +263,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## 7. Default registry components');
+  lines.push('## 8. Default registry components');
   lines.push('');
   lines.push(`**Count:** ${snapshot.componentCount} types.`);
   if (snapshot.taxonomyMissingExplicit.length > 0) {
@@ -265,7 +306,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
 
   lines.push('---');
   lines.push('');
-  lines.push('## 9. Machine-readable snapshot');
+  lines.push('## 10. Machine-readable snapshot');
   lines.push('');
   lines.push('See `dsl-kb/dsl-registry.snapshot.json` for the same registry metadata as structured JSON.');
   lines.push('');

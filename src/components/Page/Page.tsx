@@ -3,7 +3,7 @@ import { cn } from '../../utils';
 import type { PageProps } from './Page.types';
 
 export const Page = forwardRef<HTMLDivElement, PageProps>(({ className, children, ...rest }, ref) => (
-  <div ref={ref} className={cn('min-h-screen w-full', className)} {...rest}>
+  <div ref={ref} className={cn('min-h-screen w-full min-w-0', className)} {...rest}>
     {children}
   </div>
 ));

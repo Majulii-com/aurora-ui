@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import React from 'react';
+import { cn } from '../utils';
 import { Box } from '../components/Box';
 import { Stack } from '../components/Stack';
 import { Grid } from '../components/Grid';
@@ -86,7 +87,13 @@ function GenRow(props: Record<string, unknown>) {
   const n = Number(rawGap);
   const gap = (GAPS.has(n) ? n : 3) as 0 | 1 | 2 | 3 | 4 | 6 | 8;
   return (
-    <Stack direction="row" gap={gap} align="center" className={className as string | undefined} {...rest}>
+    <Stack
+      direction="row"
+      gap={gap}
+      align="center"
+      className={cn('w-full min-w-0', className as string | undefined)}
+      {...rest}
+    >
       {children as React.ReactNode}
     </Stack>
   );

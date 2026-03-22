@@ -1,11 +1,11 @@
 # Aurora GenUI DSL — AI knowledge base (generated)
 
 > **Auto-generated** — do not edit by hand. Run `npm run gen:dsl-kb` after registry or renderer changes.
-> **Generated at:** 2026-03-22T22:31:23.134Z
+> **Generated at:** 2026-03-22T22:44:13.769Z
 
 ## Purpose
 
-This file is optimized for **LLM context**: it describes the **JSON shape** (`GenUIDocument`), **expression strings**, **declarative actions**, **renderer wiring** (special prop names), **lint limits**, **every default registry component** with example `defaultProps`, and **§8 — full example documents** showing the response shape for interactive UIs.
+This file is optimized for **LLM context**: it describes **§1 — responsive layout rules** (required for any generated UI), the **JSON shape** (`GenUIDocument`), **expression strings**, **declarative actions**, **renderer wiring** (special prop names), **lint limits**, **every default registry component** with example `defaultProps`, and **§9 — full example documents** showing the response shape for interactive UIs.
 
 Use it together with human docs: `docs/GENERATIVE_UI.md`, `docs/GENERATIVE_UI_DSL_PROPS.md`, `docs/COMPONENT_DSL_CONVENTIONS.md`.
 
@@ -13,7 +13,28 @@ Wiring rows and taxonomy are maintained in `src/runtime/dslRendererWiring.ts` an
 
 ---
 
-## 1. Pipeline (mental model)
+## 1. Responsive layout (all viewports — required)
+
+**Every** generated `GenUIDocument` must read and interact correctly on **phone, tablet, desktop, and large monitors** without horizontal page overflow, clipped controls, or unusably small tap targets. Prefer **fluid** layout; avoid fixed pixel widths for page shells and main columns.
+
+### 1.1 Defaults you can rely on
+
+- **`Stack`** (registry default) includes `w-full min-w-0`; **`Row`** wraps horizontal stacks with `w-full min-w-0` so flex children can shrink inside narrow parents.
+- **`Grid`** uses **mobile-first** column tracks (e.g. `columns: 3` → one column on small screens, up to three from `lg:`). Override with `props.className` if a design needs a different breakpoint ladder.
+- **`Page`**, **`Box`**, **`Card`**, **`StatCard`**, **`Table`** scroll wrappers include **`min-w-0`** (and width where needed) so nested flex/grid layouts don’t force horizontal overflow.
+- **Charts** use Recharts `ResponsiveContainer` where applicable; still set a sensible numeric `height` and put the chart in a parent with `className` containing `w-full min-w-0`.
+
+### 1.2 What the model must do in JSON (`className` / structure)
+
+- Use **Tailwind responsive prefixes** on layout and typography: `sm:`, `md:`, `lg:`, `xl:`, `2xl:` — e.g. `flex-col md:flex-row`, `gap-3 md:gap-6`, `text-sm md:text-base`, `p-4 lg:p-8`.
+- Prefer **`Container`** + **`Stack`** / **`Grid`** for dashboards; avoid `w-[420px]`-style fixed main widths. Use `max-w-*`, `w-full`, `flex-1`, `min-w-0`, and `overflow-x-auto` on inner scroll regions (e.g. wide **`GenDataTable`** / toolbars).
+- **`SplitPane`**: on small viewports side-by-side panes are often too narrow; prefer **`className`** patterns that stack or hide secondary content via **`ShowWhen`** + state, or host-specific layouts — document the intent in examples when using split layouts.
+- **Forms**: full-width inputs on mobile (`w-full`), adequate vertical spacing between fields, and **`Modal`** / **`Drawer`** sizes that fit small screens (`size` + `className`).
+- **Touch**: keep interactive controls at least ~44×44 CSS px where possible (padding on **`Button`**, **`IconButton`**, **`Tab`** targets).
+
+---
+
+## 2. Pipeline (mental model)
 
 ```
 GenUIDocument JSON
@@ -26,7 +47,7 @@ GenUIDocument JSON
 
 ---
 
-## 2. Root document shape (`GenUIDocument`)
+## 3. Root document shape (`GenUIDocument`)
 
 | Field | Required | Role |
 |-------|----------|------|
@@ -37,9 +58,9 @@ GenUIDocument JSON
 | `version` | no | Tooling only |
 | `onMountAction` | no | Action id run once on mount |
 
-### 2.1 `GenUINode`
+### 3.1 `GenUINode`
 
-- `type` — string, must be a key in the host registry (default list: **§7**).
+- `type` — string, must be a key in the host registry (default list: **§8**).
 - `props` — object; values may contain `{{state.path}}`, `{{bindings.x}}`, `{{response}}` after API calls, etc.
 - `children` — nested `GenUINode[]` for composition.
 - `id` — optional hint for React keys.
@@ -48,7 +69,7 @@ GenUIDocument JSON
 
 ---
 
-## 3. Expression placeholders
+## 4. Expression placeholders
 
 Strings in `props` are resolved with `resolveDeep`. Typical patterns:
 
@@ -58,7 +79,7 @@ Strings in `props` are resolved with `resolveDeep`. Typical patterns:
 
 ---
 
-## 4. Action types (`ActionDef`)
+## 5. Action types (`ActionDef`)
 
 Allowed `type` discriminator values: **SET_STATE**, **MERGE_STATE**, **API_CALL**, **NAVIGATE**, **CUSTOM**, **CHAIN**.
 
@@ -73,7 +94,7 @@ Allowed `type` discriminator values: **SET_STATE**, **MERGE_STATE**, **API_CALL*
 
 ---
 
-## 5. Renderer DSL wiring (special `props`)
+## 6. Renderer DSL wiring (special `props`)
 
 These props are interpreted by `GenUIRenderer` — they are **not** passed raw to React components.
 
@@ -95,7 +116,7 @@ These props are interpreted by `GenUIRenderer` — they are **not** passed raw t
 
 ---
 
-## 6. Document limits (lint)
+## 7. Document limits (lint)
 
 | Limit | Default |
 |-------|---------|
@@ -104,7 +125,7 @@ These props are interpreted by `GenUIRenderer` — they are **not** passed raw t
 
 ---
 
-## 7. Default registry components
+## 8. Default registry components
 
 **Count:** 76 types.
 
@@ -929,7 +950,7 @@ Grouped by category. **`defaultProps`** are copied from `auroraGenUIRegistry` (f
 
 ---
 
-## 8. Example full documents (target AI response shape)
+## 9. Example full documents (target AI response shape)
 
 When asked to **generate UI as JSON**, respond with **one** root object that matches `GenUIDocument`: at minimum `ui` + `state`; add `actions` when using `onClickAction`, `bind`, `tabBind`, `onMountAction`, etc. Do **not** output functions — only data. Below are **valid** examples (Zod-checked at generate time); source files live in `dsl-kb/examples/`.
 
@@ -2635,6 +2656,6 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
 
 ---
 
-## 9. Machine-readable snapshot
+## 10. Machine-readable snapshot
 
 See `dsl-kb/dsl-registry.snapshot.json` for the same registry metadata as structured JSON.

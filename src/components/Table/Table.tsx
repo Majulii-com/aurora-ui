@@ -18,7 +18,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
       <TablePlainContext.Provider value={Boolean(plain)}>
         <div
           className={cn(
-            'overflow-x-auto',
+            'min-w-0 overflow-x-auto',
             ent.isAurora && !skipOuterChrome && ent.tableScrollWrap,
             wrapperClassName
           )}

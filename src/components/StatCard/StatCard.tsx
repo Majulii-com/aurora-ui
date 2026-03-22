@@ -31,7 +31,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
     <div
       ref={ref}
       className={cn(
-        'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm',
+        'w-full min-w-0 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm',
         className
       )}
     >

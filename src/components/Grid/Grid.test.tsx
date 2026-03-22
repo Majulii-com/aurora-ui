@@ -14,8 +14,11 @@ describe('Grid', () => {
     expect(screen.getByText('Cell 2')).toBeInTheDocument();
   });
 
-  it('applies columns class', () => {
+  it('applies responsive column classes', () => {
     const { container } = render(<Grid columns={4}>Child</Grid>);
-    expect(container.firstChild).toHaveClass('grid-cols-4');
+    const el = container.firstChild as HTMLElement;
+    expect(el).toHaveClass('grid');
+    expect(el.className).toMatch(/grid-cols-1/);
+    expect(el.className).toMatch(/lg:grid-cols-4/);
   });
 });

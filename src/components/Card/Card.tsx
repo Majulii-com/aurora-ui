@@ -18,7 +18,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         <div
           ref={ref}
           className={cn(
-            'overflow-hidden rounded-lg',
+            'w-full min-w-0 overflow-hidden rounded-lg',
             ent.isAurora && 'rounded-2xl',
             variant === 'elevated' && ent.card,
             variantClasses[variant],

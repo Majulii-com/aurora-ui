@@ -36,7 +36,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css,md}\"",
     "gen:dsl-kb": "tsx scripts/generate-dsl-ai-knowledge-base.ts",
     "typecheck:scripts": "tsc -p tsconfig.scripts.json --noEmit",
-    "release": "pnpm build && npm publish --access public"
+    "release": "pnpm build && npm publish --access public",
+    "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

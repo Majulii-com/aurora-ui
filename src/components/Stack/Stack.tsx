@@ -17,7 +17,7 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
     <div
       ref={ref}
       className={cn(
-        'flex',
+        'flex min-w-0',
         direction === 'column' ? 'flex-col' : 'flex-row',
         gapMap[gap],
         align && alignMap[align],

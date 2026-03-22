@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '../Input';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '../Table';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 
 export type GenTableColumn = { key: string; label: string; sortable?: boolean };
 
@@ -45,6 +46,7 @@ export function GenDataTable({
   tableWrapperClassName,
   sortHeaderButtonClassName,
 }: GenDataTableDSLProps) {
+  const ent = useAuroraSurface();
   const safeRows = Array.isArray(rows) ? rows : [];
 
   const filtered = React.useMemo(() => {
@@ -68,7 +70,7 @@ export function GenDataTable({
   }, [filtered, sortKey, sortDir]);
 
   return (
-    <div className={cn('w-full min-w-0', className)}>
+    <div className={cn('w-full min-w-0', ent.isAurora && ent.tableSurface, className)}>
       {onFilterChange ? (
         <div className={cn('mb-4 w-full max-w-md py-0.5', filterRowClassName)}>
           <Input
@@ -80,6 +82,7 @@ export function GenDataTable({
         </div>
       ) : null}
       <Table
+        skipOuterChrome={ent.isAurora}
         className={tableClassName}
         wrapperClassName={cn('w-full min-w-0', tableWrapperClassName)}
       >

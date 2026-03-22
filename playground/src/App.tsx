@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ThemeProvider } from '@majulii/aurora-ui';
+import { ThemeProvider, cn, useAuroraSurface } from '@majulii/aurora-ui';
 import { Sidebar } from './Sidebar';
 import { Canvas } from './Canvas';
 import { SchemaPanel } from './SchemaPanel';
@@ -11,6 +11,7 @@ import { GenDSLPanel } from './GenDSLPanel';
 import { PlaygroundProvider, usePlayground } from '@majulii/aurora-ui';
 
 function PlaygroundLayout() {
+  const ent = useAuroraSurface();
   const [mode, setMode] = useState<'canvas' | 'gen'>(() => {
     try {
       const v = localStorage.getItem('aurora-playground-mode');
@@ -42,7 +43,7 @@ function PlaygroundLayout() {
 
   return (
     <>
-      <div className="relative flex h-screen bg-gray-100 dark:bg-gray-900">
+      <div className={cn('relative flex h-screen bg-gray-100 dark:bg-gray-900', ent.playgroundPage)}>
         <div className="absolute top-2 right-2 z-50 flex gap-2">
           <button
             type="button"
@@ -91,7 +92,11 @@ function PlaygroundLayout() {
 
 export default function App() {
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider
+      defaultTheme="light"
+      defaultAppearance="aurora"
+      appearanceStorageKey="aurora-playground-appearance"
+    >
       <PlaygroundProvider>
         <PlaygroundLayout />
       </PlaygroundProvider>

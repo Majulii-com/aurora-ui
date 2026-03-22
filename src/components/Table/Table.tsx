@@ -1,5 +1,7 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
+import { TablePlainContext, useTablePlain } from './TablePlainContext';
 import type {
   TableProps,
   TableHeadProps,
@@ -10,16 +12,41 @@ import type {
 } from './Table.types';
 
 export const Table = forwardRef<HTMLTableElement, TableProps>(
-  ({ className, wrapperClassName, ...rest }, ref) => (
-    <div className={cn('overflow-x-auto', wrapperClassName)}>
-      <table ref={ref} className={cn('w-full border-collapse', className)} {...rest} />
-    </div>
-  )
+  ({ className, wrapperClassName, plain, skipOuterChrome, ...rest }, ref) => {
+    const ent = useAuroraSurface(plain);
+    return (
+      <TablePlainContext.Provider value={Boolean(plain)}>
+        <div
+          className={cn(
+            'overflow-x-auto',
+            ent.isAurora && !skipOuterChrome && ent.tableScrollWrap,
+            wrapperClassName
+          )}
+        >
+          <table ref={ref} className={cn('w-full border-collapse text-sm', className)} {...rest} />
+        </div>
+      </TablePlainContext.Provider>
+    );
+  }
 );
 Table.displayName = 'Table';
 
 export const TableHead = forwardRef<HTMLTableSectionElement, TableHeadProps>(
-  ({ className, ...rest }, ref) => <thead ref={ref} className={cn('bg-gray-50 dark:bg-gray-800', className)} {...rest} />
+  ({ className, ...rest }, ref) => {
+    const plain = useTablePlain();
+    const ent = useAuroraSurface(plain);
+    return (
+      <thead
+        ref={ref}
+        className={cn(
+          'bg-gray-50 dark:bg-gray-800',
+          ent.isAurora && ent.tableHead,
+          className
+        )}
+        {...rest}
+      />
+    );
+  }
 );
 TableHead.displayName = 'TableHead';
 
@@ -29,22 +56,58 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 TableBody.displayName = 'TableBody';
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-  ({ className, ...rest }, ref) => (
-    <tr ref={ref} className={cn('border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50', className)} {...rest} />
-  )
+  ({ className, ...rest }, ref) => {
+    const plain = useTablePlain();
+    const ent = useAuroraSurface(plain);
+    return (
+      <tr
+        ref={ref}
+        className={cn(
+          'border-b border-gray-200 dark:border-gray-700',
+          ent.isAurora ? ent.tableRow : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+          className
+        )}
+        {...rest}
+      />
+    );
+  }
 );
 TableRow.displayName = 'TableRow';
 
 export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
-  ({ className, ...rest }, ref) => (
-    <th ref={ref} className={cn('px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100', className)} {...rest} />
-  )
+  ({ className, ...rest }, ref) => {
+    const plain = useTablePlain();
+    const ent = useAuroraSurface(plain);
+    return (
+      <th
+        ref={ref}
+        className={cn(
+          'px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100',
+          ent.isAurora && ent.tableHeaderCell,
+          className
+        )}
+        {...rest}
+      />
+    );
+  }
 );
 TableHeaderCell.displayName = 'TableHeaderCell';
 
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ className, ...rest }, ref) => (
-    <td ref={ref} className={cn('px-4 py-3 text-sm text-gray-700 dark:text-gray-300', className)} {...rest} />
-  )
+  ({ className, ...rest }, ref) => {
+    const plain = useTablePlain();
+    const ent = useAuroraSurface(plain);
+    return (
+      <td
+        ref={ref}
+        className={cn(
+          'px-4 py-3 text-sm text-gray-700 dark:text-gray-300',
+          ent.isAurora && ent.tableCell,
+          className
+        )}
+        {...rest}
+      />
+    );
+  }
 );
 TableCell.displayName = 'TableCell';

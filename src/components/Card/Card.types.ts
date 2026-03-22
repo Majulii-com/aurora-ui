@@ -1,8 +1,9 @@
 import type { HTMLAttributes } from 'react';
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
 
 export type CardVariant = 'elevated' | 'outline' | 'filled';
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps extends HTMLAttributes<HTMLDivElement>, AuroraSurfaceProps {
   variant?: CardVariant;
 }
 

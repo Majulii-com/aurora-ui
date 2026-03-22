@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import type { ChatInputProps } from './Chat.types';
@@ -14,7 +15,9 @@ export function ChatInput({
   trailing,
   className,
   textareaClassName,
+  plain,
 }: ChatInputProps) {
+  const ent = useAuroraSurface(plain);
   const [internalValue, setInternalValue] = useState('');
   const isControlled = controlledValue !== undefined;
   const value = isControlled ? controlledValue : internalValue;
@@ -63,6 +66,7 @@ export function ChatInput({
         rows={1}
         className={cn(
           'flex-1 min-h-[40px] max-h-[120px] resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50',
+          ent.textarea,
           textareaClassName
         )}
       />

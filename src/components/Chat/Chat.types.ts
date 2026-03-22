@@ -1,3 +1,5 @@
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
+
 export type ChatMessageRole = 'user' | 'assistant' | 'system';
 
 export interface ChatMessageData {
@@ -43,7 +45,7 @@ export interface ChatMessageProps {
   className?: string;
 }
 
-export interface ChatInputProps {
+export interface ChatInputProps extends AuroraSurfaceProps {
   value?: string;
   onChange?: (value: string) => void;
   onSend?: (value: string) => void;

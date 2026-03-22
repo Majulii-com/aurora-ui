@@ -1,4 +1,5 @@
 import type { SelectHTMLAttributes } from 'react';
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 
@@ -8,7 +9,7 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>, AuroraSurfaceProps {
   size?: SelectSize;
   variant?: 'default' | 'outline' | 'filled';
   options: SelectOption[];

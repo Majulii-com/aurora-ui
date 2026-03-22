@@ -299,10 +299,21 @@ export { AddIcon, SearchIcon, CloseIcon } from './icons';
 export type { IconProps } from './icons';
 
 // Theme
-export { ThemeProvider, useTheme } from './theme';
-export type { ThemeMode, ThemeProviderProps } from './theme';
+export {
+  ThemeProvider,
+  useTheme,
+  useAuroraAppearance,
+  useAuroraSurface,
+  /** @deprecated Use `useAuroraSurface` */
+  useEnterpriseSurface,
+  applyAppearanceVariables,
+} from './theme';
+export type { ThemeMode, ThemeProviderProps, AuroraAppearance } from './theme';
 export { lightColors, darkColors } from './theme';
 export type { ThemeColors } from './theme';
+
+// Surface / appearance opt-out on components
+export type { AuroraSurfaceProps } from './types/auroraSurface';
 
 // Utils
 export { cn, compose, pipe, variant, createVariant } from './utils';

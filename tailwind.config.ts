@@ -30,6 +30,12 @@ const config: Config = {
           600: 'var(--aurora-secondary-600)',
           700: 'var(--aurora-secondary-700)',
         },
+        /** Majulii logo: cyan nodes, sun accent */
+        brand: {
+          navy: '#0b1f2a',
+          info: 'var(--aurora-info)',
+          accent: 'var(--aurora-accent)',
+        },
       },
       spacing: {
         '18': '4.5rem',

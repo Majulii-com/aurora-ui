@@ -41,15 +41,17 @@ import '@majulii/aurora-ui/styles.css';
 
 ### Theme provider (optional)
 
-Wrap your app with `ThemeProvider` for theming and dark mode:
+Wrap your app with `ThemeProvider` for theming, dark mode, and **default Aurora styling** (soft radii, subtle shadows). Use `defaultAppearance="plain"` for a denser, flatter look, or pass `plain` on individual components to opt out.
 
 ```tsx
 import { ThemeProvider } from '@majulii/aurora-ui';
 
-<ThemeProvider defaultTheme="light">
+<ThemeProvider defaultTheme="light" defaultAppearance="aurora">
   <App />
 </ThemeProvider>
 ```
+
+See **`docs/THEME_APPEARANCE.md`** for `appearance`, `useAuroraAppearance`, and per-component `plain`.
 
 ### Components
 

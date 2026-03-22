@@ -7,6 +7,7 @@ import {
   auroraGenUIRegistryTypes,
   cn,
   Button,
+  useAuroraSurface,
 } from '@majulii/aurora-ui';
 import { GEN_FORM_TABS_SAMPLE, GEN_MINIMAL_SAMPLE } from './genSamples';
 import { GEN_API_TABLE_SAMPLE } from './genApiTableSample';
@@ -24,6 +25,7 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
   const [text, setText] = useState(GEN_MINIMAL_SAMPLE);
   const deferredText = useDeferredValue(text);
   const { jsonPaneWidth, onSeparatorPointerDown } = useJsonPreviewPane();
+  const ent = useAuroraSurface();
 
   const parsed = useMemo(() => {
     const raw = tryParseJson(deferredText);
@@ -51,8 +53,14 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
   const canRender = Boolean(parseResult?.ok && doc);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
-      <header className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <div className={cn('flex flex-col h-screen bg-gray-100 dark:bg-gray-900', ent.playgroundPage)}>
+      <header
+        className={cn(
+          'shrink-0 flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800',
+          ent.isAurora &&
+            'border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-900/85 backdrop-blur-sm shadow-[var(--aurora-shadow-control)]'
+        )}
+      >
         <Button type="button" variant="ghost" size="sm" onClick={onBack}>
           ← Schema playground
         </Button>
@@ -105,8 +113,18 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
           )}
         />
 
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-700">
-          <div className="shrink-0 p-3 border-b border-gray-200 dark:border-gray-700 space-y-2 max-h-[40%] overflow-auto">
+        <div
+          className={cn(
+            'flex-1 min-w-0 min-h-0 flex flex-col bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-700',
+            ent.playgroundGenColumn
+          )}
+        >
+          <div
+            className={cn(
+              'shrink-0 p-3 border-b border-gray-200 dark:border-gray-700 space-y-2 max-h-[40%] overflow-auto',
+              ent.isAurora && 'border-slate-200/80 dark:border-slate-700/80 bg-white/40 dark:bg-slate-900/20'
+            )}
+          >
             {parsed.kind === 'invalidJson' && (
               <div className="text-sm text-amber-700 dark:text-amber-300">{parsed.message}</div>
             )}
@@ -139,9 +157,14 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
             )}
           </div>
 
-          <div className="flex-1 min-h-0 overflow-auto p-4">
+          <div className={cn('flex-1 min-h-0 overflow-auto p-4', ent.playgroundCanvasMain)}>
             {canRender && doc ? (
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-w-0 overflow-x-auto shadow-sm">
+              <div
+                className={cn(
+                  'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-w-0 overflow-x-auto shadow-sm',
+                  ent.playgroundGenPreview
+                )}
+              >
                 <GenUIProvider
                   key={deferredText.slice(0, 120)}
                   document={doc}

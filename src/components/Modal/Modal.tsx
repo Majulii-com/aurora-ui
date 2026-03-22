@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { ModalProps } from './Modal.types';
 
 const sizeClasses = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', full: 'max-w-[90vw] max-h-[90vh]' };
@@ -14,8 +15,10 @@ export function Modal({
   showCloseButton = true,
   className,
   children,
+  plain,
   ...rest
 }: ModalProps) {
+  const ent = useAuroraSurface(plain);
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -51,6 +54,7 @@ export function Modal({
       <div
         className={cn(
           'relative w-full rounded-lg bg-white dark:bg-gray-800 shadow-xl',
+          ent.modalPanel,
           sizeClasses[size],
           className
         )}

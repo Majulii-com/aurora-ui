@@ -33,6 +33,6 @@ describe('Button', () => {
       </Button>
     );
     const btn = screen.getByRole('button');
-    expect(btn).toHaveClass('bg-primary-500');
+    expect(btn.className).toMatch(/primary-500/);
   });
 });

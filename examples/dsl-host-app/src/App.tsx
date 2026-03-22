@@ -71,7 +71,10 @@ export default function App() {
   const lintErrors = lintIssues.filter((i) => i.level === 'error');
 
   return (
-    <ThemeProvider>
+    <ThemeProvider
+      defaultAppearance="aurora"
+      appearanceStorageKey="aurora-dsl-host-appearance"
+    >
       <div className="flex h-screen min-h-0 flex-col bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
         <header className="shrink-0 border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
           <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-3">

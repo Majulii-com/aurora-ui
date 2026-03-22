@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { AlertProps } from './Alert.types';
 
 const variantClasses = {
@@ -10,12 +11,15 @@ const variantClasses = {
 };
 
 export const Alert = forwardRef<HTMLDivElement, AlertProps>(
-  ({ variant = 'info', title, onClose, className, children, ...rest }, ref) => (
+  ({ variant = 'info', title, onClose, className, children, plain, ...rest }, ref) => {
+    const ent = useAuroraSurface(plain);
+    return (
     <div
       ref={ref}
       role="alert"
       className={cn(
         'rounded-lg border p-4',
+        ent.alert,
         variantClasses[variant],
         className
       )}
@@ -40,7 +44,8 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
         )}
       </div>
     </div>
-  )
+    );
+  }
 );
 
 Alert.displayName = 'Alert';

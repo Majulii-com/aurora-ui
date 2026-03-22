@@ -4,10 +4,12 @@ import {
   SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
   usePlayground,
   cn,
+  useAuroraSurface,
 } from '@majulii/aurora-ui';
 import { uiRegistry } from '../ComponentRegistry';
 
 export function Canvas() {
+  const ent = useAuroraSurface();
   const { effectiveSchema, appData, setData, selectedId, select, removeNode, addNode, moveNode, updateNode, emitPlaygroundEvent } = usePlayground();
 
   const handleDrop = useCallback(
@@ -45,13 +47,14 @@ export function Canvas() {
   );
 
   return (
-    <main className="flex-1 overflow-auto p-6">
+    <main className={cn('flex-1 overflow-auto p-6', ent.playgroundCanvasMain)}>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         className={cn(
           'min-h-[400px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600',
-          'bg-white dark:bg-gray-800 p-4'
+          'bg-white dark:bg-gray-800 p-4',
+          ent.playgroundCanvasDropzone
         )}
       >
         <EditableSchemaRenderer

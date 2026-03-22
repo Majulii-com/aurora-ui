@@ -1,11 +1,13 @@
 import { forwardRef, useEffect, useRef } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { CheckboxProps } from './Checkbox.types';
 
 const sizeClasses = { sm: 'h-4 w-4', md: 'h-5 w-5', lg: 'h-6 w-6' };
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ size = 'md', label, error, indeterminate, className, id: idProp, ...rest }, ref) => {
+    const ent = useAuroraSurface();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const id = idProp ?? `aurora-checkbox-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -29,6 +31,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           className={cn(
             'rounded border-gray-300 text-primary-600 focus:ring-primary-500 focus:ring-offset-0 disabled:opacity-50',
             sizeClasses[size],
+            ent.isAurora && ent.checkbox,
             error && 'border-red-500'
           )}
           aria-invalid={error}

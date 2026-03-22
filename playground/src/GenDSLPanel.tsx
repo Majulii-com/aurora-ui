@@ -66,6 +66,14 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
 
   const handleNav = useCallback((path: string) => {
     console.info('[Gen DSL demo] NAVIGATE', path);
+    if (path.startsWith('#')) {
+      const id = path.slice(1);
+      if (typeof document !== 'undefined') {
+        requestAnimationFrame(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    }
   }, []);
 
   const handleCustom = useCallback((name: string, payload: unknown) => {

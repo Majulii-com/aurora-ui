@@ -24,6 +24,11 @@
       "file": "05-fullscreen-marketing-dashboard.json",
       "title": "Full-screen marketing + analytics cockpit",
       "intent": "Use for dense landing pages, launch consoles, or campaign dashboards: Page hero, KPI grid, segmented range, stepper, tabs, Area+Pie charts, accordion, SplitPane with filtered table + pagination, Drawer and Modal, CHAIN actions."
+    },
+    {
+      "file": "06-simple-landing.json",
+      "title": "Simple marketing landing page",
+      "intent": "Use for lightweight product/marketing sites: sticky nav, hero + code teaser, feature cards (Grid), pricing band, newsletter with ShowWhen success, footer; NAVIGATE anchors and CHAIN subscribe."
     }
   ]
 }

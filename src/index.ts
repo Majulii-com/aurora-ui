@@ -322,6 +322,8 @@ export {
   useRunAction,
 } from './runtime/GenUIProvider';
 export { GenUIRenderer } from './runtime/GenUIRenderer';
+export { PoweredByMajuliiBar } from './runtime/PoweredByMajuliiBar';
+export type { PoweredByMajuliiBarProps } from './runtime/PoweredByMajuliiBar';
 export { auroraGenUIRegistry, auroraGenUIRegistryTypes } from './runtime/auroraGenRegistry';
 export type { GenRegistryEntry } from './runtime/auroraGenRegistry';
 export { lintGenUIDocument, parseAndLintGenUIDocument, GEN_LINT_ACTION_PROP_KEYS } from './runtime/genLint';

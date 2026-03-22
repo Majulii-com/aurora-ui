@@ -6,6 +6,7 @@ import { resolveDeep, resolveNamedBindingMap } from './expressions';
 import { getAtPath } from './bindings';
 import type { ExpressionContext } from '../schema/genDocumentTypes';
 import { useGenUI, useGenUIState, useRunAction } from './GenUIProvider';
+import { PoweredByMajuliiBar } from './PoweredByMajuliiBar';
 import { cn } from '../utils';
 
 function coerceBoolean(v: unknown): boolean {
@@ -26,16 +27,32 @@ export function GenUIRenderer({
   registry = auroraGenUIRegistry,
   /** Optional wrapper for host layout (e.g. preview padding). Does not affect the JSON tree. */
   className,
+  /**
+   * When true (default), shows a compact “Powered by majulii.com” strip at the top of the rendered output.
+   * Set to false for white-label or fully custom chrome.
+   */
+  showMajuliiBranding = true,
 }: {
   root: GenUINode;
   registry?: Record<string, GenRegistryEntry>;
   className?: string;
+  showMajuliiBranding?: boolean;
 }) {
   const inner = <NodeRenderer node={root} registry={registry} />;
-  if (className) {
-    return <div className={className}>{inner}</div>;
+  const body = className ? <div className={className}>{inner}</div> : inner;
+
+  if (!showMajuliiBranding) {
+    return body;
   }
-  return inner;
+
+  return (
+    <div className="relative flex min-w-0 flex-col">
+      <div className="sticky top-0 z-30 flex min-h-0 shrink-0 justify-end border-b border-slate-200/80 bg-white/95 px-2 py-1.5 backdrop-blur dark:border-slate-700/80 dark:bg-gray-800/95">
+        <PoweredByMajuliiBar />
+      </div>
+      {body}
+    </div>
+  );
 }
 
 function NodeRenderer({ node, registry }: NodeRendererProps) {

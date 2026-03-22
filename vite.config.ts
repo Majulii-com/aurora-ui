@@ -11,7 +11,7 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'zod', 'zustand'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'zod', 'zustand', 'recharts'],
       output: [
         {
           format: 'es',

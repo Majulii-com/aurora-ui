@@ -178,6 +178,32 @@ export type { LineChartProps, LineChartDatum, LineChartSeries } from './componen
 export { PieChart } from './components/PieChart';
 export type { PieChartProps, PieChartDatum } from './components/PieChart';
 
+export { AreaChart } from './components/AreaChart';
+export type { AreaChartProps, AreaChartDatum, AreaChartSeries } from './components/AreaChart';
+
+export { ScatterChart } from './components/ScatterChart';
+export type { ScatterChartProps, ScatterChartPoint } from './components/ScatterChart';
+
+export { RadarChart } from './components/RadarChart';
+export type { RadarChartProps, RadarChartRow } from './components/RadarChart';
+
+export { RadialBarChart } from './components/RadialBarChart';
+export type { RadialBarChartProps, RadialBarDatum } from './components/RadialBarChart';
+
+export { TreemapChart } from './components/TreemapChart';
+export type { TreemapChartProps, TreemapNode } from './components/TreemapChart';
+
+export { FunnelChart } from './components/FunnelChart';
+export type { FunnelChartProps, FunnelDatum } from './components/FunnelChart';
+
+export { ComposedChart } from './components/ComposedChart';
+export type { ComposedChartProps, ComposedSeriesConfig, ComposedSeriesType } from './components/ComposedChart';
+
+export { SankeyChart } from './components/SankeyChart';
+export type { SankeyChartProps, SankeyNodeDatum, SankeyLinkDatum } from './components/SankeyChart';
+
+export type { InteractiveChartProps } from './components/charts/chartInteraction.types';
+
 export {
   Chat,
   ChatHeader,

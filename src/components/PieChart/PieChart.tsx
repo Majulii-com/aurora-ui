@@ -1,12 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
+import { PieChart as RPieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { cn } from '../../utils';
+import { AuroraChartTooltipContent } from '../charts/AuroraChartTooltip';
+import { AURORA_CHART_COLORS, chartColorAt } from '../charts/chartColors';
 import type { PieChartProps } from './PieChart.types';
 
-const DEFAULT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-
-function getSegmentColor(colors: string[], index: number): string {
-  return colors[index % colors.length];
-}
+const DEFAULT_COLORS = [...AURORA_CHART_COLORS];
 
 export function PieChart({
   data,
@@ -15,79 +14,136 @@ export function PieChart({
   size = 200,
   showLabels = true,
   className,
+  interactive = true,
+  filterable = true,
+  onDatumClick,
+  onDatumHover,
+  detailSlot,
 }: PieChartProps) {
-  const total = useMemo(() => data.reduce((s, d) => s + d.value, 0), [data]);
-  const segments = useMemo(() => {
-    if (total === 0) return [];
-    return data.map((d, i) => ({
-      ...d,
-      startAngle: 0,
-      endAngle: 0,
-      offset: 0,
-      color: getSegmentColor(colors, i),
-    }));
-  }, [data, total, colors]);
+  const [hiddenLabels, setHiddenLabels] = useState<Set<string>>(() => new Set());
 
-  const withAngles = useMemo(() => {
-    let acc = 0;
-    const toRad = (deg: number) => ((deg - 90) * Math.PI) / 180;
-    return segments.map((s) => {
-      const pct = total > 0 ? s.value / total : 0;
-      const startDeg = acc * 360;
-      acc += pct;
-      const endDeg = acc * 360;
-      return { ...s, startAngle: toRad(startDeg), endAngle: toRad(endDeg), pct };
+  const colorByLabel = useMemo(() => {
+    const m = new Map<string, string>();
+    data.forEach((d, i) => {
+      m.set(d.label, chartColorAt(i, colors));
     });
-  }, [segments, total]);
+    return m;
+  }, [data, colors]);
+
+  const visibleData = useMemo(
+    () => data.filter((d) => !hiddenLabels.has(d.label)),
+    [data, hiddenLabels]
+  );
+
+  const toggleLabel = useCallback(
+    (label: string) => {
+      if (!filterable || data.length < 2) return;
+      setHiddenLabels((prev) => {
+        const next = new Set(prev);
+        if (next.has(label)) next.delete(label);
+        else next.add(label);
+        return next;
+      });
+    },
+    [filterable, data.length]
+  );
 
   if (data.length === 0) {
     return (
-      <div className={cn('flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800/50', className)} style={{ width: size, height: size }}>
+      <div
+        className={cn(
+          'flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800/50',
+          className
+        )}
+        style={{ width: size, height: size }}
+      >
         <span className="text-sm text-gray-500">No data</span>
       </div>
     );
   }
 
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = (size / 2) * 0.85;
-  const ir = donut ? r * 0.5 : 0;
+  if (visibleData.length === 0) {
+    return (
+      <div
+        className={cn('flex flex-col items-center gap-3 rounded-lg bg-gray-50 px-4 py-6 dark:bg-gray-800/50', className)}
+        style={{ minHeight: size, width: '100%' }}
+      >
+        <span className="text-center text-sm text-gray-500">All segments hidden. Click a label to show it again.</span>
+        {showLabels && (
+          <div className="flex flex-wrap justify-center gap-2">
+            {data.map((d) => (
+              <button
+                key={d.label}
+                type="button"
+                className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                onClick={() => toggleLabel(d.label)}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
-  const describeArc = (startRad: number, endRad: number, innerR: number) => {
-    const start = { x: cx + r * Math.cos(startRad), y: cy - r * Math.sin(startRad) };
-    const end = { x: cx + r * Math.cos(endRad), y: cy - r * Math.sin(endRad) };
-    const large = endRad - startRad > Math.PI ? 1 : 0;
-    if (innerR <= 0) {
-      return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${large} 1 ${end.x} ${end.y} Z`;
-    }
-    const startInner = { x: cx + innerR * Math.cos(startRad), y: cy - innerR * Math.sin(startRad) };
-    const endInner = { x: cx + innerR * Math.cos(endRad), y: cy - innerR * Math.sin(endRad) };
-    return `M ${start.x} ${start.y} A ${r} ${r} 0 ${large} 1 ${end.x} ${end.y} L ${endInner.x} ${endInner.y} A ${innerR} ${innerR} 0 ${large} 0 ${startInner.x} ${startInner.y} Z`;
-  };
+  const tooltipEl = interactive ? <Tooltip content={<AuroraChartTooltipContent />} /> : null;
+  const legendInteractive = filterable && data.length > 1;
 
   return (
-    <div className={cn('inline-flex flex-col items-center', className)}>
-      <svg width={size} height={size} role="img" aria-label="Pie chart">
-        {withAngles.map((seg, i) => (
-          <path
-            key={i}
-            d={describeArc(seg.startAngle, seg.endAngle, ir)}
-            fill={seg.color}
-            className="transition-opacity"
-          />
-        ))}
-      </svg>
-      {showLabels && (
-        <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
-          {withAngles.map((seg, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
-              <span className="text-gray-600 dark:text-gray-400">{seg.label}</span>
-              <span className="text-gray-500 tabular-nums">({Math.round(seg.pct * 100)}%)</span>
-            </span>
-          ))}
-        </div>
-      )}
+    <div className={cn('inline-flex w-full min-w-0 flex-col items-center', className)}>
+      <ResponsiveContainer width="100%" height={size}>
+        <RPieChart>
+          <Pie
+            data={visibleData}
+            dataKey="value"
+            nameKey="label"
+            cx="50%"
+            cy="50%"
+            innerRadius={donut ? '45%' : 0}
+            outerRadius="82%"
+            paddingAngle={visibleData.length > 1 ? 1 : 0}
+            onClick={(_, index) => {
+              const row = visibleData[index];
+              if (row && onDatumClick) onDatumClick({ ...row } as Record<string, unknown>, { dataKey: 'value' });
+            }}
+            onMouseEnter={(_, index) => {
+              const row = visibleData[index];
+              onDatumHover?.(row ? ({ ...row } as Record<string, unknown>) : null);
+            }}
+            onMouseLeave={() => onDatumHover?.(null)}
+          >
+            {visibleData.map((entry) => (
+              <Cell key={entry.label} fill={colorByLabel.get(entry.label) ?? DEFAULT_COLORS[0]} stroke="transparent" />
+            ))}
+          </Pie>
+          {tooltipEl}
+          {showLabels && (
+            <Legend
+              wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+              payload={data.map((d) => ({
+                value: d.label,
+                id: d.label,
+                type: 'circle' as const,
+                color: colorByLabel.get(d.label) ?? DEFAULT_COLORS[0],
+              }))}
+              onClick={
+                legendInteractive
+                  ? (item) => {
+                      const label = String(item.value ?? '');
+                      if (label) toggleLabel(label);
+                    }
+                  : undefined
+              }
+              formatter={(value: string) => {
+                const inactive = hiddenLabels.has(value);
+                return <span style={{ opacity: legendInteractive && inactive ? 0.45 : 1 }}>{value}</span>;
+              }}
+            />
+          )}
+        </RPieChart>
+      </ResponsiveContainer>
+      {detailSlot != null && <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">{detailSlot}</div>}
     </div>
   );
 }

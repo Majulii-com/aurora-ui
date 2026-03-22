@@ -48,6 +48,14 @@ import { StatCard } from '../components/StatCard';
 import { BarChart } from '../components/BarChart';
 import { LineChart } from '../components/LineChart';
 import { PieChart } from '../components/PieChart';
+import { AreaChart } from '../components/AreaChart';
+import { ScatterChart } from '../components/ScatterChart';
+import { RadarChart } from '../components/RadarChart';
+import { RadialBarChart } from '../components/RadialBarChart';
+import { TreemapChart } from '../components/TreemapChart';
+import { FunnelChart } from '../components/FunnelChart';
+import { ComposedChart } from '../components/ComposedChart';
+import { SankeyChart } from '../components/SankeyChart';
 /** Import implementation files so TS/Vite resolve without relying on `index` re-exports (avoids IDE 2307 on some setups). */
 import { GenText } from '../components/GenText/GenText';
 import { GenDataTable } from '../components/GenDataTable/GenDataTable';
@@ -283,6 +291,99 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
         { label: 'A', value: 40 },
         { label: 'B', value: 60 },
       ],
+    },
+  },
+  AreaChart: {
+    component: AreaChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { x: 'Mon', y: 2 },
+        { x: 'Tue', y: 5 },
+      ],
+      height: 180,
+    },
+  },
+  ScatterChart: {
+    component: ScatterChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { x: 10, y: 20, label: 'A' },
+        { x: 30, y: 8, label: 'B' },
+      ],
+      height: 200,
+    },
+  },
+  RadarChart: {
+    component: RadarChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { subject: 'Speed', A: 80, B: 50 },
+        { subject: 'Reliability', A: 70, B: 90 },
+        { subject: 'Comfort', A: 60, B: 70 },
+      ],
+      height: 220,
+    },
+  },
+  RadialBarChart: {
+    component: RadialBarChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { name: 'A', value: 40 },
+        { name: 'B', value: 30 },
+        { name: 'C', value: 30 },
+      ],
+      height: 220,
+    },
+  },
+  TreemapChart: {
+    component: TreemapChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: {
+        name: 'Root',
+        children: [
+          { name: 'Alpha', size: 400 },
+          { name: 'Beta', size: 300 },
+          { name: 'Gamma', size: 200 },
+        ],
+      },
+      height: 200,
+    },
+  },
+  FunnelChart: {
+    component: FunnelChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      data: [
+        { name: 'Visitors', value: 1000 },
+        { name: 'Leads', value: 400 },
+        { name: 'Sales', value: 120 },
+      ],
+      height: 220,
+    },
+  },
+  ComposedChart: {
+    component: ComposedChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      indexKey: 'month',
+      data: [
+        { month: 'Jan', revenue: 40, profit: 12 },
+        { month: 'Feb', revenue: 55, profit: 18 },
+      ],
+      series: [
+        { type: 'bar', dataKey: 'revenue', name: 'Revenue' },
+        { type: 'line', dataKey: 'profit', name: 'Profit' },
+      ],
+      height: 200,
+    },
+  },
+  SankeyChart: {
+    component: SankeyChart as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+      links: [
+        { source: 0, target: 1, value: 10 },
+        { source: 1, target: 2, value: 10 },
+      ],
+      height: 220,
     },
   },
 

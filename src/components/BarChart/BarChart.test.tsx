@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { BarChart } from './BarChart';
 
 const data = [
@@ -10,9 +10,10 @@ const data = [
 describe('BarChart', () => {
   it('renders chart with data', () => {
     const { container } = render(<BarChart data={data} />);
-    expect(container.querySelector('svg')).toBeInTheDocument();
-    expect(screen.getByText('A')).toBeInTheDocument();
-    expect(screen.getByText('B')).toBeInTheDocument();
+    const svg = container.querySelector('svg');
+    expect(svg).toBeTruthy();
+    expect(within(svg as HTMLElement).getByText('A')).toBeInTheDocument();
+    expect(within(svg as HTMLElement).getByText('B')).toBeInTheDocument();
   });
 
   it('shows no data message when data is empty', () => {

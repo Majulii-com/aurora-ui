@@ -219,7 +219,7 @@ export function GenDSLPanel({ onBack }: { onBack: () => void }) {
                 >
                   <div
                     className={cn(
-                      'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-w-0 overflow-x-auto shadow-sm transition-[width] duration-200 ease-out',
+                      'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 min-w-0 overflow-x-hidden overflow-y-visible shadow-sm transition-[width] duration-200 ease-out',
                       ent.playgroundGenPreview,
                       viewportPreset !== 'full' && 'ring-1 ring-gray-300/80 dark:ring-gray-600'
                     )}

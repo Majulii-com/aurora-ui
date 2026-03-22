@@ -14,7 +14,11 @@
       "rolloutPct": 72
     },
     "crm": {
-      "rows": [],
+      "rows": [
+        { "id": 101, "title": "Preview row (shown before GET)", "userId": 1, "completed": false },
+        { "id": 102, "title": "Scroll down for KPIs, charts & API tools", "userId": 2, "completed": true },
+        { "id": 103, "title": "Network loads replace this table", "userId": 1, "completed": false }
+      ],
       "sortKey": "id",
       "sortDir": "asc",
       "filter": "",
@@ -204,7 +208,7 @@
   "ui": {
     "type": "Page",
     "props": {
-      "className": "min-h-screen w-full bg-gradient-to-b from-indigo-50/80 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
+      "className": "min-h-screen w-full min-w-0 bg-gradient-to-b from-indigo-50/80 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
     },
     "children": [
       {
@@ -224,7 +228,7 @@
                   {
                     "type": "Box",
                     "props": {
-                      "className": "flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between w-full min-w-0"
+                      "className": "flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between w-full min-w-0"
                     },
                     "children": [
                       {
@@ -247,7 +251,7 @@
                       },
                       {
                         "type": "Breadcrumb",
-                        "props": { "className": "hidden sm:flex text-sm w-full min-w-0 overflow-x-auto" },
+                        "props": { "className": "hidden xl:flex text-sm w-full min-w-0 overflow-x-auto order-2 xl:order-none" },
                         "children": [
                           {
                             "type": "BreadcrumbItem",
@@ -262,12 +266,16 @@
                       {
                         "type": "Box",
                         "props": {
-                          "className": "flex flex-wrap gap-2 w-full md:w-auto md:max-w-none md:ml-auto justify-start md:justify-end min-w-0"
+                          "className": "flex flex-wrap gap-x-2 gap-y-2 w-full min-w-0 xl:max-w-[min(100%,42rem)] xl:ml-auto justify-start xl:justify-end"
                         },
                         "children": [
                           {
                             "type": "Dropdown",
-                            "props": { "triggerLabel": "Workspace", "placement": "bottom-end" },
+                            "props": {
+                              "triggerLabel": "Workspace",
+                              "placement": "bottom-end",
+                              "className": "min-w-0 shrink"
+                            },
                             "children": [
                               {
                                 "type": "DropdownItem",
@@ -288,6 +296,7 @@
                                 "props": {
                                   "variant": "outline",
                                   "size": "sm",
+                                  "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                                   "children": "What’s new"
                                 }
                               }
@@ -299,6 +308,7 @@
                               "variant": "primary",
                               "size": "sm",
                               "onClickAction": "openDemo",
+                              "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                               "children": "Book demo"
                             }
                           },
@@ -308,6 +318,7 @@
                               "variant": "secondary",
                               "size": "sm",
                               "onClickAction": "openDrawer",
+                              "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                               "children": "Menu"
                             }
                           }
@@ -352,12 +363,20 @@
           },
           {
             "type": "Container",
-            "props": { "maxWidth": "full", "className": "max-w-7xl px-4 py-8 w-full" },
+            "props": { "maxWidth": "full", "className": "max-w-7xl px-4 py-6 sm:py-8 w-full mx-auto" },
             "children": [
               {
                 "type": "Stack",
-                "props": { "gap": 8, "className": "w-full min-w-0" },
+                "props": { "gap": 6, "className": "w-full min-w-0 md:gap-8" },
                 "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "className": "text-xs sm:text-sm text-center sm:text-left rounded-lg border border-dashed border-slate-200/90 bg-white/50 px-3 py-2 dark:border-slate-600 dark:bg-slate-900/30",
+                      "children": "↓ Scroll for KPI cards, charts, onboarding, tabs, live API (filter/sort/CRUD), static pipeline table, FAQ, then try Menu / Book demo for drawer & modal."
+                    }
+                  },
                   {
                     "type": "Grid",
                     "props": {
@@ -382,7 +401,7 @@
                             "type": "Text",
                             "props": {
                               "variant": "muted",
-                              "className": "text-base max-w-xl",
+                              "className": "text-base w-full max-w-3xl",
                               "children": "Full-screen marketing shell: hero, KPIs, charts, CRM-style table, drawer, and modal — all declarative JSON."
                             }
                           },
@@ -391,17 +410,26 @@
                             "props": { "gap": 3, "className": "flex-wrap items-stretch sm:items-center" },
                             "children": [
                               {
-                                "type": "SegmentedControl",
+                                "type": "Box",
                                 "props": {
-                                  "aria-label": "Reporting range",
-                                  "value": "{{state.ui.timeRange}}",
-                                  "onChangeAction": "setTimeRange",
-                                  "options": [
-                                    { "value": "24h", "label": "24h" },
-                                    { "value": "7d", "label": "7d" },
-                                    { "value": "30d", "label": "30d" }
-                                  ]
-                                }
+                                  "className": "w-full min-w-0 max-w-full overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-none sm:overflow-visible"
+                                },
+                                "children": [
+                                  {
+                                    "type": "SegmentedControl",
+                                    "props": {
+                                      "aria-label": "Reporting range",
+                                      "value": "{{state.ui.timeRange}}",
+                                      "onChangeAction": "setTimeRange",
+                                      "className": "max-w-full",
+                                      "options": [
+                                        { "value": "24h", "label": "24h" },
+                                        { "value": "7d", "label": "7d" },
+                                        { "value": "30d", "label": "30d" }
+                                      ]
+                                    }
+                                  }
+                                ]
                               },
                               {
                                 "type": "Button",

@@ -47,7 +47,7 @@ export function GenUIRenderer({
 
   return (
     <div className="relative flex min-w-0 flex-col">
-      <div className="sticky top-0 z-30 flex min-h-0 shrink-0 justify-end border-b border-slate-200/80 bg-white/95 px-2 py-1.5 backdrop-blur dark:border-slate-700/80 dark:bg-gray-800/95">
+      <div className="sticky top-0 z-30 flex min-h-0 shrink-0 justify-end bg-white/95 px-2 py-1.5 backdrop-blur dark:bg-gray-800/95">
         <PoweredByMajuliiBar />
       </div>
       {body}

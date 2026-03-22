@@ -1,4 +1,6 @@
-export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
+
+export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement>, AuroraSurfaceProps {
   /** Shape of the placeholder */
   variant?: 'text' | 'rect' | 'circle';
   /** Width (e.g. '100%', '2rem'); for text, line width */

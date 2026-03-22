@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type {
   AccordionContextValue,
   AccordionProps,
@@ -13,7 +14,10 @@ function toArray(v: string | string[] | null | undefined): string[] {
   return Array.isArray(v) ? v : [v];
 }
 
-type InternalContext = AccordionContextValue & { toggle: (value: string) => void; isOpen: (value: string) => boolean };
+type InternalContext = AccordionContextValue & {
+  toggle: (value: string) => void;
+  isOpen: (value: string) => boolean;
+};
 
 const AccordionContext = createContext<InternalContext | null>(null);
 const AccordionItemContext = createContext<string | null>(null);
@@ -30,6 +34,7 @@ export function Accordion({
   onChange,
   variant = 'default',
   allowMultiple = false,
+  plain,
   className,
   children,
   ...rest
@@ -66,6 +71,7 @@ export function Accordion({
     },
     variant,
     allowMultiple,
+    plain: Boolean(plain),
     toggle,
     isOpen,
   };
@@ -80,13 +86,16 @@ export function Accordion({
 }
 
 export function AccordionItem({ value, className, children, ...rest }: AccordionItemProps) {
-  const { variant } = useAccordion();
+  const { variant, plain } = useAccordion();
+  const ent = useAuroraSurface(plain);
   return (
     <AccordionItemContext.Provider value={value}>
       <div
         className={cn(
-          variant === 'bordered' && 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden',
-          variant === 'separated' && 'border border-gray-200 dark:border-gray-700 rounded-lg',
+          variant === 'bordered' &&
+            (ent.isAurora ? ent.accordionItemBordered : 'border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden'),
+          variant === 'separated' &&
+            (ent.isAurora ? ent.accordionItemSeparated : 'border border-gray-200 dark:border-gray-700 rounded-lg'),
           className
         )}
         {...rest}
@@ -99,6 +108,7 @@ export function AccordionItem({ value, className, children, ...rest }: Accordion
 
 export function AccordionTrigger({ className, children, ...rest }: AccordionTriggerProps) {
   const ctx = useAccordion();
+  const ent = useAuroraSurface(ctx.plain);
   const itemValue = useContext(AccordionItemContext);
   if (itemValue == null) return null;
   const isOpen = ctx.isOpen(itemValue);
@@ -107,6 +117,7 @@ export function AccordionTrigger({ className, children, ...rest }: AccordionTrig
       type="button"
       className={cn(
         'w-full flex items-center justify-between px-4 py-3 text-left font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500',
+        ent.isAurora && ent.accordionTrigger,
         ctx.variant === 'bordered' && 'border-b border-gray-200 dark:border-gray-700 last:border-b-0',
         className
       )}
@@ -126,12 +137,13 @@ export function AccordionTrigger({ className, children, ...rest }: AccordionTrig
 
 export function AccordionContent({ className, children, ...rest }: AccordionContentProps) {
   const ctx = useAccordion();
+  const ent = useAuroraSurface(ctx.plain);
   const itemValue = useContext(AccordionItemContext);
   if (itemValue == null) return null;
   const isOpen = ctx.isOpen(itemValue);
   if (!isOpen) return null;
   return (
-    <div className={cn('px-4 py-3 text-gray-600 dark:text-gray-400', className)} {...rest}>
+    <div className={cn('px-4 py-3 text-gray-600 dark:text-gray-400', ent.isAurora && ent.accordionContent, className)} {...rest}>
       {children}
     </div>
   );

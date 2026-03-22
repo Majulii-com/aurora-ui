@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { PopoverProps } from './Popover.types';
 
 const placementClasses: Record<NonNullable<PopoverProps['placement']>, string> = {
@@ -24,8 +25,10 @@ export function Popover({
   onOpenChange,
   placement = 'bottom-start',
   closeOnOutsideClick = true,
+  plain,
   className,
 }: PopoverProps) {
+  const ent = useAuroraSurface(plain);
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : internalOpen;
@@ -53,6 +56,7 @@ export function Popover({
         <div
           className={cn(
             'absolute z-50 min-w-[10rem] max-w-[24rem] p-3 rounded-lg bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700',
+            ent.isAurora && ent.popover,
             placementClasses[placement]
           )}
           role="dialog"

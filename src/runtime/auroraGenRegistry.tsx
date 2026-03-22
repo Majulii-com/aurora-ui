@@ -62,6 +62,11 @@ import { GenDataTable } from '../components/GenDataTable/GenDataTable';
 import { GenSpinner } from '../components/GenSpinner/GenSpinner';
 import { MultiSelect } from '../components/MultiSelect/MultiSelect';
 import { TreeTable } from '../components/TreeTable/TreeTable';
+import { SegmentedControl } from '../components/SegmentedControl';
+import { Stepper } from '../components/Stepper';
+import { DateField } from '../components/DateField';
+import { FileUpload } from '../components/FileUpload';
+import { CopyButton } from '../components/CopyButton';
 import {
   GenFragment,
   GenDropdown,
@@ -140,6 +145,41 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
   Slider: {
     component: Slider as unknown as ComponentType<Record<string, unknown>>,
     defaultProps: { min: 0, max: 100, value: 50, showValue: true },
+  },
+  SegmentedControl: {
+    component: SegmentedControl as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      options: [
+        { value: 'a', label: 'A' },
+        { value: 'b', label: 'B' },
+      ],
+      value: 'a',
+      onChange: () => {},
+      'aria-label': 'Segmented',
+    },
+  },
+  Stepper: {
+    component: Stepper as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: {
+      steps: [
+        { id: '1', title: 'Cart', description: 'Review' },
+        { id: '2', title: 'Pay', description: 'Billing' },
+        { id: '3', title: 'Done', description: 'Receipt' },
+      ],
+      activeIndex: 1,
+    },
+  },
+  DateField: {
+    component: DateField as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { type: 'date', label: 'Date' },
+  },
+  FileUpload: {
+    component: FileUpload as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { title: 'Upload files', onFilesChange: () => {} },
+  },
+  CopyButton: {
+    component: CopyButton as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { textToCopy: 'hello@example.com', children: 'Copy email' },
   },
   Label: { component: Label as unknown as ComponentType<Record<string, unknown>> },
   Button: { component: Button as unknown as ComponentType<Record<string, unknown>> },

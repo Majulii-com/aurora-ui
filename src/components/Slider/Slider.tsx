@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { SliderProps } from './Slider.types';
 
 const sizeClasses = {
@@ -18,12 +19,14 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       size = 'md',
       label,
       showValue = false,
+      plain,
       className,
       id,
       ...rest
     },
     ref
   ) => {
+    const ent = useAuroraSurface(plain);
     const displayValue = value ?? min;
     return (
       <div className={cn('w-full', className)}>
@@ -46,7 +49,8 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
           step={step}
           value={value ?? min}
           className={cn(
-            'w-full rounded-full appearance-none bg-gray-200 dark:bg-gray-700 accent-primary-500 cursor-pointer',
+            'w-full rounded-full appearance-none accent-primary-500 cursor-pointer',
+            ent.isAurora ? ent.slider : 'bg-gray-200 dark:bg-gray-700',
             sizeClasses[size],
             '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary-500 [&::-moz-range-thumb]:border-0'
           )}

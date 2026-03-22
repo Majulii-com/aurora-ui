@@ -1,7 +1,9 @@
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
+
 export type DrawerPlacement = 'left' | 'right' | 'bottom';
 export type DrawerSize = 'sm' | 'md' | 'lg' | 'full';
 
-export interface DrawerProps {
+export interface DrawerProps extends AuroraSurfaceProps {
   isOpen?: boolean;
   onClose?: () => void;
   /** Where the drawer slides in from */

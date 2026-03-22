@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { DrawerProps } from './Drawer.types';
 
 const placementClasses = {
@@ -31,9 +32,11 @@ export function Drawer({
   title,
   showCloseButton = true,
   closeOnOverlayClick = true,
+  plain,
   className,
   children,
 }: DrawerProps) {
+  const ent = useAuroraSurface(plain);
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose?.();
@@ -70,6 +73,7 @@ export function Drawer({
       <div
         className={cn(
           'relative flex flex-col bg-white dark:bg-gray-800 shadow-xl',
+          ent.isAurora && ent.drawerPanel,
           placementClasses[placement],
           isBottom ? sizeClassesBottom[size] : sizeClasses[size],
           className

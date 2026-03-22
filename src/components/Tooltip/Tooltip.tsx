@@ -1,5 +1,6 @@
 import { useState, useRef, cloneElement, isValidElement } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { TooltipProps } from './Tooltip.types';
 
 const placementClasses: Record<TooltipProps['placement'] & string, string> = {
@@ -13,10 +14,12 @@ export function Tooltip({
   content,
   placement = 'top',
   disabled,
+  plain,
   children,
   className,
   ...rest
 }: TooltipProps) {
+  const ent = useAuroraSurface(plain);
   const [visible, setVisible] = useState(false);
   const triggerRef = useRef<HTMLElement | null>(null);
 
@@ -50,6 +53,7 @@ export function Tooltip({
       role="tooltip"
       className={cn(
         'absolute z-50 px-2 py-1.5 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded shadow-lg whitespace-nowrap',
+        ent.isAurora && cn(ent.tooltipBubble, 'text-white'),
         placementClasses[placement],
         className
       )}

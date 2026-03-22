@@ -1,3 +1,5 @@
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
+
 export type PopoverPlacement =
   | 'top'
   | 'top-start'
@@ -12,7 +14,7 @@ export type PopoverPlacement =
   | 'right-start'
   | 'right-end';
 
-export interface PopoverProps {
+export interface PopoverProps extends AuroraSurfaceProps {
   /** Element that opens the popover when clicked */
   trigger: React.ReactNode;
   /** Content shown in the popover (can be rich: forms, buttons, etc.) */

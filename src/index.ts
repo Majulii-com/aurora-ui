@@ -145,6 +145,21 @@ export type { AuroraDslRootDiv, AuroraDslRootSpan } from './types/auroraDslCompo
 export { Slider } from './components/Slider';
 export type { SliderProps, SliderSize } from './components/Slider';
 
+export { SegmentedControl } from './components/SegmentedControl';
+export type { SegmentedControlProps, SegmentedOption, SegmentedControlSize } from './components/SegmentedControl';
+
+export { Stepper } from './components/Stepper';
+export type { StepperProps, StepperStep } from './components/Stepper';
+
+export { DateField } from './components/DateField';
+export type { DateFieldProps, DateFieldType } from './components/DateField';
+
+export { FileUpload } from './components/FileUpload';
+export type { FileUploadProps } from './components/FileUpload';
+
+export { CopyButton } from './components/CopyButton';
+export type { CopyButtonProps } from './components/CopyButton';
+
 export { Label } from './components/Label';
 export type { LabelProps } from './components/Label';
 

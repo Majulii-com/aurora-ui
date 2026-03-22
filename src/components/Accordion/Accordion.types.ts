@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
 
 export type AccordionVariant = 'default' | 'bordered' | 'separated';
 
@@ -7,9 +8,12 @@ export interface AccordionContextValue {
   setExpanded: (value: string | null) => void;
   variant: AccordionVariant;
   allowMultiple?: boolean;
+  plain: boolean;
 }
 
-export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> {
+export interface AccordionProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'>,
+    AuroraSurfaceProps {
   defaultValue?: string | string[] | null;
   value?: string | string[] | null;
   onChange?: (value: string | string[] | null) => void;

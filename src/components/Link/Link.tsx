@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { LinkProps } from './Link.types';
 
 const variantClasses: Record<NonNullable<LinkProps['variant']>, string> = {
@@ -10,15 +11,30 @@ const variantClasses: Record<NonNullable<LinkProps['variant']>, string> = {
 };
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ variant = 'default', external, className, rel, target, ...rest }, ref) => (
+  ({ variant = 'default', external, plain, className, rel, target, ...rest }, ref) => {
+    const ent = useAuroraSurface(plain);
+    const auroraVariant =
+      ent.isAurora &&
+      ({
+        default: ent.linkDefault,
+        primary: ent.linkPrimary,
+        muted: ent.linkMuted,
+        underline: ent.linkUnderline,
+      }[variant] as string);
+    return (
     <a
       ref={ref}
-      className={cn('transition-colors', variantClasses[variant], className)}
+      className={cn(
+        'transition-colors duration-200',
+        ent.isAurora ? auroraVariant : variantClasses[variant],
+        className
+      )}
       rel={external ? 'noopener noreferrer' : rel}
       target={external ? '_blank' : target}
       {...rest}
     />
-  )
+    );
+  }
 );
 
 Link.displayName = 'Link';

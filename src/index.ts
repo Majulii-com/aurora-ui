@@ -324,8 +324,16 @@ export {
 export { GenUIRenderer } from './runtime/GenUIRenderer';
 export { auroraGenUIRegistry, auroraGenUIRegistryTypes } from './runtime/auroraGenRegistry';
 export type { GenRegistryEntry } from './runtime/auroraGenRegistry';
-export { lintGenUIDocument, parseAndLintGenUIDocument } from './runtime/genLint';
+export { lintGenUIDocument, parseAndLintGenUIDocument, GEN_LINT_ACTION_PROP_KEYS } from './runtime/genLint';
 export type { GenLintIssue, GenLintResult, GenLintLevel, ParseAndLintResult } from './runtime/genLint';
+export {
+  GEN_REGISTRY_TYPE_CATEGORY,
+  GEN_REGISTRY_COMPONENT_CATEGORY_ORDER,
+  getGenUIRegistryComponentCategory,
+} from './runtime/dslRegistryTaxonomy';
+export type { GenUIRegistryComponentCategory } from './runtime/dslRegistryTaxonomy';
+export { GEN_UI_DSL_WIRING_ROWS } from './runtime/dslRendererWiring';
+export type { GenUIDslWiringRow } from './runtime/dslRendererWiring';
 export { DEFAULT_GEN_LIMITS } from './runtime/genLimits';
 export type { GenDocumentLimits } from './runtime/genLimits';
 

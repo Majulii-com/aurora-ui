@@ -1,0 +1,925 @@
+{
+  "version": "1",
+  "state": {
+    "ui": {
+      "drawerOpen": false,
+      "demoModal": false,
+      "promoVisible": true,
+      "timeRange": "30d",
+      "dashTab": "overview",
+      "wizardStep": 1,
+      "notifyBeta": true,
+      "leadEmail": "",
+      "leadFilter": "",
+      "rolloutPct": 72
+    },
+    "kpis": {
+      "mrr": "$428k",
+      "mrrTrend": "up",
+      "signups": "12.4k",
+      "signupsTrend": "up",
+      "sessions": "890k",
+      "sessionsTrend": "neutral",
+      "conv": "3.8%",
+      "convTrend": "down"
+    },
+    "charts": {
+      "area": {
+        "series": [
+          {
+            "name": "Organic",
+            "color": "#6366f1",
+            "data": [
+              { "x": "W1", "y": 120 },
+              { "x": "W2", "y": 156 },
+              { "x": "W3", "y": 142 },
+              { "x": "W4", "y": 188 }
+            ]
+          },
+          {
+            "name": "Paid",
+            "color": "#22c55e",
+            "data": [
+              { "x": "W1", "y": 80 },
+              { "x": "W2", "y": 96 },
+              { "x": "W3", "y": 110 },
+              { "x": "W4", "y": 124 }
+            ]
+          }
+        ]
+      },
+      "pie": [
+        { "label": "Search", "value": 42 },
+        { "label": "Social", "value": 28 },
+        { "label": "Direct", "value": 22 },
+        { "label": "Email", "value": 8 }
+      ]
+    },
+    "leads": {
+      "rows": [
+        { "id": "L-901", "company": "Northwind", "stage": "Qualified", "owner": "Asha" },
+        { "id": "L-902", "company": "Umbrella", "stage": "Meeting", "owner": "Ben" },
+        { "id": "L-903", "company": "Soylent", "stage": "New", "owner": "Chen" },
+        { "id": "L-904", "company": "Initech", "stage": "Won", "owner": "Dana" },
+        { "id": "L-905", "company": "Vehement", "stage": "Qualified", "owner": "Asha" }
+      ],
+      "page": 1,
+      "totalPages": 6
+    }
+  },
+  "actions": {
+    "openDrawer": { "type": "SET_STATE", "path": "ui.drawerOpen", "value": true },
+    "closeDrawer": { "type": "SET_STATE", "path": "ui.drawerOpen", "value": false },
+    "openDemo": { "type": "SET_STATE", "path": "ui.demoModal", "value": true },
+    "closeDemo": {
+      "type": "CHAIN",
+      "chain": [
+        { "type": "SET_STATE", "path": "ui.demoModal", "value": false },
+        { "type": "SET_STATE", "path": "ui.leadEmail", "value": "" }
+      ]
+    },
+    "dismissPromo": { "type": "SET_STATE", "path": "ui.promoVisible", "value": false },
+    "setTimeRange": { "type": "SET_STATE", "path": "ui.timeRange", "value": "{{event.value}}" },
+    "goWizard1": { "type": "SET_STATE", "path": "ui.wizardStep", "value": 0 },
+    "goWizard2": { "type": "SET_STATE", "path": "ui.wizardStep", "value": 1 },
+    "goWizard3": { "type": "SET_STATE", "path": "ui.wizardStep", "value": 2 },
+    "leadsPage": { "type": "SET_STATE", "path": "leads.page", "value": "{{event.page}}" }
+  },
+  "ui": {
+    "type": "Page",
+    "props": {
+      "className": "min-h-screen w-full bg-gradient-to-b from-indigo-50/80 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
+    },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "gap": 0, "className": "w-full min-w-0" },
+        "children": [
+          {
+            "type": "Box",
+            "props": {
+              "className": "sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90"
+            },
+            "children": [
+              {
+                "type": "Container",
+                "props": { "maxWidth": "full", "className": "max-w-7xl px-4 py-3" },
+                "children": [
+                  {
+                    "type": "Row",
+                    "props": { "gap": 3, "className": "w-full flex-wrap justify-between" },
+                    "children": [
+                      {
+                        "type": "Row",
+                        "props": { "gap": 2, "className": "items-center min-w-0" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "title",
+                              "className": "text-lg font-semibold tracking-tight",
+                              "children": "Aurora Launch"
+                            }
+                          },
+                          {
+                            "type": "Badge",
+                            "props": { "variant": "primary", "children": "GA" }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Breadcrumb",
+                        "props": { "className": "hidden sm:flex text-sm" },
+                        "children": [
+                          {
+                            "type": "BreadcrumbItem",
+                            "props": { "children": "Marketing" }
+                          },
+                          {
+                            "type": "BreadcrumbItem",
+                            "props": { "children": "Campaign console" }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Row",
+                        "props": { "gap": 2, "className": "items-center" },
+                        "children": [
+                          {
+                            "type": "Dropdown",
+                            "props": { "triggerLabel": "Workspace", "placement": "bottom-end" },
+                            "children": [
+                              {
+                                "type": "DropdownItem",
+                                "props": { "children": "Switch org…" }
+                              },
+                              {
+                                "type": "DropdownItem",
+                                "props": { "children": "Invite teammate" }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Tooltip",
+                            "props": { "content": "Product updates" },
+                            "children": [
+                              {
+                                "type": "Button",
+                                "props": {
+                                  "variant": "outline",
+                                  "size": "sm",
+                                  "children": "What’s new"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "variant": "primary",
+                              "size": "sm",
+                              "onClickAction": "openDemo",
+                              "children": "Book demo"
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "variant": "secondary",
+                              "size": "sm",
+                              "onClickAction": "openDrawer",
+                              "children": "Menu"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ShowWhen",
+            "props": { "when": "{{state.ui.promoVisible}}" },
+            "children": [
+              {
+                "type": "Container",
+                "props": { "maxWidth": "full", "className": "max-w-7xl px-4 pt-4" },
+                "children": [
+                  {
+                    "type": "Alert",
+                    "props": {
+                      "variant": "info",
+                      "title": "Webinar: scale your funnel",
+                      "className": "w-full",
+                      "children": "Live session Thursday — seats limited."
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "size": "sm",
+                      "onClickAction": "dismissPromo",
+                      "className": "-mt-2",
+                      "children": "Dismiss"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Container",
+            "props": { "maxWidth": "full", "className": "max-w-7xl px-4 py-8 w-full" },
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "gap": 8, "className": "w-full min-w-0" },
+                "children": [
+                  {
+                    "type": "Grid",
+                    "props": {
+                      "columns": 2,
+                      "gap": 6,
+                      "className": "max-lg:grid-cols-1 items-start"
+                    },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 4, "className": "min-w-0" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "title",
+                              "className": "text-3xl sm:text-4xl font-bold leading-tight",
+                              "children": "Turn traffic into pipeline — without another tab."
+                            }
+                          },
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "muted",
+                              "className": "text-base max-w-xl",
+                              "children": "Full-screen marketing shell: hero, KPIs, charts, CRM-style table, drawer, and modal — all declarative JSON."
+                            }
+                          },
+                          {
+                            "type": "Row",
+                            "props": { "gap": 3, "className": "flex-wrap items-center" },
+                            "children": [
+                              {
+                                "type": "SegmentedControl",
+                                "props": {
+                                  "aria-label": "Reporting range",
+                                  "value": "{{state.ui.timeRange}}",
+                                  "onChangeAction": "setTimeRange",
+                                  "options": [
+                                    { "value": "24h", "label": "24h" },
+                                    { "value": "7d", "label": "7d" },
+                                    { "value": "30d", "label": "30d" }
+                                  ]
+                                }
+                              },
+                              {
+                                "type": "Button",
+                                "props": {
+                                  "variant": "primary",
+                                  "onClickAction": "openDemo",
+                                  "children": "Start trial"
+                                }
+                              },
+                              {
+                                "type": "Link",
+                                "props": { "href": "#pricing", "children": "View pricing" }
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Row",
+                            "props": { "gap": 4, "className": "items-center flex-wrap" },
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm",
+                                  "children": "Beta emails"
+                                }
+                              },
+                              {
+                                "type": "Switch",
+                                "props": { "bind": "ui.notifyBeta", "label": "On" }
+                              },
+                              {
+                                "type": "CopyButton",
+                                "props": {
+                                  "textToCopy": "hello@aurora.example",
+                                  "className": "text-xs",
+                                  "children": "Copy contact"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "props": {
+                          "gap": 2,
+                          "className": "rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg dark:border-slate-700"
+                        },
+                        "children": [
+                          {
+                            "type": "Image",
+                            "props": {
+                              "src": "https://picsum.photos/seed/aurora-marketing/900/520",
+                              "alt": "Product screenshot",
+                              "className": "w-full h-48 object-cover"
+                            }
+                          },
+                          {
+                            "type": "Box",
+                            "props": {
+                              "className": "p-4 bg-white/90 dark:bg-slate-900/80"
+                            },
+                            "children": [
+                              {
+                                "type": "Row",
+                                "props": { "gap": 2, "className": "items-center mb-2" },
+                                "children": [
+                                  {
+                                    "type": "Icon",
+                                    "props": { "name": "maximize", "size": 20 }
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "body",
+                                      "className": "font-medium",
+                                      "children": "Immersive preview"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm",
+                                  "children": "Pair with `Page` + `Container` for full-viewport layouts."
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "gap": 3, "className": "w-full" },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "className": "text-xs uppercase tracking-wider",
+                          "children": "Onboarding checklist"
+                        }
+                      },
+                      {
+                        "type": "Stepper",
+                        "props": {
+                          "steps": [
+                            {
+                              "id": "connect",
+                              "title": "Connect data",
+                              "description": "Sources"
+                            },
+                            {
+                              "id": "audience",
+                              "title": "Define ICP",
+                              "description": "Segments"
+                            },
+                            {
+                              "id": "launch",
+                              "title": "Go live",
+                              "description": "Campaign"
+                            }
+                          ],
+                          "activeIndex": "{{state.ui.wizardStep}}",
+                          "className": "w-full"
+                        }
+                      },
+                      {
+                        "type": "Row",
+                        "props": { "gap": 2, "className": "flex-wrap" },
+                        "children": [
+                          {
+                            "type": "Button",
+                            "props": {
+                              "size": "sm",
+                              "variant": "outline",
+                              "onClickAction": "goWizard1",
+                              "children": "Step 1"
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "size": "sm",
+                              "variant": "outline",
+                              "onClickAction": "goWizard2",
+                              "children": "Step 2"
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "size": "sm",
+                              "variant": "outline",
+                              "onClickAction": "goWizard3",
+                              "children": "Step 3"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "props": {
+                      "columns": 4,
+                      "gap": 4,
+                      "className": "max-xl:grid-cols-2 max-md:grid-cols-1"
+                    },
+                    "children": [
+                      {
+                        "type": "StatCard",
+                        "props": {
+                          "title": "MRR (est.)",
+                          "value": "{{state.kpis.mrr}}",
+                          "trend": "{{state.kpis.mrrTrend}}",
+                          "trendLabel": "+9%",
+                          "subtitle": "Finance",
+                          "className": "shadow-sm"
+                        }
+                      },
+                      {
+                        "type": "StatCard",
+                        "props": {
+                          "title": "Signups",
+                          "value": "{{state.kpis.signups}}",
+                          "trend": "{{state.kpis.signupsTrend}}",
+                          "trendLabel": "+3%",
+                          "subtitle": "Growth",
+                          "className": "shadow-sm"
+                        }
+                      },
+                      {
+                        "type": "StatCard",
+                        "props": {
+                          "title": "Sessions",
+                          "value": "{{state.kpis.sessions}}",
+                          "trend": "{{state.kpis.sessionsTrend}}",
+                          "trendLabel": "—",
+                          "subtitle": "Web",
+                          "className": "shadow-sm"
+                        }
+                      },
+                      {
+                        "type": "StatCard",
+                        "props": {
+                          "title": "Conv. rate",
+                          "value": "{{state.kpis.conv}}",
+                          "trend": "{{state.kpis.convTrend}}",
+                          "trendLabel": "-0.2pp",
+                          "subtitle": "Funnel",
+                          "className": "shadow-sm"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Tabs",
+                    "props": {
+                      "tabBind": "ui.dashTab",
+                      "variant": "enclosed",
+                      "className": "w-full"
+                    },
+                    "children": [
+                      {
+                        "type": "TabList",
+                        "children": [
+                          {
+                            "type": "Tab",
+                            "props": { "value": "overview", "children": "Overview" }
+                          },
+                          {
+                            "type": "Tab",
+                            "props": { "value": "campaigns", "children": "Campaigns" }
+                          },
+                          {
+                            "type": "Tab",
+                            "props": { "value": "funnel", "children": "Funnel" }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TabPanel",
+                        "props": { "value": "overview" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "body",
+                              "className": "mb-4",
+                              "children": "Blend acquisition and product analytics in one surface. Charts read from `state.charts`."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TabPanel",
+                        "props": { "value": "campaigns" },
+                        "children": [
+                          {
+                            "type": "Row",
+                            "props": { "gap": 3, "className": "items-start flex-wrap" },
+                            "children": [
+                              {
+                                "type": "Avatar",
+                                "props": { "name": "Campaign A", "size": "md" }
+                              },
+                              {
+                                "type": "Stack",
+                                "props": { "gap": 1 },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "body",
+                                      "className": "font-medium",
+                                      "children": "Lifecycle — enterprise"
+                                    }
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "muted",
+                                      "className": "text-sm",
+                                      "children": "Use `TabPanel` to isolate dense copy from the default overview."
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TabPanel",
+                        "props": { "value": "funnel" },
+                        "children": [
+                          {
+                            "type": "EmptyState",
+                            "props": {
+                              "title": "Connect warehouse",
+                              "description": "Wire `onMountAction` + API_CALL to hydrate funnel stages."
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "props": {
+                      "columns": 2,
+                      "gap": 6,
+                      "className": "max-lg:grid-cols-1"
+                    },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 2, "className": "min-w-0" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "muted",
+                              "className": "text-xs uppercase tracking-wider",
+                              "children": "Traffic mix (area)"
+                            }
+                          },
+                          {
+                            "type": "AreaChart",
+                            "props": {
+                              "series": "{{state.charts.area.series}}",
+                              "stacked": true,
+                              "height": 260,
+                              "showDots": false,
+                              "className": "rounded-xl border border-slate-200 dark:border-slate-700 p-2"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 2, "className": "min-w-0" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "muted",
+                              "className": "text-xs uppercase tracking-wider",
+                              "children": "Channel share"
+                            }
+                          },
+                          {
+                            "type": "PieChart",
+                            "props": {
+                              "data": "{{state.charts.pie}}",
+                              "donut": true,
+                              "showLabels": true,
+                              "size": 240,
+                              "className": "mx-auto"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "gap": 2, "className": "w-full max-w-xl" },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "body",
+                          "className": "text-sm",
+                          "children": "Progressive rollout"
+                        }
+                      },
+                      {
+                        "type": "Progress",
+                        "props": {
+                          "value": "{{state.ui.rolloutPct}}",
+                          "max": 100,
+                          "className": "h-2"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "className": "text-xs",
+                          "children": "Target: 100% by next sprint"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Card",
+                    "props": { "className": "shadow-sm" },
+                    "children": [
+                      {
+                        "type": "CardHeader",
+                        "props": { "children": "FAQ" }
+                      },
+                      {
+                        "type": "CardBody",
+                        "children": [
+                          {
+                            "type": "Accordion",
+                            "props": { "defaultValue": "a1", "className": "w-full" },
+                            "children": [
+                              {
+                                "type": "AccordionItem",
+                                "props": { "value": "a1" },
+                                "children": [
+                                  {
+                                    "type": "AccordionTrigger",
+                                    "props": { "children": "How do actions compose?" }
+                                  },
+                                  {
+                                    "type": "AccordionContent",
+                                    "props": {
+                                      "children": "Use `CHAIN` for multi-step updates (e.g. close modal and reset fields)."
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "AccordionItem",
+                                "props": { "value": "a2" },
+                                "children": [
+                                  {
+                                    "type": "AccordionTrigger",
+                                    "props": { "children": "Where do charts get data?" }
+                                  },
+                                  {
+                                    "type": "AccordionContent",
+                                    "props": {
+                                      "children": "Prefer `state.*` plus `API_CALL` on success to merge hydrated series."
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Divider"
+                  },
+                  {
+                    "type": "SplitPane",
+                    "props": {
+                      "direction": "horizontal",
+                      "defaultSize": 0.55,
+                      "className": "min-h-[320px] rounded-xl border border-slate-200 dark:border-slate-700"
+                    },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "gap": 3, "className": "min-h-[300px] min-w-0 p-4" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "title",
+                              "className": "text-lg",
+                              "children": "Pipeline"
+                            }
+                          },
+                          {
+                            "type": "Table",
+                            "props": {
+                              "columns": [
+                                { "key": "id", "label": "ID", "sortable": true },
+                                { "key": "company", "label": "Company", "sortable": true },
+                                { "key": "stage", "label": "Stage", "sortable": true },
+                                { "key": "owner", "label": "Owner", "sortable": true }
+                              ],
+                              "rows": "{{state.leads.rows}}",
+                              "filterBind": "ui.leadFilter",
+                              "className": "w-full min-w-0 text-sm"
+                            }
+                          },
+                          {
+                            "type": "Pagination",
+                            "props": {
+                              "page": "{{state.leads.page}}",
+                              "totalPages": "{{state.leads.totalPages}}",
+                              "onPageChangeAction": "leadsPage"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "props": {
+                          "gap": 3,
+                          "className": "min-h-[300px] p-4 bg-slate-50/80 dark:bg-slate-800/40"
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "title",
+                              "className": "text-base",
+                              "children": "Side insights"
+                            }
+                          },
+                          {
+                            "type": "Alert",
+                            "props": {
+                              "variant": "success",
+                              "title": "Filter is bound",
+                              "children": "`filterBind` syncs the table filter to `state` for client-side narrowing."
+                            }
+                          },
+                          {
+                            "type": "Row",
+                            "props": { "gap": 2, "className": "items-center text-sm text-slate-600 dark:text-slate-300" },
+                            "children": [
+                              { "type": "Kbd", "props": { "children": "⌘K" } },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "children": "Command palette placeholder"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Drawer",
+        "props": {
+          "isOpen": "{{state.ui.drawerOpen}}",
+          "title": "Navigate",
+          "placement": "right",
+          "onCloseAction": "closeDrawer"
+        },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "gap": 3, "className": "p-2" },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "className": "justify-start",
+                  "onClickAction": "openDemo",
+                  "children": "Book demo"
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "className": "justify-start",
+                  "onClickAction": "closeDrawer",
+                  "children": "Close"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Modal",
+        "props": {
+          "isOpen": "{{state.ui.demoModal}}",
+          "title": "Book a demo",
+          "size": "md",
+          "onCloseAction": "closeDemo"
+        },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "gap": 4 },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "body",
+                  "children": "We’ll reach out at the email below. This modal uses `CHAIN` on close to reset the field."
+                }
+              },
+              {
+                "type": "Input",
+                "props": {
+                  "label": "Work email",
+                  "type": "email",
+                  "placeholder": "you@company.com",
+                  "bind": "ui.leadEmail"
+                }
+              },
+              {
+                "type": "Row",
+                "props": { "gap": 2, "className": "justify-end" },
+                "children": [
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "secondary",
+                      "onClickAction": "closeDemo",
+                      "children": "Cancel"
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "primary",
+                      "onClickAction": "closeDemo",
+                      "children": "Submit"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "version": "1",
+  "state": {
+    "ui": {
+      "tab": "profile",
+      "displayName": ""
+    },
+    "flags": {
+      "saved": false
+    }
+  },
+  "actions": {
+    "saveProfile": {
+      "type": "SET_STATE",
+      "path": "flags.saved",
+      "value": true
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full max-w-lg min-w-0 p-4"
+    },
+    "children": [
+      {
+        "type": "Text",
+        "props": {
+          "variant": "title",
+          "children": "Account"
+        }
+      },
+      {
+        "type": "Tabs",
+        "props": {
+          "tabBind": "ui.tab",
+          "variant": "line",
+          "className": "w-full"
+        },
+        "children": [
+          {
+            "type": "TabList",
+            "children": [
+              {
+                "type": "Tab",
+                "props": {
+                  "value": "profile",
+                  "children": "Profile"
+                }
+              },
+              {
+                "type": "Tab",
+                "props": {
+                  "value": "security",
+                  "children": "Security"
+                }
+              }
+            ]
+          },
+          {
+            "type": "TabPanel",
+            "props": {
+              "value": "profile",
+              "className": "pt-4"
+            },
+            "children": [
+              {
+                "type": "Input",
+                "props": {
+                  "label": "Display name",
+                  "bind": "ui.displayName",
+                  "placeholder": "Ada Lovelace"
+                }
+              }
+            ]
+          },
+          {
+            "type": "TabPanel",
+            "props": {
+              "value": "security",
+              "className": "pt-4"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "body",
+                  "children": "Rotate API keys and review sessions in your host app."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "props": {
+          "gap": 2,
+          "className": "items-center"
+        },
+        "children": [
+          {
+            "type": "Button",
+            "props": {
+              "children": "Save",
+              "variant": "primary",
+              "onClickAction": "saveProfile"
+            }
+          },
+          {
+            "type": "ShowWhen",
+            "props": {
+              "when": "{{state.flags.saved}}"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "muted",
+                  "children": "Saved (demo)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

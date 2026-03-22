@@ -1,0 +1,651 @@
+{
+  "generatedAt": "2026-03-22T22:29:35.245Z",
+  "registryVersion": "auroraGenUIRegistry",
+  "componentCount": 76,
+  "types": [
+    "Accordion",
+    "AccordionContent",
+    "AccordionItem",
+    "AccordionTrigger",
+    "Alert",
+    "AreaChart",
+    "Avatar",
+    "Badge",
+    "BarChart",
+    "Box",
+    "Breadcrumb",
+    "BreadcrumbItem",
+    "Button",
+    "Card",
+    "CardBody",
+    "CardFooter",
+    "CardHeader",
+    "Checkbox",
+    "Code",
+    "CodeBlock",
+    "ComposedChart",
+    "Container",
+    "CopyButton",
+    "DateField",
+    "Divider",
+    "Drawer",
+    "Dropdown",
+    "DropdownItem",
+    "EmptyState",
+    "FileUpload",
+    "Fragment",
+    "FunnelChart",
+    "Grid",
+    "Icon",
+    "IconButton",
+    "Image",
+    "Input",
+    "Kbd",
+    "Label",
+    "LineChart",
+    "Link",
+    "Modal",
+    "MultiSelect",
+    "Page",
+    "Pagination",
+    "PieChart",
+    "Popover",
+    "Progress",
+    "RadarChart",
+    "RadialBarChart",
+    "Radio",
+    "Row",
+    "SankeyChart",
+    "ScatterChart",
+    "SegmentedControl",
+    "Select",
+    "ShowWhen",
+    "Skeleton",
+    "Slider",
+    "Spinner",
+    "SplitPane",
+    "Stack",
+    "StatCard",
+    "Stepper",
+    "Switch",
+    "Tab",
+    "TabList",
+    "TabPanel",
+    "Table",
+    "Tabs",
+    "Text",
+    "Textarea",
+    "Tooltip",
+    "TreeTable",
+    "TreeView",
+    "TreemapChart"
+  ],
+  "registry": {
+    "Accordion": {
+      "defaultProps": {
+        "variant": "default",
+        "allowMultiple": false
+      }
+    },
+    "AccordionContent": {
+      "defaultProps": {
+        "children": "Content"
+      }
+    },
+    "AccordionItem": {
+      "defaultProps": {
+        "value": "1"
+      }
+    },
+    "AccordionTrigger": {
+      "defaultProps": {
+        "children": "Section"
+      }
+    },
+    "Alert": {},
+    "AreaChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "x": "Mon",
+            "y": 2
+          },
+          {
+            "x": "Tue",
+            "y": 5
+          }
+        ],
+        "height": 180
+      }
+    },
+    "Avatar": {
+      "defaultProps": {
+        "name": "?"
+      }
+    },
+    "Badge": {
+      "defaultProps": {
+        "children": "Badge",
+        "variant": "primary"
+      }
+    },
+    "BarChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "label": "A",
+            "value": 10
+          },
+          {
+            "label": "B",
+            "value": 24
+          }
+        ],
+        "height": 180
+      }
+    },
+    "Box": {},
+    "Breadcrumb": {},
+    "BreadcrumbItem": {
+      "defaultProps": {
+        "children": "Home"
+      }
+    },
+    "Button": {},
+    "Card": {},
+    "CardBody": {},
+    "CardFooter": {},
+    "CardHeader": {
+      "defaultProps": {
+        "children": "Header"
+      }
+    },
+    "Checkbox": {},
+    "Code": {
+      "defaultProps": {
+        "children": "code"
+      }
+    },
+    "CodeBlock": {
+      "defaultProps": {
+        "code": "// example",
+        "showLineNumbers": true
+      }
+    },
+    "ComposedChart": {
+      "defaultProps": {
+        "indexKey": "month",
+        "data": [
+          {
+            "month": "Jan",
+            "revenue": 40,
+            "profit": 12
+          },
+          {
+            "month": "Feb",
+            "revenue": 55,
+            "profit": 18
+          }
+        ],
+        "series": [
+          {
+            "type": "bar",
+            "dataKey": "revenue",
+            "name": "Revenue"
+          },
+          {
+            "type": "line",
+            "dataKey": "profit",
+            "name": "Profit"
+          }
+        ],
+        "height": 200
+      }
+    },
+    "Container": {},
+    "CopyButton": {
+      "defaultProps": {
+        "textToCopy": "hello@example.com",
+        "children": "Copy email"
+      }
+    },
+    "DateField": {
+      "defaultProps": {
+        "type": "date",
+        "label": "Date"
+      }
+    },
+    "Divider": {},
+    "Drawer": {
+      "defaultProps": {
+        "isOpen": false,
+        "onClose": "[function]",
+        "title": "Drawer",
+        "placement": "right"
+      }
+    },
+    "Dropdown": {
+      "defaultProps": {
+        "triggerLabel": "Menu",
+        "placement": "bottom-start"
+      }
+    },
+    "DropdownItem": {
+      "defaultProps": {
+        "children": "Item"
+      }
+    },
+    "EmptyState": {
+      "defaultProps": {
+        "title": "Nothing here",
+        "description": "Add content to get started."
+      }
+    },
+    "FileUpload": {
+      "defaultProps": {
+        "title": "Upload files",
+        "onFilesChange": "[function]"
+      }
+    },
+    "Fragment": {},
+    "FunnelChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "name": "Visitors",
+            "value": 1000
+          },
+          {
+            "name": "Leads",
+            "value": 400
+          },
+          {
+            "name": "Sales",
+            "value": 120
+          }
+        ],
+        "height": 220
+      }
+    },
+    "Grid": {},
+    "Icon": {
+      "defaultProps": {
+        "name": "search"
+      }
+    },
+    "IconButton": {
+      "defaultProps": {
+        "aria-label": "Action"
+      }
+    },
+    "Image": {
+      "defaultProps": {
+        "src": "https://picsum.photos/seed/aurora/800/400",
+        "alt": ""
+      }
+    },
+    "Input": {},
+    "Kbd": {
+      "defaultProps": {
+        "children": "⌘K"
+      }
+    },
+    "Label": {},
+    "LineChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "x": "Mon",
+            "y": 2
+          },
+          {
+            "x": "Tue",
+            "y": 5
+          }
+        ],
+        "height": 180
+      }
+    },
+    "Link": {
+      "defaultProps": {
+        "href": "#",
+        "children": "Link"
+      }
+    },
+    "Modal": {
+      "defaultProps": {
+        "isOpen": false,
+        "onClose": "[function]",
+        "title": "Dialog",
+        "size": "md"
+      }
+    },
+    "MultiSelect": {
+      "defaultProps": {
+        "options": [
+          {
+            "value": "a",
+            "label": "Option A"
+          },
+          {
+            "value": "b",
+            "label": "Option B"
+          },
+          {
+            "value": "c",
+            "label": "Option C"
+          }
+        ],
+        "value": [],
+        "onChange": "[function]",
+        "placeholder": "Choose…"
+      }
+    },
+    "Page": {},
+    "Pagination": {
+      "defaultProps": {
+        "page": 1,
+        "totalPages": 5,
+        "onPageChange": "[function]"
+      }
+    },
+    "PieChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "label": "A",
+            "value": 40
+          },
+          {
+            "label": "B",
+            "value": 60
+          }
+        ]
+      }
+    },
+    "Popover": {
+      "defaultProps": {
+        "triggerLabel": "Open",
+        "placement": "bottom-start"
+      }
+    },
+    "Progress": {
+      "defaultProps": {
+        "value": 50,
+        "max": 100
+      }
+    },
+    "RadarChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "subject": "Speed",
+            "A": 80,
+            "B": 50
+          },
+          {
+            "subject": "Reliability",
+            "A": 70,
+            "B": 90
+          },
+          {
+            "subject": "Comfort",
+            "A": 60,
+            "B": 70
+          }
+        ],
+        "height": 220
+      }
+    },
+    "RadialBarChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "name": "A",
+            "value": 40
+          },
+          {
+            "name": "B",
+            "value": 30
+          },
+          {
+            "name": "C",
+            "value": 30
+          }
+        ],
+        "height": 220
+      }
+    },
+    "Radio": {
+      "defaultProps": {
+        "name": "gen-radio"
+      }
+    },
+    "Row": {},
+    "SankeyChart": {
+      "defaultProps": {
+        "nodes": [
+          {
+            "name": "A"
+          },
+          {
+            "name": "B"
+          },
+          {
+            "name": "C"
+          }
+        ],
+        "links": [
+          {
+            "source": 0,
+            "target": 1,
+            "value": 10
+          },
+          {
+            "source": 1,
+            "target": 2,
+            "value": 10
+          }
+        ],
+        "height": 220
+      }
+    },
+    "ScatterChart": {
+      "defaultProps": {
+        "data": [
+          {
+            "x": 10,
+            "y": 20,
+            "label": "A"
+          },
+          {
+            "x": 30,
+            "y": 8,
+            "label": "B"
+          }
+        ],
+        "height": 200
+      }
+    },
+    "SegmentedControl": {
+      "defaultProps": {
+        "options": [
+          {
+            "value": "a",
+            "label": "A"
+          },
+          {
+            "value": "b",
+            "label": "B"
+          }
+        ],
+        "value": "a",
+        "onChange": "[function]",
+        "aria-label": "Segmented"
+      }
+    },
+    "Select": {
+      "defaultProps": {
+        "options": [
+          {
+            "value": "a",
+            "label": "Option A"
+          },
+          {
+            "value": "b",
+            "label": "Option B"
+          }
+        ]
+      }
+    },
+    "ShowWhen": {},
+    "Skeleton": {},
+    "Slider": {
+      "defaultProps": {
+        "min": 0,
+        "max": 100,
+        "value": 50,
+        "showValue": true
+      }
+    },
+    "Spinner": {},
+    "SplitPane": {
+      "defaultProps": {
+        "direction": "horizontal",
+        "defaultSize": 0.4
+      }
+    },
+    "Stack": {
+      "defaultProps": {
+        "gap": 4,
+        "className": "w-full min-w-0"
+      }
+    },
+    "StatCard": {
+      "defaultProps": {
+        "title": "Metric",
+        "value": "—",
+        "trend": "neutral",
+        "trendLabel": ""
+      }
+    },
+    "Stepper": {
+      "defaultProps": {
+        "steps": [
+          {
+            "id": "1",
+            "title": "Cart",
+            "description": "Review"
+          },
+          {
+            "id": "2",
+            "title": "Pay",
+            "description": "Billing"
+          },
+          {
+            "id": "3",
+            "title": "Done",
+            "description": "Receipt"
+          }
+        ],
+        "activeIndex": 1
+      }
+    },
+    "Switch": {},
+    "Tab": {},
+    "TabList": {},
+    "TabPanel": {},
+    "Table": {
+      "defaultProps": {
+        "className": "w-full min-w-0"
+      }
+    },
+    "Tabs": {
+      "defaultProps": {
+        "value": "1",
+        "onChange": "[function]"
+      }
+    },
+    "Text": {},
+    "Textarea": {},
+    "Tooltip": {
+      "defaultProps": {
+        "content": "Tooltip"
+      }
+    },
+    "TreeTable": {
+      "defaultProps": {
+        "className": "w-full min-w-0",
+        "columns": [
+          {
+            "key": "name",
+            "label": "Name"
+          },
+          {
+            "key": "role",
+            "label": "Role"
+          }
+        ],
+        "rows": [
+          {
+            "id": "1",
+            "name": "Engineering",
+            "role": "Dept"
+          },
+          {
+            "id": "2",
+            "parentId": "1",
+            "name": "Platform",
+            "role": "Team"
+          },
+          {
+            "id": "3",
+            "parentId": "2",
+            "name": "API",
+            "role": "Squad"
+          }
+        ],
+        "defaultExpandAll": true
+      }
+    },
+    "TreeView": {
+      "defaultProps": {
+        "items": [
+          {
+            "id": "1",
+            "label": "Folder",
+            "children": [
+              {
+                "id": "1-1",
+                "label": "File"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "TreemapChart": {
+      "defaultProps": {
+        "data": {
+          "name": "Root",
+          "children": [
+            {
+              "name": "Alpha",
+              "size": 400
+            },
+            {
+              "name": "Beta",
+              "size": 300
+            },
+            {
+              "name": "Gamma",
+              "size": 200
+            }
+          ]
+        },
+        "height": 200
+      }
+    }
+  },
+  "taxonomyMissingExplicit": []
+}

@@ -1,0 +1,113 @@
+{
+  "version": "1",
+  "state": {
+    "ui": {
+      "modalOpen": false,
+      "bannerVisible": true
+    }
+  },
+  "actions": {
+    "openModal": {
+      "type": "SET_STATE",
+      "path": "ui.modalOpen",
+      "value": true
+    },
+    "closeModal": {
+      "type": "SET_STATE",
+      "path": "ui.modalOpen",
+      "value": false
+    },
+    "dismissBanner": {
+      "type": "SET_STATE",
+      "path": "ui.bannerVisible",
+      "value": false
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full max-w-2xl min-w-0 p-4"
+    },
+    "children": [
+      {
+        "type": "ShowWhen",
+        "props": {
+          "when": "{{state.ui.bannerVisible}}"
+        },
+        "children": [
+          {
+            "type": "Alert",
+            "props": {
+              "variant": "info",
+              "title": "Maintenance",
+              "children": "Read-only mode this weekend.",
+              "className": "w-full"
+            }
+          },
+          {
+            "type": "Button",
+            "props": {
+              "children": "Dismiss",
+              "variant": "secondary",
+              "size": "sm",
+              "onClickAction": "dismissBanner",
+              "className": "mt-2"
+            }
+          }
+        ]
+      },
+      {
+        "type": "Button",
+        "props": {
+          "children": "Open details",
+          "variant": "primary",
+          "onClickAction": "openModal"
+        }
+      },
+      {
+        "type": "Modal",
+        "props": {
+          "isOpen": "{{state.ui.modalOpen}}",
+          "title": "Details",
+          "onCloseAction": "closeModal",
+          "size": "md"
+        },
+        "children": [
+          {
+            "type": "Stack",
+            "props": {
+              "gap": 3
+            },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "body",
+                  "children": "Content is composed from nested `children` nodes; close uses onCloseAction → SET_STATE."
+                }
+              },
+              {
+                "type": "Row",
+                "props": {
+                  "gap": 2,
+                  "className": "justify-end"
+                },
+                "children": [
+                  {
+                    "type": "Button",
+                    "props": {
+                      "children": "Close",
+                      "variant": "secondary",
+                      "onClickAction": "closeModal"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

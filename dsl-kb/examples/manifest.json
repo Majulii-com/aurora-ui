@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "file": "01-interactive-form-tabs.json",
+      "title": "Tabs, two-way bind, and a declarative action",
+      "intent": "Use when the user asks for settings, profile, or multi-step forms without navigation."
+    },
+    {
+      "file": "02-table-pagination.json",
+      "title": "Data table + pagination driven by state",
+      "intent": "Use when listing rows from state with page controls; extend with onMountAction + API_CALL for live data."
+    },
+    {
+      "file": "03-modal-showwhen-alert.json",
+      "title": "Conditional blocks, modal, and action wiring",
+      "intent": "Use for confirmations, banners, and toggling visibility via SET_STATE."
+    },
+    {
+      "file": "04-dashboard-charts-split.json",
+      "title": "Split layout with charts and KPI cards",
+      "intent": "Use for analytics-style dashboards: charts read series/data from state."
+    },
+    {
+      "file": "05-fullscreen-marketing-dashboard.json",
+      "title": "Full-screen marketing + analytics cockpit",
+      "intent": "Use for dense landing pages, launch consoles, or campaign dashboards: Page hero, KPI grid, segmented range, stepper, tabs, Area+Pie charts, accordion, SplitPane with filtered table + pagination, Drawer and Modal, CHAIN actions."
+    }
+  ]
+}

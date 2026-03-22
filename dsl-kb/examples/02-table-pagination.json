@@ -1,0 +1,57 @@
+{
+  "version": "1",
+  "state": {
+    "invoices": {
+      "rows": [
+        { "id": "inv-1001", "customer": "Acme Corp", "total": 1200, "status": "Paid" },
+        { "id": "inv-1002", "customer": "Globex", "total": 850, "status": "Open" }
+      ],
+      "page": 1,
+      "totalPages": 4
+    }
+  },
+  "actions": {
+    "goPage": {
+      "type": "SET_STATE",
+      "path": "invoices.page",
+      "value": "{{event.page}}"
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full min-w-0 p-4"
+    },
+    "children": [
+      {
+        "type": "Text",
+        "props": {
+          "variant": "title",
+          "children": "Invoices"
+        }
+      },
+      {
+        "type": "Table",
+        "props": {
+          "columns": [
+            { "key": "id", "label": "ID", "sortable": true },
+            { "key": "customer", "label": "Customer", "sortable": true },
+            { "key": "total", "label": "Total", "sortable": false },
+            { "key": "status", "label": "Status", "sortable": true }
+          ],
+          "rows": "{{state.invoices.rows}}",
+          "className": "w-full min-w-0"
+        }
+      },
+      {
+        "type": "Pagination",
+        "props": {
+          "page": "{{state.invoices.page}}",
+          "totalPages": "{{state.invoices.totalPages}}",
+          "onPageChangeAction": "goPage"
+        }
+      }
+    ]
+  }
+}

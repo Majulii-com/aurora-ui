@@ -26,13 +26,15 @@ export interface GenLintResult {
  * (see `docs/GENERATIVE_UI.md` §6). Document-level `onMountAction` is checked separately in
  * {@link lintGenUIDocument}.
  */
-const ACTION_PROP_KEYS = new Set([
+export const GEN_LINT_ACTION_PROP_KEYS = [
   'onClickAction',
   'onSortAction',
   'onChangeAction',
   'onCloseAction',
   'onPageChangeAction',
-]);
+] as const;
+
+const ACTION_PROP_KEYS = new Set<string>(GEN_LINT_ACTION_PROP_KEYS);
 
 function walkUi(
   node: GenUINode,

@@ -1,0 +1,130 @@
+{
+  "version": "1",
+  "state": {
+    "kpis": {
+      "revenue": "$2.4M",
+      "trend": "up"
+    },
+    "charts": {
+      "bars": [
+        { "label": "Mon", "value": 28 },
+        { "label": "Tue", "value": 35 },
+        { "label": "Wed", "value": 22 }
+      ],
+      "line": {
+        "series": [
+          {
+            "name": "Ingress",
+            "color": "#3b82f6",
+            "data": [
+              { "x": "00:00", "y": 12 },
+              { "x": "12:00", "y": 44 },
+              { "x": "20:00", "y": 24 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "ui": {
+    "type": "Stack",
+    "props": {
+      "gap": 4,
+      "className": "w-full min-w-0 p-4"
+    },
+    "children": [
+      {
+        "type": "Grid",
+        "props": {
+          "columns": 2,
+          "gap": 4,
+          "className": "max-lg:grid-cols-1"
+        },
+        "children": [
+          {
+            "type": "StatCard",
+            "props": {
+              "title": "ARR (proxy)",
+              "value": "{{state.kpis.revenue}}",
+              "trend": "{{state.kpis.trend}}",
+              "trendLabel": "+6%",
+              "subtitle": "Finance",
+              "className": "shadow-sm"
+            }
+          },
+          {
+            "type": "StatCard",
+            "props": {
+              "title": "Pipeline",
+              "value": "—",
+              "trend": "neutral",
+              "trendLabel": "",
+              "subtitle": "Sales",
+              "className": "shadow-sm"
+            }
+          }
+        ]
+      },
+      {
+        "type": "SplitPane",
+        "props": {
+          "direction": "horizontal",
+          "defaultSize": 0.5,
+          "className": "min-h-[240px] rounded-xl border border-slate-200 dark:border-slate-700"
+        },
+        "children": [
+          {
+            "type": "Stack",
+            "props": {
+              "gap": 2,
+              "className": "min-h-[220px] min-w-0 p-3"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "muted",
+                  "children": "Volume",
+                  "className": "text-xs uppercase tracking-wide"
+                }
+              },
+              {
+                "type": "BarChart",
+                "props": {
+                  "data": "{{state.charts.bars}}",
+                  "height": 200,
+                  "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                }
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "props": {
+              "gap": 2,
+              "className": "min-h-[220px] min-w-0 p-3"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "props": {
+                  "variant": "muted",
+                  "children": "Ingress",
+                  "className": "text-xs uppercase tracking-wide"
+                }
+              },
+              {
+                "type": "LineChart",
+                "props": {
+                  "series": "{{state.charts.line.series}}",
+                  "height": 200,
+                  "className": "rounded-lg border border-slate-100 dark:border-slate-800"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,6 +6,8 @@ AI (or tools) emit **one JSON object** (no functions). The host runs:
 
 This document lists **only behavior that is implemented today** in `aurora-ui` (see §Not supported for boundaries). **Per-component JSON props (Tailwind / DSL knobs):** `GENERATIVE_UI_DSL_PROPS.md`. **Conventions for new Aurora components (so JSON stays in control):** `COMPONENT_DSL_CONVENTIONS.md`.
 
+**AI / tooling — auto-generated knowledge base** (registry types, `defaultProps`, renderer wiring, action shapes): run `npm run gen:dsl-kb` and use repo-root **`dsl-kb/DSL_AI_KNOWLEDGE_BASE.md`** plus **`dsl-kb/dsl-registry.snapshot.json`** (see `dsl-kb/README.md`).
+
 ---
 
 ## 0. Host example app

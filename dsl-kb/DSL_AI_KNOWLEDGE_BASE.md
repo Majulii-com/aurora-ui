@@ -1,7 +1,7 @@
 # Aurora GenUI DSL — AI knowledge base (generated)
 
 > **Auto-generated** — do not edit by hand. Run `npm run gen:dsl-kb` after registry or renderer changes.
-> **Generated at:** 2026-03-22T22:29:35.245Z
+> **Generated at:** 2026-03-22T22:31:23.134Z
 
 ## Purpose
 

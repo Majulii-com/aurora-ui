@@ -31,16 +31,13 @@ export const ManyPages: Story = {
   render: () => <PaginationDemo totalPages={20} />,
 };
 
+function PaginationWithoutFirstLastDemo() {
+  const [page, setPage] = useState(1);
+  return (
+    <Pagination page={page} totalPages={10} onPageChange={setPage} showFirstLast={false} />
+  );
+}
+
 export const WithoutFirstLast: Story = {
-  render: () => {
-    const [page, setPage] = useState(1);
-    return (
-      <Pagination
-        page={page}
-        totalPages={10}
-        onPageChange={setPage}
-        showFirstLast={false}
-      />
-    );
-  },
+  render: () => <PaginationWithoutFirstLastDemo />,
 };

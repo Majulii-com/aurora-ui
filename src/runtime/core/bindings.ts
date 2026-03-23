@@ -106,7 +106,7 @@ export function injectStateHandlers(
   twoWayBindings: Record<string, string>,
   setData: (path: string, value: unknown) => void
 ): Record<string, unknown> {
-  let out = { ...resolvedProps };
+  const out = { ...resolvedProps };
   for (const [propKey, path] of Object.entries(twoWayBindings)) {
     const handlerName =
       STATE_HANDLER_NAMES[propKey] ??

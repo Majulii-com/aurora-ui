@@ -17,19 +17,28 @@ export default meta;
 type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = {
-  args: {
-    'aria-label': 'Add',
-    children: <Icon name="add" size={20} />,
-  },
+  render: () => (
+    <IconButton aria-label="Add">
+      <Icon name="add" size={20} />
+    </IconButton>
+  ),
 };
 
 export const Toolbar: Story = {
   render: () => (
     <div className="flex gap-2">
-      <IconButton aria-label="Run" children={<Icon name="run" size={18} />} />
-      <IconButton aria-label="Save" children={<Icon name="save" size={18} />} />
-      <IconButton aria-label="Export" children={<Icon name="export" size={18} />} />
-      <IconButton aria-label="Settings" children={<Icon name="settings" size={18} />} />
+      <IconButton aria-label="Run">
+        <Icon name="run" size={18} />
+      </IconButton>
+      <IconButton aria-label="Save">
+        <Icon name="save" size={18} />
+      </IconButton>
+      <IconButton aria-label="Export">
+        <Icon name="export" size={18} />
+      </IconButton>
+      <IconButton aria-label="Settings">
+        <Icon name="settings" size={18} />
+      </IconButton>
     </div>
   ),
 };

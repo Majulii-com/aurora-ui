@@ -15,7 +15,8 @@ export function GenFragment({ children }: { children?: React.ReactNode }) {
 }
 
 export function GenDropdown(props: Record<string, unknown>) {
-  const { triggerLabel = 'Menu', children, trigger: _ignore, ...rest } = props;
+  const { triggerLabel = 'Menu', children, trigger, ...rest } = props;
+  void trigger;
   return (
     <Dropdown
       {...(rest as Omit<React.ComponentProps<typeof Dropdown>, 'trigger' | 'children'>)}
@@ -31,7 +32,8 @@ export function GenDropdown(props: Record<string, unknown>) {
 }
 
 export function GenPopover(props: Record<string, unknown>) {
-  const { triggerLabel = 'Open', children, trigger: _ignore, ...rest } = props;
+  const { triggerLabel = 'Open', children, trigger, ...rest } = props;
+  void trigger;
   return (
     <Popover
       {...(rest as Omit<React.ComponentProps<typeof Popover>, 'trigger' | 'children'>)}

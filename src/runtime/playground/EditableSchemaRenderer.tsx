@@ -137,15 +137,7 @@ export function EditableSchemaRenderer({
   );
 
   const entry = registry[node.type];
-  if (!entry) {
-    return (
-      <div className="p-2 bg-red-100 dark:bg-red-900/30 text-red-700 rounded text-sm">
-        Unknown component: {node.type}
-      </div>
-    );
-  }
-
-  const { component: Component, defaultProps = {} } = entry;
+  const defaultProps = entry?.defaultProps ?? {};
   const rawProps = { ...defaultProps, ...node.props } as Record<string, unknown>;
 
   const resolvedProps = useMemo(
@@ -160,6 +152,16 @@ export function EditableSchemaRenderer({
     () => injectStateHandlers(resolvedProps, twoWayBindings, setData),
     [resolvedProps, twoWayBindings, setData]
   );
+
+  if (!entry) {
+    return (
+      <div className="p-2 bg-red-100 dark:bg-red-900/30 text-red-700 rounded text-sm">
+        Unknown component: {node.type}
+      </div>
+    );
+  }
+
+  const { component: Component } = entry;
 
   const props = propsWithHandlers;
   const childNodes = node.children ?? [];
@@ -181,7 +183,8 @@ export function EditableSchemaRenderer({
     <EditableSchemaRenderer key={child.id} {...childProps} parentType={node.type} node={child} />
   ));
 
-  const { children: _propChildren, ...restProps } = props;
+  const { children: _childrenFromRegistry, ...restProps } = props;
+  void _childrenFromRegistry;
   let finalProps = restProps as Record<string, unknown>;
   if (node.id && VALUE_TYPES.has(node.type) && !twoWayBindings.value) {
     const value = (node.props?.value as string) ?? (resolvedProps.value as string) ?? '';

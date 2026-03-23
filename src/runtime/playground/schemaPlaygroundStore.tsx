@@ -273,7 +273,8 @@ export function PlaygroundProvider({
 
   const getSerializableSchema = useCallback(() => {
     function stripIds(n: UINode): UINode {
-      const { id: _id, ...rest } = n;
+      const { id, ...rest } = n;
+      void id;
       return { ...rest, children: n.children?.map(stripIds) };
     }
     return stripIds(cloneNode(schema));

@@ -3,7 +3,6 @@ import {
   Chat,
   ChatHeader,
   ChatMessages,
-  ChatMessage,
   ChatInput,
   ChatOptionCard,
   ChatSuggestions,
@@ -44,8 +43,12 @@ export const Default: Story = {
         subtitle="Ask anything"
         actions={
           <>
-            <IconButton aria-label="Minimize" children={<Icon name="chevron-down" size={16} />} />
-            <IconButton aria-label="Close" children={<Icon name="close" size={16} />} />
+            <IconButton aria-label="Minimize">
+              <Icon name="chevron-down" size={16} />
+            </IconButton>
+            <IconButton aria-label="Close">
+              <Icon name="close" size={16} />
+            </IconButton>
           </>
         }
       />

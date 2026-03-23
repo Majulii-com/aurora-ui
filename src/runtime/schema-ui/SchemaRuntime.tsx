@@ -45,18 +45,7 @@ function SchemaRuntimeInner({
   onAction: SchemaRuntimeProps['onAction'];
 }): React.ReactElement | null {
   const entry = registry[node.type];
-  if (!entry) {
-    return (
-      <div
-        key={node.id}
-        className="p-2 bg-red-100 dark:bg-red-900/30 text-red-700 rounded text-sm"
-      >
-        Unknown component: {node.type}
-      </div>
-    );
-  }
-
-  const { component: Component, defaultProps = {} } = entry;
+  const defaultProps = entry?.defaultProps ?? {};
   const rawProps = { ...defaultProps, ...node.props } as Record<string, unknown>;
 
   const resolvedProps = useMemo(
@@ -72,6 +61,19 @@ function SchemaRuntimeInner({
     [resolvedProps, twoWayBindings, setData]
   );
 
+  if (!entry) {
+    return (
+      <div
+        key={node.id}
+        className="p-2 bg-red-100 dark:bg-red-900/30 text-red-700 rounded text-sm"
+      >
+        Unknown component: {node.type}
+      </div>
+    );
+  }
+
+  const { component: Component } = entry;
+
   const childNodes = node.children ?? [];
   const renderedChildren = childNodes.map((child) => (
     <SchemaRuntimeInner
@@ -84,7 +86,8 @@ function SchemaRuntimeInner({
     />
   ));
 
-  const { children: _propChildren, ...restProps } = propsWithHandlers;
+  const { children: _childrenFromRegistry, ...restProps } = propsWithHandlers;
+  void _childrenFromRegistry;
   let finalProps = restProps as Record<string, unknown>;
 
   if (node.id && VALUE_TYPES.has(node.type) && !twoWayBindings.value) {

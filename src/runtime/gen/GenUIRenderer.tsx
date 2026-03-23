@@ -82,19 +82,7 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
   );
 
   const entry = registry[node.type];
-  if (!entry) {
-    return (
-      <div
-        className={cn(
-          'rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-800 dark:text-red-200'
-        )}
-      >
-        Unknown component: <code className="font-mono">{node.type}</code>
-      </div>
-    );
-  }
-
-  const { component: Component, defaultProps = {} } = entry;
+  const defaultProps = entry?.defaultProps ?? {};
   const rawProps = { ...defaultProps, ...(node.props ?? {}) } as Record<string, unknown>;
 
   const resolved = resolveDeep(rawProps, ctx) as Record<string, unknown>;
@@ -227,6 +215,20 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
 
     return p;
   }, [resolved, state, node.type, loadingMap, getStore, run]);
+
+  if (!entry) {
+    return (
+      <div
+        className={cn(
+          'rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-800 dark:text-red-200'
+        )}
+      >
+        Unknown component: <code className="font-mono">{node.type}</code>
+      </div>
+    );
+  }
+
+  const { component: Component } = entry;
 
   const childNodes = node.children ?? [];
 

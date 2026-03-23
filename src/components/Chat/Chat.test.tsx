@@ -4,7 +4,6 @@ import {
   Chat,
   ChatHeader,
   ChatMessages,
-  ChatMessage,
   ChatInput,
   ChatOptionCard,
   ChatSuggestions,

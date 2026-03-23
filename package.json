@@ -1,6 +1,6 @@
 {
   "name": "@majulii/aurora-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Majulii Aurora UI - React component system with TailwindCSS",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
@@ -98,7 +98,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/majulii/aurora-ui"
+    "url": "https://github.com/Majulii-com/aurora-ui"
+  },
+  "homepage": "https://github.com/Majulii-com/aurora-ui#readme",
+  "bugs": {
+    "url": "https://github.com/Majulii-com/aurora-ui/issues"
   },
   "dependencies": {
     "lucide-react": "^0.577.0"

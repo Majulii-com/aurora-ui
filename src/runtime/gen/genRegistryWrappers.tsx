@@ -3,11 +3,11 @@
  * still compose naturally with `children` from the Gen UI tree.
  */
 import React from 'react';
-import { Button } from '../components/Button';
-import { Dropdown } from '../components/Dropdown';
-import { Popover } from '../components/Popover';
-import { Icon } from '../components/Icon';
-import { IconButton } from '../components/IconButton';
+import { Button } from '../../components/Button';
+import { Dropdown } from '../../components/Dropdown';
+import { Popover } from '../../components/Popover';
+import { Icon } from '../../components/Icon';
+import { IconButton } from '../../components/IconButton';
 
 /** Groups nodes without an extra DOM box — use for layout grouping in JSON. */
 export function GenFragment({ children }: { children?: React.ReactNode }) {

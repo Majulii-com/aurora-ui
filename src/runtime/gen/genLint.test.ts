@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { lintGenUIDocument, parseAndLintGenUIDocument } from './genLint';
 import { auroraGenUIRegistryTypes } from './auroraGenRegistry';
-import type { GenUIDocument } from '../schema/genDocumentTypes';
+import type { GenUIDocument } from '../../schema/genDocumentTypes';
 
 const minimalDoc = (ui: GenUIDocument['ui']): GenUIDocument => ({
   state: {},

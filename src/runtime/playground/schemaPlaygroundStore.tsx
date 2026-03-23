@@ -7,7 +7,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { UINode } from '../schema/types';
+import type { UINode } from '../../schema/types';
 import { defaultAppReducer, INITIAL_APP_STATE, type AppState, type AppAction } from './appReducer';
 
 function genId(): string {

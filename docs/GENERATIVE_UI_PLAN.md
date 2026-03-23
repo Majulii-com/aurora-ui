@@ -17,7 +17,7 @@ This file tracks **(A)** what the generative stack **does today** (aligned with 
 | **Default registry** | See **§4** in `GENERATIVE_UI.md` (`auroraGenUIRegistry` / `auroraGenUIRegistryTypes`) |
 | **Playground** | **Generative JSON DSL** mode: paste JSON, Zod + lint output, live preview |
 | **Docs** | **`GENERATIVE_UI.md`** = authoritative “what works / what doesn’t”; **`GENERATIVE_UI_DSL_PROPS.md`** = per-`type` styling/layout props for AI JSON; **`COMPONENT_DSL_CONVENTIONS.md`** = how to build components for DSL |
-| **Tests** | `src/runtime/genLint.test.ts` (lint); broader interpreter/renderer tests = **future** (Phase 5) |
+| **Tests** | `src/runtime/gen/genLint.test.ts` (lint); broader interpreter/renderer tests = **future** (Phase 5) |
 
 ---
 

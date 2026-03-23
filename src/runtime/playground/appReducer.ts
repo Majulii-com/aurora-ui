@@ -2,7 +2,7 @@
  * Serializable app state updates for schema-driven UIs (`__bind` + `setData`).
  * Host apps (and the schema playground) dispatch these actions; no custom reducer code required for basic path updates.
  */
-import { setAtPath } from './bindings';
+import { setAtPath } from '../core/bindings';
 
 export type AppState = Record<string, unknown>;
 

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { UIState } from '../schema/genDocumentTypes';
-import { setAtPathImmutable } from './genPaths';
+import type { UIState } from '../../schema/genDocumentTypes';
+import { setAtPathImmutable } from '../core/genPaths';
 
 export interface GenRuntimeState {
   state: UIState;

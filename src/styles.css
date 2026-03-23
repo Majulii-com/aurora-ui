@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  .aurora-ui-scope {
     /* Majulii brand — teal primary, navy text (overridden per theme via ThemeProvider) */
     --aurora-primary-50: #f0fdfa;
     --aurora-primary-100: #ccfbf1;

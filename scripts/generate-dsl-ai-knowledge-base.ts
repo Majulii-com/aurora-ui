@@ -2,24 +2,25 @@
  * Generates AI-oriented knowledge base artifacts for GenUI / DSL JSON.
  * Run: npm run gen:dsl-kb
  *
- * Metadata (wiring, lint keys, taxonomy) lives under `src/runtime/dsl*.ts` and `genLint.ts`.
+ * Metadata (wiring, lint keys, taxonomy) lives under `src/runtime/gen/` (e.g. `dslRendererWiring.ts`, `genLint.ts`).
  */
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-import { auroraGenUIRegistry } from '../src/runtime/auroraGenRegistry';
+import { auroraGenUIRegistry } from '../src/runtime/gen/auroraGenRegistry';
 import { ACTION_TYPES } from '../src/schema/genDocumentTypes';
 import { parseGenUIDocument } from '../src/schema/genDocumentSchema';
-import { DEFAULT_GEN_LIMITS } from '../src/runtime/genLimits';
-import { GEN_LINT_ACTION_PROP_KEYS } from '../src/runtime/genLint';
-import { GEN_UI_DSL_WIRING_ROWS } from '../src/runtime/dslRendererWiring';
+import { DEFAULT_GEN_LIMITS } from '../src/runtime/gen/genLimits';
+import { GEN_LINT_ACTION_PROP_KEYS } from '../src/runtime/gen/genLint';
+import { GEN_UI_DSL_WIRING_ROWS } from '../src/runtime/gen/dslRendererWiring';
 import {
   GEN_REGISTRY_COMPONENT_CATEGORY_ORDER,
   GEN_REGISTRY_TYPE_CATEGORY,
   getGenUIRegistryComponentCategory,
   type GenUIRegistryComponentCategory,
-} from '../src/runtime/dslRegistryTaxonomy';
+} from '../src/runtime/gen/dslRegistryTaxonomy';
+import { LUCIDE_ICON_NAMES, LEGACY_ICON_ALIASES } from '../src/icons/iconNames';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 /** Top-level folder (not under `docs/`) so it’s easy to spot as AI / tooling output */
@@ -133,7 +134,7 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
   lines.push('');
   lines.push('Use it together with human docs: `docs/GENERATIVE_UI.md`, `docs/GENERATIVE_UI_DSL_PROPS.md`, `docs/COMPONENT_DSL_CONVENTIONS.md`.');
   lines.push('');
-  lines.push('Wiring rows and taxonomy are maintained in `src/runtime/dslRendererWiring.ts` and `src/runtime/dslRegistryTaxonomy.ts`.');
+  lines.push('Wiring rows and taxonomy are maintained in `src/runtime/gen/dslRendererWiring.ts` and `src/runtime/gen/dslRegistryTaxonomy.ts`.');
   lines.push('');
   lines.push('---');
   lines.push('');
@@ -252,6 +253,28 @@ function buildMarkdown(snapshot: ReturnType<typeof buildSnapshot>): string {
     `**Lint** also checks that string values on **${GEN_LINT_ACTION_PROP_KEYS.map((p) => `\`${p}\``).join(', ')}** reference existing keys in \`document.actions\`.`
   );
   lines.push('');
+  lines.push('### 6.1 `Icon` component — Lucide icon names');
+  lines.push('');
+  lines.push(
+    'The **`Icon`** registry component uses **Lucide** (via `lucide-react` dynamic icons). Pass `props.name` as a **kebab-case** icon id (e.g. `home`, `chevron-right`, `trash-2`) or **PascalCase** (`Home`, `ChevronRight`).'
+  );
+  lines.push('');
+  lines.push(
+    `**Count:** **${LUCIDE_ICON_NAMES.length}** icon names (same set as \`lucide-react\` \`iconNames\`). Full sorted list: \`dsl-kb/lucide-icon-names.json\`.`
+  );
+  lines.push('');
+  lines.push('**Legacy aliases** (older DSL examples):');
+  lines.push('');
+  lines.push('| Alias | Lucide `name` |');
+  lines.push('|-------|----------------|');
+  for (const [alias, lucide] of Object.entries(LEGACY_ICON_ALIASES).sort(([a], [b]) => a.localeCompare(b))) {
+    lines.push(`| \`${alias}\` | \`${lucide}\` |`);
+  }
+  lines.push('');
+  lines.push(
+    '**Examples:** `"name": "search"`, `"name": "settings"`, `"name": "rocket"`. Invalid names render nothing (and warn in dev).'
+  );
+  lines.push('');
   lines.push('---');
   lines.push('');
   lines.push('## 7. Document limits (lint)');
@@ -322,8 +345,16 @@ function main() {
   writeFileSync(jsonPath, JSON.stringify(snapshot, null, 2) + '\n', 'utf8');
   writeFileSync(mdPath, buildMarkdown(snapshot), 'utf8');
 
+  const iconNamesPath = join(OUT_DIR, 'lucide-icon-names.json');
+  writeFileSync(
+    iconNamesPath,
+    JSON.stringify([...LUCIDE_ICON_NAMES].sort((a, b) => a.localeCompare(b)), null, 2) + '\n',
+    'utf8'
+  );
+
   console.log(`Wrote ${jsonPath}`);
   console.log(`Wrote ${mdPath}`);
+  console.log(`Wrote ${iconNamesPath} (${LUCIDE_ICON_NAMES.length} names)`);
   console.log(`Components: ${snapshot.componentCount}`);
   if (snapshot.taxonomyMissingExplicit.length > 0) {
     console.warn(

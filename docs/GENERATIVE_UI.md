@@ -257,10 +257,10 @@ Playground: `npm run playground` → **Generative JSON DSL** → **Load …** bu
 | Topic | Location |
 |-------|----------|
 | Types & Zod | `src/schema/genDocumentTypes.ts`, `genDocumentSchema.ts` |
-| Interpreter | `src/runtime/genInterpreter.ts` |
-| Store | `src/runtime/genStore.ts`, `genPaths.ts` |
-| Renderer | `src/runtime/GenUIRenderer.tsx` |
-| Default registry | `src/runtime/auroraGenRegistry.tsx` |
-| Lint | `src/runtime/genLint.ts` |
+| Interpreter | `src/runtime/gen/genInterpreter.ts` |
+| Store | `src/runtime/gen/genStore.ts`, `src/runtime/core/genPaths.ts` |
+| Renderer | `src/runtime/gen/GenUIRenderer.tsx` |
+| Default registry | `src/runtime/gen/auroraGenRegistry.tsx` |
+| Lint | `src/runtime/gen/genLint.ts` |
 
 Roadmap for **future** work: `docs/GENERATIVE_UI_PLAN.md` (Phase 3+).

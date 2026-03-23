@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
-import type { UINode, UIRegistry } from '../schema/types';
+import type { UINode, UIRegistry } from '../../schema/types';
 import {
   resolveBindings,
   collectTwoWayBindings,
   injectStateHandlers,
-} from './bindings';
-import { Accordion, AccordionItem, AccordionTrigger } from '../components/Accordion';
-import { Button } from '../components/Button';
-import { cn } from '../utils';
+} from '../core/bindings';
+import { Accordion, AccordionItem, AccordionTrigger } from '../../components/Accordion';
+import { Button } from '../../components/Button';
+import { cn } from '../../utils';
 
 import {
   SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,

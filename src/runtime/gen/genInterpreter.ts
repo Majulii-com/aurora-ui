@@ -1,9 +1,9 @@
-import type { ActionDef } from '../schema/genDocumentTypes';
+import type { ActionDef } from '../../schema/genDocumentTypes';
 import type { GenRuntimeStore } from './genStore';
 import { resolveValue, resolveDeep, sanitizeForLog } from './expressions';
-import type { ExpressionContext } from '../schema/genDocumentTypes';
-import type { EngineErrorHandler } from './core/engineTypes';
-import { reportEngineError } from './core/reportEngineError';
+import type { ExpressionContext } from '../../schema/genDocumentTypes';
+import type { EngineErrorHandler } from '../core/engineTypes';
+import { reportEngineError } from '../core/reportEngineError';
 
 export type NavigateHandler = (path: string) => void;
 export type CustomHandler = (name: string, payload: unknown) => void;

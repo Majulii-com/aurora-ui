@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
-import type { GenUIDocument } from '../schema/genDocumentTypes';
+import type { GenUIDocument } from '../../schema/genDocumentTypes';
 import { createRuntimeStore, type GenRuntimeStore } from './genStore';
 import type { InterpreterOptions } from './genInterpreter';
 import { runAction } from './genInterpreter';
-import type { ActionDef } from '../schema/genDocumentTypes';
+import type { ActionDef } from '../../schema/genDocumentTypes';
 import { resolveNamedBindingMap } from './expressions';
-import type { EngineErrorHandler } from './core/engineTypes';
+import type { EngineErrorHandler } from '../core/engineTypes';
 
 type GenUIContextValue = {
   document: GenUIDocument;

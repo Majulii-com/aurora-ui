@@ -13,7 +13,15 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'zod', 'zustand', 'recharts'],
+      external: (id) =>
+        [
+          'react',
+          'react-dom',
+          'react/jsx-runtime',
+          'zod',
+          'zustand',
+          'recharts',
+        ].includes(id) || id.startsWith('lucide-react'),
       output: [
         {
           format: 'es',

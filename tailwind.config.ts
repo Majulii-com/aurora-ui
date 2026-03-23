@@ -8,6 +8,11 @@ const config: Config = {
     './examples/dsl-ops-dashboard/**/*.{js,ts,jsx,tsx}',
     './.storybook/**/*.{js,ts,jsx,tsx}',
   ],
+  /**
+   * Scope every generated Tailwind utility to Aurora containers only.
+   * Prevents Aurora utility CSS from styling host app markup.
+   */
+  important: '.aurora-ui-scope',
   darkMode: 'class',
   theme: {
     extend: {

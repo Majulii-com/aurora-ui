@@ -1,5 +1,5 @@
-import { cn } from '../utils';
-import majuliiLogo from '../assets/majulii_logo.svg';
+import { cn } from '../../utils';
+import majuliiLogo from '../../assets/majulii_logo.svg';
 
 const MAJULII_URL = 'https://majulii.com';
 

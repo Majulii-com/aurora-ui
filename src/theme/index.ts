@@ -1,5 +1,6 @@
 export {
   ThemeProvider,
+  AURORA_SCOPE_CLASS,
   useTheme,
   useAuroraAppearance,
   type ThemeMode,

@@ -1,26 +1,24 @@
 # `src/runtime`
 
-Execution layer for **declarative UI** in Aurora: schema runtime, **Generative JSON DSL** (Gen UI), and optional **schema playground** tooling.
+Execution layer for declarative UI in Aurora. Folders are grouped by **engine** so the Generative JSON DSL stays isolated from legacy schema UI and playground tooling.
 
 ## Layout
 
-| Area | Role | Key entry points |
-|------|------|------------------|
-| **`core/`** | Engine primitives shared by the Gen interpreter: typed error surface, centralized failure reporting. | `engineTypes.ts`, `reportEngineError.ts` |
-| **Gen DSL (flat files)** | **Interpreter**, **Zustand store**, **expression resolver**, **lint**, **registry**, **React provider/renderer**. | `genInterpreter.ts`, `genStore.ts`, `expressions.ts`, `GenUIProvider.tsx`, `GenUIRenderer.tsx`, `auroraGenRegistry.tsx`, `genLint.ts` |
-| **Legacy / shared bindings** | Path helpers used by Gen + older schema flows. | `bindings.ts`, `genPaths.ts` |
-| **Schema UI runtime** | Pre–Gen UI JSON schema renderer. | `SchemaRuntime.tsx` |
-| **Playground** | Drag/drop schema editor host state + canvas. | `schemaPlaygroundStore.tsx`, `EditableSchemaRenderer.tsx`, `appReducer.ts`, `schemaDndConstants.ts` |
-| **Utilities** | Chat client, JSON preview hook. | `genDslChatClient.ts`, `useJsonPreviewPane.ts` |
+| Folder | Role |
+|--------|------|
+| **`core/`** | Shared primitives: path bindings (`bindings.ts`), immutable path updates (`genPaths.ts`), Gen engine error types (`engineTypes.ts`), centralized failure reporting (`reportEngineError.ts`). No React; safe to reuse in tests and non-UI runners. |
+| **`gen/`** | **Generative JSON DSL** — interpreter, Zustand store, expressions, lint, default component registry, registry wrappers, React provider/renderer, branding bar, chat client. |
+| **`schema-ui/`** | Legacy **JSON schema** tree renderer (`SchemaRuntime`) for pre–Gen UI flows. |
+| **`playground/`** | Visual **schema playground** editor (drag/drop, canvas, reducer). |
+| **`hooks/`** | Runtime hooks (e.g. `useJsonPreviewPane` for the Gen DSL playground). |
 
 ## Extension points (Gen DSL)
 
-- **Components:** merge or replace entries in `auroraGenUIRegistry` (pass `registry` to `GenUIRenderer`).
-- **Actions:** `document.actions` + `onClickAction` / API chains — executed by `runAction` / `runChain` in `genInterpreter.ts`.
-- **Host hooks:** `GenUIProvider` accepts `navigate`, `onCustom`, and **`onEngineError`** for unexpected interpreter failures (invalid `MERGE_STATE` shapes, resolver throws, etc.). HTTP errors still flow through `lastError` and `onError` chains on `API_CALL`.
+- **Registry:** merge or replace `auroraGenUIRegistry` (`gen/auroraGenRegistry.tsx`).
+- **Actions:** `document.actions` executed by `gen/genInterpreter.ts` (`runAction` / `runChain`).
+- **Host hooks:** `GenUIProvider` — `navigate`, `onCustom`, `onEngineError`.
 
 ## Principles
 
-- **No `eval`:** expressions use `expressions.ts` string templates only.
-- **Fail-soft:** action steps report through `reportEngineError` + `store.lastError` instead of crashing the React tree when possible.
-- **Imports:** prefer `../schema/*` for types; keep `core/` free of React so it stays reusable in tests and non-UI runners.
+- **No `eval`:** expressions live in `gen/expressions.ts`.
+- **Imports:** `gen/*` uses `../core/*` for bindings/paths; `schema-ui` and `playground` import `../core/bindings` where needed.

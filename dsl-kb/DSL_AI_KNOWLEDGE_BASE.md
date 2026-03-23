@@ -1,7 +1,7 @@
 # Aurora GenUI DSL — AI knowledge base (generated)
 
 > **Auto-generated** — do not edit by hand. Run `npm run gen:dsl-kb` after registry or renderer changes.
-> **Generated at:** 2026-03-22T22:44:13.769Z
+> **Generated at:** 2026-03-23T09:13:52.259Z
 
 ## Purpose
 
@@ -9,7 +9,7 @@ This file is optimized for **LLM context**: it describes **§1 — responsive la
 
 Use it together with human docs: `docs/GENERATIVE_UI.md`, `docs/GENERATIVE_UI_DSL_PROPS.md`, `docs/COMPONENT_DSL_CONVENTIONS.md`.
 
-Wiring rows and taxonomy are maintained in `src/runtime/dslRendererWiring.ts` and `src/runtime/dslRegistryTaxonomy.ts`.
+Wiring rows and taxonomy are maintained in `src/runtime/gen/dslRendererWiring.ts` and `src/runtime/gen/dslRegistryTaxonomy.ts`.
 
 ---
 
@@ -113,6 +113,32 @@ These props are interpreted by `GenUIRenderer` — they are **not** passed raw t
 | `onMountAction` | document root | Top-level field on `GenUIDocument`; runs once on mount (action id). |
 
 **Lint** also checks that string values on **`onClickAction`, `onSortAction`, `onChangeAction`, `onCloseAction`, `onPageChangeAction`** reference existing keys in `document.actions`.
+
+### 6.1 `Icon` component — Lucide icon names
+
+The **`Icon`** registry component uses **Lucide** (via `lucide-react` dynamic icons). Pass `props.name` as a **kebab-case** icon id (e.g. `home`, `chevron-right`, `trash-2`) or **PascalCase** (`Home`, `ChevronRight`).
+
+**Count:** **1951** icon names (same set as `lucide-react` `iconNames`). Full sorted list: `dsl-kb/lucide-icon-names.json`.
+
+**Legacy aliases** (older DSL examples):
+
+| Alias | Lucide `name` |
+|-------|----------------|
+| `add` | `plus` |
+| `chevron-down` | `chevron-down` |
+| `chevron-right` | `chevron-right` |
+| `close` | `x` |
+| `export` | `upload` |
+| `maximize` | `maximize` |
+| `menu` | `menu` |
+| `more` | `more-vertical` |
+| `refresh` | `refresh-cw` |
+| `run` | `play` |
+| `save` | `save` |
+| `search` | `search` |
+| `settings` | `settings` |
+
+**Examples:** `"name": "search"`, `"name": "settings"`, `"name": "rocket"`. Invalid names render nothing (and warn in dev).
 
 ---
 
@@ -1475,6 +1501,36 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
       "leadFilter": "",
       "rolloutPct": 72
     },
+    "crm": {
+      "rows": [
+        {
+          "id": 101,
+          "title": "Preview row (shown before GET)",
+          "userId": 1,
+          "completed": false
+        },
+        {
+          "id": 102,
+          "title": "Scroll down for KPIs, charts & API tools",
+          "userId": 2,
+          "completed": true
+        },
+        {
+          "id": 103,
+          "title": "Network loads replace this table",
+          "userId": 1,
+          "completed": false
+        }
+      ],
+      "sortKey": "id",
+      "sortDir": "asc",
+      "filter": "",
+      "columnFilters": {},
+      "draftTitle": "Ship campaign v2",
+      "patchTitle": "Updated via PATCH",
+      "deleteId": "1",
+      "lastStatus": ""
+    },
     "kpis": {
       "mrr": "$428k",
       "mrrTrend": "up",
@@ -1650,12 +1706,194 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
       "type": "SET_STATE",
       "path": "leads.page",
       "value": "{{event.page}}"
+    },
+    "loadTodos": {
+      "type": "API_CALL",
+      "id": "todosApi",
+      "url": "https://jsonplaceholder.typicode.com/todos?_limit=20",
+      "method": "GET",
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.rows",
+            "value": "{{response}}"
+          },
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "GET OK — todos loaded."
+          }
+        ]
+      },
+      "onError": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "GET failed (offline or blocked)."
+          }
+        ]
+      }
+    },
+    "sortCrm": {
+      "type": "CHAIN",
+      "chain": [
+        {
+          "type": "SET_STATE",
+          "path": "crm.sortKey",
+          "value": "{{event.column}}"
+        },
+        {
+          "type": "SET_STATE",
+          "path": "crm.sortDir",
+          "value": "asc"
+        }
+      ]
+    },
+    "saveTodo": {
+      "type": "API_CALL",
+      "id": "saveTodoApi",
+      "url": "https://jsonplaceholder.typicode.com/todos",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "{{state.crm.draftTitle}}",
+        "completed": false,
+        "userId": 1
+      },
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "POST 201 — refreshing list…"
+          },
+          {
+            "type": "SET_STATE",
+            "path": "crm.draftTitle",
+            "value": ""
+          },
+          {
+            "type": "API_CALL",
+            "id": "todosApi",
+            "url": "https://jsonplaceholder.typicode.com/todos?_limit=20",
+            "method": "GET",
+            "onSuccess": {
+              "chain": [
+                {
+                  "type": "SET_STATE",
+                  "path": "crm.rows",
+                  "value": "{{response}}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "onError": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "POST failed."
+          }
+        ]
+      }
+    },
+    "patchTodo": {
+      "type": "API_CALL",
+      "id": "patchTodoApi",
+      "url": "https://jsonplaceholder.typicode.com/todos/1",
+      "method": "PATCH",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "{{state.crm.patchTitle}}",
+        "completed": true
+      },
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "PATCH #1 OK — refreshing…"
+          },
+          {
+            "type": "API_CALL",
+            "id": "todosApi",
+            "url": "https://jsonplaceholder.typicode.com/todos?_limit=20",
+            "method": "GET",
+            "onSuccess": {
+              "chain": [
+                {
+                  "type": "SET_STATE",
+                  "path": "crm.rows",
+                  "value": "{{response}}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "onError": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "PATCH failed."
+          }
+        ]
+      }
+    },
+    "deleteTodo": {
+      "type": "API_CALL",
+      "id": "deleteTodoApi",
+      "url": "https://jsonplaceholder.typicode.com/todos/{{state.crm.deleteId}}",
+      "method": "DELETE",
+      "onSuccess": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "DELETE sent — refreshing…"
+          },
+          {
+            "type": "API_CALL",
+            "id": "todosApi",
+            "url": "https://jsonplaceholder.typicode.com/todos?_limit=20",
+            "method": "GET",
+            "onSuccess": {
+              "chain": [
+                {
+                  "type": "SET_STATE",
+                  "path": "crm.rows",
+                  "value": "{{response}}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "onError": {
+        "chain": [
+          {
+            "type": "SET_STATE",
+            "path": "crm.lastStatus",
+            "value": "DELETE failed."
+          }
+        ]
+      }
     }
   },
+  "onMountAction": "loadTodos",
   "ui": {
     "type": "Page",
     "props": {
-      "className": "min-h-screen w-full bg-gradient-to-b from-indigo-50/80 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
+      "className": "min-h-screen w-full min-w-0 bg-gradient-to-b from-indigo-50/80 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
     },
     "children": [
       {
@@ -1679,17 +1917,16 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                 },
                 "children": [
                   {
-                    "type": "Row",
+                    "type": "Box",
                     "props": {
-                      "gap": 3,
-                      "className": "w-full flex-wrap justify-between"
+                      "className": "flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between w-full min-w-0"
                     },
                     "children": [
                       {
                         "type": "Row",
                         "props": {
                           "gap": 2,
-                          "className": "items-center min-w-0"
+                          "className": "items-center min-w-0 shrink-0"
                         },
                         "children": [
                           {
@@ -1712,7 +1949,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                       {
                         "type": "Breadcrumb",
                         "props": {
-                          "className": "hidden sm:flex text-sm"
+                          "className": "hidden xl:flex text-sm w-full min-w-0 overflow-x-auto order-2 xl:order-none"
                         },
                         "children": [
                           {
@@ -1730,17 +1967,17 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                         ]
                       },
                       {
-                        "type": "Row",
+                        "type": "Box",
                         "props": {
-                          "gap": 2,
-                          "className": "items-center"
+                          "className": "flex flex-wrap gap-x-2 gap-y-2 w-full min-w-0 xl:max-w-[min(100%,42rem)] xl:ml-auto justify-start xl:justify-end"
                         },
                         "children": [
                           {
                             "type": "Dropdown",
                             "props": {
                               "triggerLabel": "Workspace",
-                              "placement": "bottom-end"
+                              "placement": "bottom-end",
+                              "className": "min-w-0 shrink"
                             },
                             "children": [
                               {
@@ -1768,6 +2005,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                                 "props": {
                                   "variant": "outline",
                                   "size": "sm",
+                                  "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                                   "children": "What’s new"
                                 }
                               }
@@ -1779,6 +2017,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                               "variant": "primary",
                               "size": "sm",
                               "onClickAction": "openDemo",
+                              "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                               "children": "Book demo"
                             }
                           },
@@ -1788,6 +2027,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                               "variant": "secondary",
                               "size": "sm",
                               "onClickAction": "openDrawer",
+                              "className": "shrink-0 whitespace-nowrap text-xs sm:text-sm",
                               "children": "Menu"
                             }
                           }
@@ -1809,7 +2049,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                 "type": "Container",
                 "props": {
                   "maxWidth": "full",
-                  "className": "max-w-7xl px-4 pt-4"
+                  "className": "max-w-7xl px-4 pt-4 flex flex-col gap-1"
                 },
                 "children": [
                   {
@@ -1827,7 +2067,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                       "variant": "ghost",
                       "size": "sm",
                       "onClickAction": "dismissPromo",
-                      "className": "-mt-2",
+                      "className": "-mt-1 self-start sm:self-auto",
                       "children": "Dismiss"
                     }
                   }
@@ -1839,22 +2079,30 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
             "type": "Container",
             "props": {
               "maxWidth": "full",
-              "className": "max-w-7xl px-4 py-8 w-full"
+              "className": "max-w-7xl px-4 py-6 sm:py-8 w-full mx-auto"
             },
             "children": [
               {
                 "type": "Stack",
                 "props": {
-                  "gap": 8,
-                  "className": "w-full min-w-0"
+                  "gap": 6,
+                  "className": "w-full min-w-0 md:gap-8"
                 },
                 "children": [
                   {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "className": "text-xs sm:text-sm text-center sm:text-left rounded-lg border border-dashed border-slate-200/90 bg-white/50 px-3 py-2 dark:border-slate-600 dark:bg-slate-900/30",
+                      "children": "↓ Scroll for KPI cards, charts, onboarding, tabs, live API (filter/sort/CRUD), static pipeline table, FAQ, then try Menu / Book demo for drawer & modal."
+                    }
+                  },
+                  {
                     "type": "Grid",
                     "props": {
-                      "columns": 2,
+                      "columns": 1,
                       "gap": 6,
-                      "className": "max-lg:grid-cols-1 items-start"
+                      "className": "lg:grid-cols-2 items-start"
                     },
                     "children": [
                       {
@@ -1868,7 +2116,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                             "type": "Text",
                             "props": {
                               "variant": "title",
-                              "className": "text-3xl sm:text-4xl font-bold leading-tight",
+                              "className": "text-2xl sm:text-4xl font-bold leading-tight text-balance break-words",
                               "children": "Turn traffic into pipeline — without another tab."
                             }
                           },
@@ -1876,7 +2124,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                             "type": "Text",
                             "props": {
                               "variant": "muted",
-                              "className": "text-base max-w-xl",
+                              "className": "text-base w-full max-w-3xl",
                               "children": "Full-screen marketing shell: hero, KPIs, charts, CRM-style table, drawer, and modal — all declarative JSON."
                             }
                           },
@@ -1884,30 +2132,39 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                             "type": "Row",
                             "props": {
                               "gap": 3,
-                              "className": "flex-wrap items-center"
+                              "className": "flex-wrap items-stretch sm:items-center"
                             },
                             "children": [
                               {
-                                "type": "SegmentedControl",
+                                "type": "Box",
                                 "props": {
-                                  "aria-label": "Reporting range",
-                                  "value": "{{state.ui.timeRange}}",
-                                  "onChangeAction": "setTimeRange",
-                                  "options": [
-                                    {
-                                      "value": "24h",
-                                      "label": "24h"
-                                    },
-                                    {
-                                      "value": "7d",
-                                      "label": "7d"
-                                    },
-                                    {
-                                      "value": "30d",
-                                      "label": "30d"
+                                  "className": "w-full min-w-0 max-w-full overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-none sm:overflow-visible"
+                                },
+                                "children": [
+                                  {
+                                    "type": "SegmentedControl",
+                                    "props": {
+                                      "aria-label": "Reporting range",
+                                      "value": "{{state.ui.timeRange}}",
+                                      "onChangeAction": "setTimeRange",
+                                      "className": "max-w-full",
+                                      "options": [
+                                        {
+                                          "value": "24h",
+                                          "label": "24h"
+                                        },
+                                        {
+                                          "value": "7d",
+                                          "label": "7d"
+                                        },
+                                        {
+                                          "value": "30d",
+                                          "label": "30d"
+                                        }
+                                      ]
                                     }
-                                  ]
-                                }
+                                  }
+                                ]
                               },
                               {
                                 "type": "Button",
@@ -1972,7 +2229,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                             "props": {
                               "src": "https://picsum.photos/seed/aurora-marketing/900/520",
                               "alt": "Product screenshot",
-                              "className": "w-full h-48 object-cover"
+                              "className": "w-full h-44 sm:h-52 object-cover"
                             }
                           },
                           {
@@ -2099,9 +2356,9 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                   {
                     "type": "Grid",
                     "props": {
-                      "columns": 4,
+                      "columns": 1,
                       "gap": 4,
-                      "className": "max-xl:grid-cols-2 max-md:grid-cols-1"
+                      "className": "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
                     },
                     "children": [
                       {
@@ -2160,6 +2417,9 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                     "children": [
                       {
                         "type": "TabList",
+                        "props": {
+                          "className": "min-w-0 w-full overflow-x-auto"
+                        },
                         "children": [
                           {
                             "type": "Tab",
@@ -2268,9 +2528,9 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                   {
                     "type": "Grid",
                     "props": {
-                      "columns": 2,
+                      "columns": 1,
                       "gap": 6,
-                      "className": "max-lg:grid-cols-1"
+                      "className": "lg:grid-cols-2"
                     },
                     "children": [
                       {
@@ -2431,21 +2691,286 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                     ]
                   },
                   {
+                    "type": "Card",
+                    "props": {
+                      "className": "shadow-sm border border-primary-200/50 dark:border-primary-900/40"
+                    },
+                    "children": [
+                      {
+                        "type": "CardHeader",
+                        "props": {
+                          "children": "Live API — load, filter, sort, create, update, delete"
+                        }
+                      },
+                      {
+                        "type": "CardBody",
+                        "children": [
+                          {
+                            "type": "Stack",
+                            "props": {
+                              "gap": 4,
+                              "className": "w-full min-w-0"
+                            },
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm leading-relaxed",
+                                  "children": "Document `onMountAction` runs GET todos. Table: global search (`filterBind`), per-column filters (`columnFiltersBind`), sortable headers (`onSortAction` + `CHAIN`). POST creates a todo, PATCH updates id 1, DELETE uses dynamic URL `…/todos/{{state.crm.deleteId}}`; each write chains a GET to refresh. Requires network (jsonplaceholder.typicode.com)."
+                                }
+                              },
+                              {
+                                "type": "Row",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "flex-wrap items-center"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Button",
+                                    "props": {
+                                      "variant": "outline",
+                                      "size": "sm",
+                                      "onClickAction": "loadTodos",
+                                      "children": "Refresh (GET)"
+                                    }
+                                  },
+                                  {
+                                    "type": "ShowWhen",
+                                    "props": {
+                                      "loadingKey": "todosApi"
+                                    },
+                                    "children": [
+                                      {
+                                        "type": "Row",
+                                        "props": {
+                                          "gap": 2,
+                                          "className": "items-center text-sm text-slate-600 dark:text-slate-300"
+                                        },
+                                        "children": [
+                                          {
+                                            "type": "Spinner",
+                                            "props": {
+                                              "size": "sm"
+                                            }
+                                          },
+                                          {
+                                            "type": "Text",
+                                            "props": {
+                                              "variant": "muted",
+                                              "children": "Loading…"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "ShowWhen",
+                                    "props": {
+                                      "loadingKey": "saveTodoApi"
+                                    },
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": {
+                                          "variant": "muted",
+                                          "className": "text-xs",
+                                          "children": "POST…"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "ShowWhen",
+                                    "props": {
+                                      "loadingKey": "patchTodoApi"
+                                    },
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": {
+                                          "variant": "muted",
+                                          "className": "text-xs",
+                                          "children": "PATCH…"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "ShowWhen",
+                                    "props": {
+                                      "loadingKey": "deleteTodoApi"
+                                    },
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "props": {
+                                          "variant": "muted",
+                                          "className": "text-xs",
+                                          "children": "DELETE…"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "body",
+                                  "className": "text-xs font-mono text-slate-600 dark:text-slate-300 min-h-[1.25rem]",
+                                  "children": "{{state.crm.lastStatus}}"
+                                }
+                              },
+                              {
+                                "type": "Table",
+                                "props": {
+                                  "columns": [
+                                    {
+                                      "key": "id",
+                                      "label": "ID",
+                                      "sortable": true,
+                                      "filterable": true
+                                    },
+                                    {
+                                      "key": "title",
+                                      "label": "Title",
+                                      "sortable": true,
+                                      "filterable": true
+                                    },
+                                    {
+                                      "key": "userId",
+                                      "label": "User",
+                                      "sortable": true,
+                                      "filterable": true
+                                    },
+                                    {
+                                      "key": "completed",
+                                      "label": "Done",
+                                      "sortable": true
+                                    }
+                                  ],
+                                  "rows": "{{state.crm.rows}}",
+                                  "sortKey": "{{state.crm.sortKey}}",
+                                  "sortDir": "{{state.crm.sortDir}}",
+                                  "onSortAction": "sortCrm",
+                                  "filterBind": "crm.filter",
+                                  "columnFiltersBind": "crm.columnFilters",
+                                  "filterPlaceholder": "Search todos…",
+                                  "className": "text-sm",
+                                  "tableWrapperClassName": "rounded-lg border border-slate-200 dark:border-slate-700 max-h-[min(80vh,28rem)] overflow-y-auto"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-xs uppercase tracking-wide",
+                                  "children": "Writes"
+                                }
+                              },
+                              {
+                                "type": "Box",
+                                "props": {
+                                  "className": "flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3 w-full min-w-0"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Input",
+                                    "props": {
+                                      "label": "New todo title (POST)",
+                                      "bind": "crm.draftTitle",
+                                      "className": "w-full min-w-0 flex-1"
+                                    }
+                                  },
+                                  {
+                                    "type": "Button",
+                                    "props": {
+                                      "variant": "primary",
+                                      "size": "sm",
+                                      "onClickAction": "saveTodo",
+                                      "className": "shrink-0 w-full sm:w-auto",
+                                      "children": "Create (POST)"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Row",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "flex-wrap items-end w-full"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Input",
+                                    "props": {
+                                      "label": "PATCH title for todo #1",
+                                      "bind": "crm.patchTitle",
+                                      "className": "min-w-0 flex-1"
+                                    }
+                                  },
+                                  {
+                                    "type": "Button",
+                                    "props": {
+                                      "variant": "outline",
+                                      "size": "sm",
+                                      "onClickAction": "patchTodo",
+                                      "children": "Update #1 (PATCH)"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Row",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "flex-wrap items-end w-full"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Input",
+                                    "props": {
+                                      "label": "DELETE id in URL",
+                                      "bind": "crm.deleteId",
+                                      "className": "w-full max-w-[12rem]"
+                                    }
+                                  },
+                                  {
+                                    "type": "Button",
+                                    "props": {
+                                      "variant": "danger",
+                                      "size": "sm",
+                                      "onClickAction": "deleteTodo",
+                                      "children": "Delete (DELETE)"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
                     "type": "Divider"
                   },
                   {
-                    "type": "SplitPane",
+                    "type": "Grid",
                     "props": {
-                      "direction": "horizontal",
-                      "defaultSize": 0.55,
-                      "className": "min-h-[320px] rounded-xl border border-slate-200 dark:border-slate-700"
+                      "columns": 1,
+                      "gap": 0,
+                      "className": "lg:grid-cols-2 min-h-[280px] lg:min-h-[320px] rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-slate-700"
                     },
                     "children": [
                       {
                         "type": "Stack",
                         "props": {
                           "gap": 3,
-                          "className": "min-h-[300px] min-w-0 p-4"
+                          "className": "min-h-[240px] lg:min-h-[300px] min-w-0 p-4"
                         },
                         "children": [
                           {
@@ -2500,7 +3025,7 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                         "type": "Stack",
                         "props": {
                           "gap": 3,
-                          "className": "min-h-[300px] p-4 bg-slate-50/80 dark:bg-slate-800/40"
+                          "className": "min-h-[240px] lg:min-h-[300px] p-4 bg-slate-50/80 dark:bg-slate-800/40"
                         },
                         "children": [
                           {
@@ -2642,6 +3167,781 @@ When asked to **generate UI as JSON**, respond with **one** root object that mat
                       "onClickAction": "closeDemo",
                       "children": "Submit"
                     }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Simple marketing landing page
+
+*File: `dsl-kb/examples/06-simple-landing.json` · Use for lightweight product/marketing sites: sticky nav, hero + code teaser, feature cards (Grid), pricing band, newsletter with ShowWhen success, footer; NAVIGATE anchors and CHAIN subscribe.*
+
+```json
+{
+  "version": "1",
+  "state": {
+    "ui": {
+      "email": "",
+      "subscribed": false,
+      "showForm": true
+    }
+  },
+  "actions": {
+    "goPricing": {
+      "type": "NAVIGATE",
+      "path": "#pricing"
+    },
+    "goFeatures": {
+      "type": "NAVIGATE",
+      "path": "#features"
+    },
+    "subscribe": {
+      "type": "CHAIN",
+      "chain": [
+        {
+          "type": "SET_STATE",
+          "path": "ui.subscribed",
+          "value": true
+        },
+        {
+          "type": "SET_STATE",
+          "path": "ui.showForm",
+          "value": false
+        },
+        {
+          "type": "SET_STATE",
+          "path": "ui.email",
+          "value": ""
+        }
+      ]
+    }
+  },
+  "ui": {
+    "type": "Page",
+    "props": {
+      "className": "min-h-screen w-full min-w-0 bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100"
+    },
+    "children": [
+      {
+        "type": "Box",
+        "props": {
+          "className": "sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80"
+        },
+        "children": [
+          {
+            "type": "Container",
+            "props": {
+              "maxWidth": "lg"
+            },
+            "children": [
+              {
+                "type": "Row",
+                "props": {
+                  "gap": 3,
+                  "className": "min-h-14 w-full flex-wrap items-center justify-between gap-y-3 py-3"
+                },
+                "children": [
+                  {
+                    "type": "Row",
+                    "props": {
+                      "gap": 2,
+                      "className": "items-center min-w-0"
+                    },
+                    "children": [
+                      {
+                        "type": "Box",
+                        "props": {
+                          "className": "flex h-9 w-9 items-center justify-center rounded-xl bg-primary-600 text-sm font-bold text-white shadow-sm"
+                        },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "variant": "body",
+                              "className": "text-sm font-bold text-white",
+                              "children": "A"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "title",
+                          "className": "text-lg font-semibold tracking-tight",
+                          "children": "Aurora"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Row",
+                    "props": {
+                      "gap": 2,
+                      "className": "flex-wrap items-center justify-end"
+                    },
+                    "children": [
+                      {
+                        "type": "Button",
+                        "props": {
+                          "variant": "ghost",
+                          "size": "sm",
+                          "onClickAction": "goFeatures",
+                          "className": "text-slate-600 dark:text-slate-300",
+                          "children": "Features"
+                        }
+                      },
+                      {
+                        "type": "Button",
+                        "props": {
+                          "variant": "ghost",
+                          "size": "sm",
+                          "onClickAction": "goPricing",
+                          "className": "text-slate-600 dark:text-slate-300",
+                          "children": "Pricing"
+                        }
+                      },
+                      {
+                        "type": "Button",
+                        "props": {
+                          "variant": "primary",
+                          "size": "sm",
+                          "onClickAction": "goPricing",
+                          "children": "Get started"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Container",
+        "props": {
+          "maxWidth": "lg",
+          "className": "pt-12 pb-16 sm:pt-16 sm:pb-20"
+        },
+        "children": [
+          {
+            "type": "Stack",
+            "props": {
+              "gap": 8,
+              "className": "w-full min-w-0 items-center text-center"
+            },
+            "children": [
+              {
+                "type": "Badge",
+                "props": {
+                  "variant": "primary",
+                  "className": "px-3 py-1",
+                  "children": "Generative UI · JSON first"
+                }
+              },
+              {
+                "type": "Stack",
+                "props": {
+                  "gap": 4,
+                  "className": "w-full max-w-3xl min-w-0"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "className": "text-3xl font-bold leading-tight tracking-tight text-balance sm:text-5xl sm:leading-[1.1]",
+                      "children": "Ship product UI from data, not boilerplate."
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "className": "text-lg leading-relaxed sm:text-xl",
+                      "children": "Describe screens in JSON, wire state and actions, and render with Aurora — responsive, accessible components out of the box."
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Row",
+                "props": {
+                  "gap": 3,
+                  "className": "flex-wrap justify-center"
+                },
+                "children": [
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "primary",
+                      "size": "lg",
+                      "onClickAction": "goPricing",
+                      "className": "min-w-[10rem]",
+                      "children": "View pricing"
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "outline",
+                      "size": "lg",
+                      "onClickAction": "goFeatures",
+                      "className": "min-w-[10rem]",
+                      "children": "See features"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "props": {
+                  "className": "mt-4 w-full max-w-4xl rounded-2xl border border-slate-200/80 bg-gradient-to-br from-primary-50/80 to-white p-1 shadow-lg shadow-primary-900/5 dark:border-slate-700 dark:from-primary-950/40 dark:to-slate-900"
+                },
+                "children": [
+                  {
+                    "type": "Box",
+                    "props": {
+                      "className": "rounded-xl bg-slate-900 px-4 py-3 text-left font-mono text-xs text-emerald-300/95 sm:text-sm"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "body",
+                          "className": "font-mono text-xs leading-relaxed text-emerald-100/90 sm:text-sm",
+                          "children": "{ \"type\": \"Stack\", \"props\": { \"className\": \"gap-4\" }, \"children\": [ … ] }"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "props": {
+          "id": "features",
+          "className": "scroll-mt-24 border-y border-slate-200/80 bg-white/60 py-16 dark:border-slate-800 dark:bg-slate-900/40"
+        },
+        "children": [
+          {
+            "type": "Container",
+            "props": {
+              "maxWidth": "lg"
+            },
+            "children": [
+              {
+                "type": "Stack",
+                "props": {
+                  "gap": 10,
+                  "className": "w-full min-w-0"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": {
+                      "gap": 2,
+                      "className": "text-center"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "title",
+                          "className": "text-2xl font-bold sm:text-3xl",
+                          "children": "Everything you need to compose UIs"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "className": "mx-auto max-w-2xl text-base",
+                          "children": "Layout, forms, feedback, and data display — all driven from a single document shape."
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "props": {
+                      "columns": 1,
+                      "gap": 6,
+                      "className": "md:grid-cols-3"
+                    },
+                    "children": [
+                      {
+                        "type": "Card",
+                        "props": {
+                          "className": "h-full border-slate-200/90 shadow-sm dark:border-slate-700"
+                        },
+                        "children": [
+                          {
+                            "type": "CardBody",
+                            "props": {
+                              "className": "flex flex-col gap-3 p-6"
+                            },
+                            "children": [
+                              {
+                                "type": "Box",
+                                "props": {
+                                  "className": "flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Icon",
+                                    "props": {
+                                      "name": "run",
+                                      "size": 22
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-lg font-semibold",
+                                  "children": "Declarative actions"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm leading-relaxed",
+                                  "children": "Chain SET_STATE, API_CALL, and NAVIGATE without shipping new React for every tweak."
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Card",
+                        "props": {
+                          "className": "h-full border-slate-200/90 shadow-sm dark:border-slate-700"
+                        },
+                        "children": [
+                          {
+                            "type": "CardBody",
+                            "props": {
+                              "className": "flex flex-col gap-3 p-6"
+                            },
+                            "children": [
+                              {
+                                "type": "Box",
+                                "props": {
+                                  "className": "flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Icon",
+                                    "props": {
+                                      "name": "save",
+                                      "size": 22
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-lg font-semibold",
+                                  "children": "State-first"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm leading-relaxed",
+                                  "children": "Bind inputs, tabs, and filters to paths — expressions resolve from one serializable tree."
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Card",
+                        "props": {
+                          "className": "h-full border-slate-200/90 shadow-sm dark:border-slate-700"
+                        },
+                        "children": [
+                          {
+                            "type": "CardBody",
+                            "props": {
+                              "className": "flex flex-col gap-3 p-6"
+                            },
+                            "children": [
+                              {
+                                "type": "Box",
+                                "props": {
+                                  "className": "flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Icon",
+                                    "props": {
+                                      "name": "settings",
+                                      "size": 22
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-lg font-semibold",
+                                  "children": "Responsive by default"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm leading-relaxed",
+                                  "children": "Use Stack, Grid, and Tailwind className strings to adapt from phones to desktops."
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "props": {
+          "id": "pricing",
+          "className": "scroll-mt-24 py-16 sm:py-20"
+        },
+        "children": [
+          {
+            "type": "Container",
+            "props": {
+              "maxWidth": "lg"
+            },
+            "children": [
+              {
+                "type": "Stack",
+                "props": {
+                  "gap": 8,
+                  "className": "w-full min-w-0"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": {
+                      "gap": 2,
+                      "className": "text-center"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "title",
+                          "className": "text-2xl font-bold sm:text-3xl",
+                          "children": "Simple pricing"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "props": {
+                          "variant": "muted",
+                          "className": "text-base",
+                          "children": "Placeholder tiers for the demo — hook your real plans to state when you integrate."
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "props": {
+                      "columns": 1,
+                      "gap": 6,
+                      "className": "lg:grid-cols-2"
+                    },
+                    "children": [
+                      {
+                        "type": "Card",
+                        "props": {
+                          "className": "border-slate-200 shadow-sm dark:border-slate-700"
+                        },
+                        "children": [
+                          {
+                            "type": "CardBody",
+                            "props": {
+                              "className": "flex flex-col gap-4 p-8"
+                            },
+                            "children": [
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-xl",
+                                  "children": "Starter"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm",
+                                  "children": "For prototypes and internal tools."
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-3xl font-bold text-slate-900 dark:text-white",
+                                  "children": "$0"
+                                }
+                              },
+                              {
+                                "type": "Button",
+                                "props": {
+                                  "variant": "outline",
+                                  "className": "w-full",
+                                  "onClickAction": "goFeatures",
+                                  "children": "Start building"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Card",
+                        "props": {
+                          "className": "border-2 border-primary-500 shadow-md shadow-primary-500/10 dark:border-primary-400"
+                        },
+                        "children": [
+                          {
+                            "type": "CardBody",
+                            "props": {
+                              "className": "flex flex-col gap-4 p-8"
+                            },
+                            "children": [
+                              {
+                                "type": "Row",
+                                "props": {
+                                  "gap": 2,
+                                  "className": "items-center justify-between"
+                                },
+                                "children": [
+                                  {
+                                    "type": "Text",
+                                    "props": {
+                                      "variant": "title",
+                                      "className": "text-xl",
+                                      "children": "Team"
+                                    }
+                                  },
+                                  {
+                                    "type": "Badge",
+                                    "props": {
+                                      "variant": "primary",
+                                      "children": "Popular"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "muted",
+                                  "className": "text-sm",
+                                  "children": "Shared registry, CI lint, and design tokens."
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "props": {
+                                  "variant": "title",
+                                  "className": "text-3xl font-bold text-slate-900 dark:text-white",
+                                  "children": "$29"
+                                }
+                              },
+                              {
+                                "type": "Button",
+                                "props": {
+                                  "variant": "primary",
+                                  "className": "w-full",
+                                  "onClickAction": "subscribe",
+                                  "children": "Join waitlist"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "props": {
+          "className": "border-t border-slate-200/80 bg-slate-50/90 py-14 dark:border-slate-800 dark:bg-slate-950/50"
+        },
+        "children": [
+          {
+            "type": "Container",
+            "props": {
+              "maxWidth": "lg"
+            },
+            "children": [
+              {
+                "type": "Stack",
+                "props": {
+                  "gap": 6,
+                  "className": "w-full min-w-0 items-center text-center"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "title",
+                      "className": "text-xl sm:text-2xl",
+                      "children": "Get the weekly DSL notes"
+                    }
+                  },
+                  {
+                    "type": "ShowWhen",
+                    "props": {
+                      "when": "{{state.ui.subscribed}}"
+                    },
+                    "children": [
+                      {
+                        "type": "Alert",
+                        "props": {
+                          "variant": "success",
+                          "title": "You’re on the list",
+                          "className": "w-full max-w-md text-left",
+                          "children": "Thanks — we’ll send patterns and schema tips to your inbox."
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "ShowWhen",
+                    "props": {
+                      "when": "{{state.ui.showForm}}"
+                    },
+                    "children": [
+                      {
+                        "type": "Row",
+                        "props": {
+                          "gap": 2,
+                          "className": "w-full max-w-md flex-col sm:flex-row sm:items-stretch"
+                        },
+                        "children": [
+                          {
+                            "type": "Input",
+                            "props": {
+                              "type": "email",
+                              "placeholder": "you@company.com",
+                              "bind": "ui.email",
+                              "className": "w-full min-w-0 flex-1"
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "variant": "primary",
+                              "onClickAction": "subscribe",
+                              "className": "w-full shrink-0 sm:w-auto",
+                              "children": "Subscribe"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "props": {
+          "className": "border-t border-slate-200/80 py-8 dark:border-slate-800"
+        },
+        "children": [
+          {
+            "type": "Container",
+            "props": {
+              "maxWidth": "lg"
+            },
+            "children": [
+              {
+                "type": "Row",
+                "props": {
+                  "gap": 4,
+                  "className": "flex-col items-center justify-between gap-y-4 sm:flex-row"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "variant": "muted",
+                      "className": "text-sm",
+                      "children": "© 2026 Aurora UI · DSL example"
+                    }
+                  },
+                  {
+                    "type": "Row",
+                    "props": {
+                      "gap": 4,
+                      "className": "text-sm"
+                    },
+                    "children": [
+                      {
+                        "type": "Link",
+                        "props": {
+                          "href": "#features",
+                          "variant": "muted",
+                          "children": "Features"
+                        }
+                      },
+                      {
+                        "type": "Link",
+                        "props": {
+                          "href": "#pricing",
+                          "variant": "muted",
+                          "children": "Pricing"
+                        }
+                      }
+                    ]
                   }
                 ]
               }

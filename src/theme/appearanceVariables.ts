@@ -1,8 +1,12 @@
 import type { AuroraAppearance } from './appearanceTypes';
 
 /** Sets design tokens used by Aurora vs plain surfaces (radii, shadows). */
-export function applyAppearanceVariables(mode: AuroraAppearance) {
-  const root = document.documentElement;
+export function applyAppearanceVariables(
+  mode: AuroraAppearance,
+  target: HTMLElement | null = typeof document !== 'undefined' ? document.documentElement : null
+) {
+  if (!target) return;
+  const root = target;
   if (mode === 'aurora') {
     /* Premium radii — generous curves like high-end product UI */
     root.style.setProperty('--aurora-radius-sm', '0.5625rem');

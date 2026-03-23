@@ -1,5 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
+import { LUCIDE_ICON_NAMES, LEGACY_ICON_ALIASES } from '../../icons/iconNames';
+
+/** Small set for the controls dropdown (full list is ~1.9k names — see `LUCIDE_ICON_NAMES`). */
+const STORYBOOK_ICON_OPTIONS = [
+  ...Object.keys(LEGACY_ICON_ALIASES),
+  'home',
+  'settings',
+  'user',
+  'bell',
+  'mail',
+  'calendar',
+  'trash-2',
+  'rocket',
+  'sparkles',
+] as const;
 
 const meta: Meta<typeof Icon> = {
   title: 'Components/Icon',
@@ -8,7 +23,8 @@ const meta: Meta<typeof Icon> = {
   argTypes: {
     name: {
       control: 'select',
-      options: ['add', 'search', 'close', 'run', 'save', 'export', 'settings', 'menu', 'chevron-down', 'chevron-right', 'refresh', 'maximize', 'more'],
+      options: STORYBOOK_ICON_OPTIONS,
+      description: `Any Lucide kebab-case name (${LUCIDE_ICON_NAMES.length} total). Legacy aliases: ${Object.keys(LEGACY_ICON_ALIASES).join(', ')}.`,
     },
   },
 };
@@ -21,10 +37,25 @@ export const Default: Story = {
   args: { name: 'search' },
 };
 
-export const All: Story = {
+export const LegacyAliases: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
-      {(['add', 'search', 'close', 'run', 'save', 'export', 'settings', 'menu', 'chevron-down', 'chevron-right', 'refresh', 'maximize', 'more'] as const).map((name) => (
+      {Object.entries(LEGACY_ICON_ALIASES).map(([alias, lucide]) => (
+        <div key={alias} className="flex flex-col items-center gap-1">
+          <Icon name={alias} size={24} />
+          <span className="text-xs text-gray-500">
+            {alias} → {lucide}
+          </span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const LucideSample: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      {['home', 'settings', 'user-round', 'bell', 'mail', 'calendar-days', 'trash-2', 'rocket', 'sparkles', 'panel-left'].map((name) => (
         <div key={name} className="flex flex-col items-center gap-1">
           <Icon name={name} size={24} />
           <span className="text-xs text-gray-500">{name}</span>

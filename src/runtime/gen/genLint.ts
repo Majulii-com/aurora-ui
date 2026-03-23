@@ -1,5 +1,5 @@
-import type { GenUINode, GenUIDocument } from '../schema/genDocumentTypes';
-import { parseGenUIDocument } from '../schema/genDocumentSchema';
+import type { GenUINode, GenUIDocument } from '../../schema/genDocumentTypes';
+import { parseGenUIDocument } from '../../schema/genDocumentSchema';
 import type { GenDocumentLimits } from './genLimits';
 import { DEFAULT_GEN_LIMITS } from './genLimits';
 

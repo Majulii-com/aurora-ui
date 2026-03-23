@@ -3,8 +3,8 @@
  * Supports: {{state.path}}, {{event.path}}, {{response.path}}, {{bindings.key}}
  */
 
-import type { ExpressionContext } from '../schema/genDocumentTypes';
-import { getAtPath } from './bindings';
+import type { ExpressionContext } from '../../schema/genDocumentTypes';
+import { getAtPath } from '../core/bindings';
 
 const EXPR_PATTERN = /\{\{\s*([^}]+?)\s*\}\}/g;
 

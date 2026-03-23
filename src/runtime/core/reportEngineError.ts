@@ -1,4 +1,4 @@
-import type { GenRuntimeStore } from '../genStore';
+import type { GenRuntimeStore } from '../gen/genStore';
 import type { EngineActionContext, EngineErrorHandler } from './engineTypes';
 
 type ReporterOpts = {

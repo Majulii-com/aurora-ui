@@ -154,7 +154,7 @@ Result: **Any UI** from existing components, **any interaction** (button click â
 
 ## 9. Implementation checklist
 
-- [x] Define `AppState` and `AppAction` types (see `src/runtime/appReducer.ts`, exported from the package).
+- [x] Define `AppState` and `AppAction` types (see `src/runtime/playground/appReducer.ts`, exported from the package).
 - [x] Implement `defaultAppReducer` (SET_PATH using setAtPath, REPLACE_STATE).
 - [x] In playground provider: replace `useState` for appData with `useReducer(defaultAppReducer, initialAppState)`.
 - [x] Expose `setData` (dispatches SET_PATH) so schema actions and two-way bindings go through the reducer.
@@ -165,4 +165,4 @@ Result: **Any UI** from existing components, **any interaction** (button click â
 
 **Real-life coverage:** The same reducer + store + schema model covers **all possible real-life scenarios**â€”visibility/modals, forms, tables (sort/filter/pagination), wizards, dashboards, eâ€‘commerce, auth, CRUD, settings, empty/error states, and composite interactions. No scenario requires a different runtime; each is expressed with state paths + schema + actions. See **`REAL_LIFE_SCENARIOS.md`** for a catalog of scenarios and how each maps to state, schema patterns, and actions.
 
-See **`src/runtime/appReducer.ts`** (`defaultAppReducer`, `INITIAL_APP_STATE`) and **`SCHEMA_PLAYGROUND_HOST.md`**; see `AI_UI_GENERATION_GUIDE.md` for how AI generates schema + state + interactions.
+See **`src/runtime/playground/appReducer.ts`** (`defaultAppReducer`, `INITIAL_APP_STATE`) and **`SCHEMA_PLAYGROUND_HOST.md`**; see `AI_UI_GENERATION_GUIDE.md` for how AI generates schema + state + interactions.

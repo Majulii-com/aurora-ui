@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { lightColors, darkColors } from './colors';
 import { cn } from '../utils/cn';
 import type { AuroraAppearance } from './appearanceTypes';
@@ -21,9 +21,11 @@ type AppearanceContextValue = {
 
 const AppearanceContext = createContext<AppearanceContextValue | null>(null);
 
-function applyTheme(mode: ThemeMode) {
+export const AURORA_SCOPE_CLASS = 'aurora-ui-scope';
+
+function applyTheme(mode: ThemeMode, root: HTMLElement | null) {
+  if (!root) return;
   const colors = mode === 'dark' ? darkColors : lightColors;
-  const root = document.documentElement;
   for (const [key, value] of Object.entries(colors)) {
     root.style.setProperty(key, value);
   }
@@ -66,6 +68,7 @@ export function ThemeProvider({
   children,
   className,
 }: ThemeProviderProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     if (typeof window === 'undefined') return defaultTheme;
     const stored = window.localStorage.getItem(storageKey) as ThemeMode | null;
@@ -81,12 +84,12 @@ export function ThemeProvider({
   const appearanceToUse = controlledAppearance ?? appearance;
 
   useEffect(() => {
-    applyTheme(themeToUse);
-  }, [themeToUse]);
+    applyTheme(themeToUse, rootRef.current);
+  }, [themeToUse, appearanceToUse]);
 
   useEffect(() => {
-    applyAppearanceVariables(appearanceToUse);
-  }, [appearanceToUse]);
+    applyAppearanceVariables(appearanceToUse, rootRef.current);
+  }, [appearanceToUse, themeToUse]);
 
   const setTheme = (next: ThemeMode) => {
     if (controlledTheme == null) {
@@ -128,7 +131,8 @@ export function ThemeProvider({
     <ThemeContext.Provider value={themeValue}>
       <AppearanceContext.Provider value={appearanceValue}>
         <div
-          className={cn(className)}
+          ref={rootRef}
+          className={cn(AURORA_SCOPE_CLASS, className)}
           data-theme={themeToUse}
           data-aurora-appearance={appearanceToUse}
         >

@@ -1,6 +1,6 @@
 /**
  * Human-readable documentation of special JSON `props` interpreted by {@link GenUIRenderer}
- * (not passed verbatim to React). Keep in sync when adding wiring in `GenUIRenderer.tsx`.
+ * (not passed verbatim to React). Keep in sync when adding wiring in `gen/GenUIRenderer.tsx`.
  */
 
 export interface GenUIDslWiringRow {

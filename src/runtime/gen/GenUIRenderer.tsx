@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import type { GenUINode } from '../schema/genDocumentTypes';
+import type { GenUINode } from '../../schema/genDocumentTypes';
 import type { GenRegistryEntry } from './auroraGenRegistry';
 import { auroraGenUIRegistry } from './auroraGenRegistry';
 import { resolveDeep, resolveNamedBindingMap } from './expressions';
-import { getAtPath } from './bindings';
-import type { ExpressionContext } from '../schema/genDocumentTypes';
+import { getAtPath } from '../core/bindings';
+import type { ExpressionContext } from '../../schema/genDocumentTypes';
 import { useGenUI, useGenUIState, useRunAction } from './GenUIProvider';
 import { PoweredByMajuliiBar } from './PoweredByMajuliiBar';
-import { cn } from '../utils';
+import { cn } from '../../utils';
 
 function coerceBoolean(v: unknown): boolean {
   if (v === true || v === 'true') return true;

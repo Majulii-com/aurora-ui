@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import type { UINode, UIRegistry } from '../schema/types';
+import type { UINode, UIRegistry } from '../../schema/types';
 import {
   getAtPath,
   resolveBindings,
   collectTwoWayBindings,
   injectStateHandlers,
-} from './bindings';
+} from '../core/bindings';
 
 const VALUE_TYPES = new Set(['Input', 'Textarea', 'Select']);
 const CHECKED_TYPES = new Set(['Checkbox', 'Switch']);

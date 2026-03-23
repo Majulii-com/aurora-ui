@@ -180,6 +180,13 @@ export type { CodeBlockProps } from './components/CodeBlock';
 
 export { Icon } from './components/Icon';
 export type { IconPropsWithName, IconName } from './components/Icon';
+export {
+  LUCIDE_ICON_NAMES,
+  LUCIDE_ICON_NAME_SET,
+  LEGACY_ICON_ALIASES,
+  resolveIconName,
+  isValidIconName,
+} from './icons/iconNames';
 
 export { StatCard } from './components/StatCard';
 export type { StatCardProps, StatCardTrend } from './components/StatCard';
@@ -265,12 +272,12 @@ export {
   collectTwoWayBindings,
   injectStateHandlers,
   STATE_HANDLER_NAMES,
-} from './runtime/bindings';
-export { SchemaRuntime } from './runtime/SchemaRuntime';
-export type { SchemaRuntimeProps } from './runtime/SchemaRuntime';
+} from './runtime/core/bindings';
+export { SchemaRuntime } from './runtime/schema-ui/SchemaRuntime';
+export type { SchemaRuntimeProps } from './runtime/schema-ui/SchemaRuntime';
 
 // Visual schema playground host (drag-drop canvas, appData, routes — consume like any host app)
-export { PlaygroundProvider, usePlayground, findNodeInSchema } from './runtime/schemaPlaygroundStore';
+export { PlaygroundProvider, usePlayground, findNodeInSchema } from './runtime/playground/schemaPlaygroundStore';
 export type {
   SchemaPlaygroundState,
   SchemaPlaygroundEvent,
@@ -282,18 +289,18 @@ export type {
   PlaygroundEvent,
   ActionContext,
   CustomActionHandler,
-} from './runtime/schemaPlaygroundStore';
-export { defaultAppReducer, INITIAL_APP_STATE } from './runtime/appReducer';
-export type { AppState, AppAction } from './runtime/appReducer';
-export { EditableSchemaRenderer } from './runtime/EditableSchemaRenderer';
-export type { EditableSchemaRendererProps } from './runtime/EditableSchemaRenderer';
+} from './runtime/playground/schemaPlaygroundStore';
+export { defaultAppReducer, INITIAL_APP_STATE } from './runtime/playground/appReducer';
+export type { AppState, AppAction } from './runtime/playground/appReducer';
+export { EditableSchemaRenderer } from './runtime/playground/EditableSchemaRenderer';
+export type { EditableSchemaRendererProps } from './runtime/playground/EditableSchemaRenderer';
 export {
   SCHEMA_PLAYGROUND_DRAG_ADD_TYPE,
   SCHEMA_PLAYGROUND_DRAG_MOVE_TYPE,
-} from './runtime/schemaDndConstants';
-export { fetchGenDslChatReply } from './runtime/genDslChatClient';
-export type { GenDslChatContext } from './runtime/genDslChatClient';
-export { useJsonPreviewPane } from './runtime/useJsonPreviewPane';
+} from './runtime/playground/schemaDndConstants';
+export { fetchGenDslChatReply } from './runtime/gen/genDslChatClient';
+export type { GenDslChatContext } from './runtime/gen/genDslChatClient';
+export { useJsonPreviewPane } from './runtime/hooks/useJsonPreviewPane';
 
 // Generative JSON DSL runtime (Zod → GenUIRenderer → Zustand → declarative actions)
 export {
@@ -301,19 +308,19 @@ export {
   resolveDeep,
   sanitizeForLog,
   resolveNamedBindingMap,
-} from './runtime/expressions';
-export { createRuntimeStore } from './runtime/genStore';
-export type { GenRuntimeStore, GenRuntimeState, GenRuntimeActions } from './runtime/genStore';
-export type { GenRuntimeStore as RuntimeStore } from './runtime/genStore';
-export type { GenRuntimeState as RuntimeStoreState } from './runtime/genStore';
-export type { GenRuntimeActions as RuntimeActions } from './runtime/genStore';
-export { setAtPathImmutable } from './runtime/genPaths';
-export { runAction, runChain } from './runtime/genInterpreter';
+} from './runtime/gen/expressions';
+export { createRuntimeStore } from './runtime/gen/genStore';
+export type { GenRuntimeStore, GenRuntimeState, GenRuntimeActions } from './runtime/gen/genStore';
+export type { GenRuntimeStore as RuntimeStore } from './runtime/gen/genStore';
+export type { GenRuntimeState as RuntimeStoreState } from './runtime/gen/genStore';
+export type { GenRuntimeActions as RuntimeActions } from './runtime/gen/genStore';
+export { setAtPathImmutable } from './runtime/core/genPaths';
+export { runAction, runChain } from './runtime/gen/genInterpreter';
 export type {
   InterpreterOptions,
   NavigateHandler,
   CustomHandler,
-} from './runtime/genInterpreter';
+} from './runtime/gen/genInterpreter';
 export type { EngineActionContext, EngineActionPhase, EngineErrorHandler } from './runtime/core/engineTypes';
 export {
   GenUIProvider,
@@ -321,24 +328,24 @@ export {
   useGenUIDocument,
   useGenUIState,
   useRunAction,
-} from './runtime/GenUIProvider';
-export { GenUIRenderer } from './runtime/GenUIRenderer';
-export { PoweredByMajuliiBar } from './runtime/PoweredByMajuliiBar';
-export type { PoweredByMajuliiBarProps } from './runtime/PoweredByMajuliiBar';
-export { auroraGenUIRegistry, auroraGenUIRegistryTypes } from './runtime/auroraGenRegistry';
-export type { GenRegistryEntry } from './runtime/auroraGenRegistry';
-export { lintGenUIDocument, parseAndLintGenUIDocument, GEN_LINT_ACTION_PROP_KEYS } from './runtime/genLint';
-export type { GenLintIssue, GenLintResult, GenLintLevel, ParseAndLintResult } from './runtime/genLint';
+} from './runtime/gen/GenUIProvider';
+export { GenUIRenderer } from './runtime/gen/GenUIRenderer';
+export { PoweredByMajuliiBar } from './runtime/gen/PoweredByMajuliiBar';
+export type { PoweredByMajuliiBarProps } from './runtime/gen/PoweredByMajuliiBar';
+export { auroraGenUIRegistry, auroraGenUIRegistryTypes } from './runtime/gen/auroraGenRegistry';
+export type { GenRegistryEntry } from './runtime/gen/auroraGenRegistry';
+export { lintGenUIDocument, parseAndLintGenUIDocument, GEN_LINT_ACTION_PROP_KEYS } from './runtime/gen/genLint';
+export type { GenLintIssue, GenLintResult, GenLintLevel, ParseAndLintResult } from './runtime/gen/genLint';
 export {
   GEN_REGISTRY_TYPE_CATEGORY,
   GEN_REGISTRY_COMPONENT_CATEGORY_ORDER,
   getGenUIRegistryComponentCategory,
-} from './runtime/dslRegistryTaxonomy';
-export type { GenUIRegistryComponentCategory } from './runtime/dslRegistryTaxonomy';
-export { GEN_UI_DSL_WIRING_ROWS } from './runtime/dslRendererWiring';
-export type { GenUIDslWiringRow } from './runtime/dslRendererWiring';
-export { DEFAULT_GEN_LIMITS } from './runtime/genLimits';
-export type { GenDocumentLimits } from './runtime/genLimits';
+} from './runtime/gen/dslRegistryTaxonomy';
+export type { GenUIRegistryComponentCategory } from './runtime/gen/dslRegistryTaxonomy';
+export { GEN_UI_DSL_WIRING_ROWS } from './runtime/gen/dslRendererWiring';
+export type { GenUIDslWiringRow } from './runtime/gen/dslRendererWiring';
+export { DEFAULT_GEN_LIMITS } from './runtime/gen/genLimits';
+export type { GenDocumentLimits } from './runtime/gen/genLimits';
 
 // Hooks
 export {
@@ -359,6 +366,7 @@ export type { IconProps } from './icons';
 // Theme
 export {
   ThemeProvider,
+  AURORA_SCOPE_CLASS,
   useTheme,
   useAuroraAppearance,
   useAuroraSurface,

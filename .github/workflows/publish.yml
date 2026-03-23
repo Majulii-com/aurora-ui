@@ -1,0 +1,50 @@
+# Publishes to npm using **Trusted Publisher** (OpenID Connect) — no long-lived NPM_TOKEN.
+# Must match npm → Package → Settings → Trusted Publisher:
+#   Organization: Majulii-com, Repository: aurora-ui, Workflow: publish.yml
+#
+# Trigger: push a semver tag (e.g. v1.0.2), or run this workflow manually.
+# Before tagging: bump version in package.json (or use `npm version patch`).
+
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      # OIDC auth is negotiated via id-token; do not set NODE_AUTH_TOKEN here.
+      - name: Publish to npm
+        run: npm publish --provenance --access public

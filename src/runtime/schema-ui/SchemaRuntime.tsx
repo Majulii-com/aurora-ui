@@ -171,7 +171,7 @@ function SchemaRuntimeInner({
 /**
  * Renders a UI schema with __bind resolution, two-way bindings, and action wiring.
  * Use this in your host app so AI-generated schema + state + actions work end-to-end.
- * See docs/HOST_APP_INTEGRATION.md.
+ * See docs/AURORA_UI_BIBLE.md §9 (bindings, reducer, host apps).
  */
 export function SchemaRuntime({
   schema,

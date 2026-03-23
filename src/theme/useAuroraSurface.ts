@@ -78,7 +78,7 @@ const OFF = {
  * Aurora **surface** tokens — “atelier” grade: layered light, jewel teal accent,
  * glass-adjacent controls, museum-canvas backgrounds. Feels expensive without loud gradients.
  * Active when global `appearance` is `'aurora'` (default). Use `plain` on a component to opt out.
- * @see docs/THEME_APPEARANCE.md
+ * @see docs/AURORA_UI_BIBLE.md §4 (theme & appearance)
  */
 export function useAuroraSurface(componentPlain?: boolean) {
   const { isAurora } = useAuroraAppearance();

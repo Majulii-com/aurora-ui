@@ -6,7 +6,7 @@ import type { UINode } from '@majulii/aurora-ui';
 /**
  * Panel to view and edit app data context (used by __bind and setData).
  * Supports loading full UI definition (schema + initialState) per docs.
- * See docs/COMPLEX_COMPONENTS.md, AI_UI_GENERATION_GUIDE.md, REAL_LIFE_SCENARIOS.md.
+ * See docs/AURORA_UI_BIBLE.md §11–§12 (patterns & scenarios).
  */
 export function DataPanel() {
   const { appData, setAppData, setSchema, routes, currentRoute, setRoute } = usePlayground();
@@ -129,7 +129,7 @@ export function DataPanel() {
                   Load definition
                 </Button>
                 <p className="text-xs text-gray-500">
-                  Sets schema and/or app state from one JSON. Use for AI-generated or saved UI definitions (see AI_UI_GENERATION_GUIDE.md, REAL_LIFE_SCENARIOS.md).
+                  Sets schema and/or app state from one JSON. Use for AI-generated or saved UI definitions (see docs/AURORA_UI_BIBLE.md §12).
                 </p>
               </div>
             )}

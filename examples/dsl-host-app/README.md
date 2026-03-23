@@ -29,4 +29,4 @@ Opens dev server on port **5175** (see `vite.config.ts`).
 
 ## Production app
 
-Point your app at **published** `@majulii/aurora-ui` (not the alias). See `docs/HOST_APP_INTEGRATION.md` and `docs/GENERATIVE_UI.md`.
+Point your app at **published** `@majulii/aurora-ui` (not the alias). See `docs/AURORA_UI_BIBLE.md` §3–§7 (Gen DSL) and §9 (host patterns).

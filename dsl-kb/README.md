@@ -23,4 +23,4 @@ Update when:
 | `dsl-registry.snapshot.json` | Same registry metadata as JSON for tooling |
 | `examples/*.json` | Human-authored example documents (forms/tabs, table/pagination, modal, charts, full-screen marketing dashboard); listed in `examples/manifest.json` |
 
-Human-authored contracts live under `docs/` (e.g. `docs/GENERATIVE_UI.md`).
+Human-authored contracts live under `docs/AURORA_UI_BIBLE.md`.

@@ -102,7 +102,7 @@ function GenRow(props: Record<string, unknown>) {
 /**
  * Full default registry: **any `type` here** can be nested under **any** layout or container
  * (`Stack`, `Box`, `Card`, `TabPanel`, `ShowWhen`, `Fragment`, …) via `children` in JSON.
- * See `docs/GENERATIVE_UI.md` §4 and `GENERATIVE_UI_DSL_PROPS.md`.
+ * See `docs/AURORA_UI_BIBLE.md` §5 (registry) and §13 (DSL props).
  */
 export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
   /** No DOM — group nodes for flexible composition */

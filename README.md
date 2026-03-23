@@ -51,7 +51,7 @@ import { ThemeProvider } from '@majulii/aurora-ui';
 </ThemeProvider>
 ```
 
-See **`docs/THEME_APPEARANCE.md`** for `appearance`, `useAuroraAppearance`, and per-component `plain`.
+See **`docs/AURORA_UI_BIBLE.md` §4** for `appearance`, `useAuroraAppearance`, and per-component `plain`.
 
 ### Components
 
@@ -145,6 +145,8 @@ const registry: UIRegistry = {
 ```
 
 The schema is **deterministic**, **JSON-serializable**, and **composable**. The Playground builds this schema visually; the same format can be produced by tools or AI.
+
+For **Gen JSON DSL** (`GenUIDocument`), **SchemaRuntime**, host integration, and runtime folder layout, see **`docs/AURORA_UI_BIBLE.md`**.
 
 ## Components
 

@@ -139,7 +139,7 @@ export type { GenTextProps, GenTextVariant } from './components/GenText';
 export { GenSpinner } from './components/GenSpinner/GenSpinner';
 export type { GenSpinnerProps } from './components/GenSpinner';
 
-/** Shared typings for DSL-stylable Aurora components (see `docs/COMPONENT_DSL_CONVENTIONS.md`). */
+/** Shared typings for DSL-stylable Aurora components (see `docs/AURORA_UI_BIBLE.md#14-conventions-for-new-components`). */
 export type { AuroraDslRootDiv, AuroraDslRootSpan } from './types/auroraDslComponent';
 
 export { Slider } from './components/Slider';

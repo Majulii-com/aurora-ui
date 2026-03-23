@@ -12,7 +12,7 @@ export type GenDslChatContext = {
 function mockReply(userMessage: string): string {
   const q = userMessage.toLowerCase();
   if (q.includes('table') || q.includes('sort') || q.includes('filter')) {
-    return 'For tables, use `type: "Table"` with `columns`, `rows` from state (e.g. `"rows": "{{state.table.rows}}"`), optional `filterBind`, `onSortAction`, and `*ClassName` props for layout. See docs/GENERATIVE_UI_DSL_PROPS.md.';
+    return 'For tables, use `type: "Table"` with `columns`, `rows` from state (e.g. `"rows": "{{state.table.rows}}"`), optional `filterBind`, `onSortAction`, and `*ClassName` props for layout. See docs/AURORA_UI_BIBLE.md §7 and §13.';
   }
   if (q.includes('tab') || q.includes('form')) {
     return 'Use `Tabs` + `tabBind` for the active tab id in state, then `TabList` / `Tab` / `TabPanel` children. Wire inputs with `bind` and actions with `onClickAction` / `onChangeAction`.';

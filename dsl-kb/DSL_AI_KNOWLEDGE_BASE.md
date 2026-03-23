@@ -7,7 +7,7 @@
 
 This file is optimized for **LLM context**: it describes **§1 — responsive layout rules** (required for any generated UI), the **JSON shape** (`GenUIDocument`), **expression strings**, **declarative actions**, **renderer wiring** (special prop names), **lint limits**, **every default registry component** with example `defaultProps`, and **§9 — full example documents** showing the response shape for interactive UIs.
 
-Use it together with human docs: `docs/GENERATIVE_UI.md`, `docs/GENERATIVE_UI_DSL_PROPS.md`, `docs/COMPONENT_DSL_CONVENTIONS.md`.
+Use it together with human docs: `docs/AURORA_UI_BIBLE.md`.
 
 Wiring rows and taxonomy are maintained in `src/runtime/gen/dslRendererWiring.ts` and `src/runtime/gen/dslRegistryTaxonomy.ts`.
 

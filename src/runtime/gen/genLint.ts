@@ -23,7 +23,7 @@ export interface GenLintResult {
 
 /**
  * Node `props` keys that reference `document.actions` ids — must match `GenUIRenderer` wiring
- * (see `docs/GENERATIVE_UI.md` §6). Document-level `onMountAction` is checked separately in
+ * (see `docs/AURORA_UI_BIBLE.md` §6). Document-level `onMountAction` is checked separately in
  * {@link lintGenUIDocument}.
  */
 export const GEN_LINT_ACTION_PROP_KEYS = [

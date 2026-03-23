@@ -390,17 +390,8 @@
                       "variant": "info",
                       "title": "Composite dashboard",
                       "className": "border-primary-200 bg-primary-50/90 dark:border-primary-900 dark:bg-primary-950/40",
+                      "onCloseAction": "dismissAlert",
                       "children": "JSON drives Tabs, SplitPane, API-backed Table + Pagination, regional Table with column filters, Recharts gallery (area, composed, scatter, radar, funnel, treemap, sankey, radial bar, bar, line, pie) with tooltips and legend toggles, MultiSelect-bound state, Accordion, TreeView, Modal, and host hooks — no repeat/map node; arrays live in state."
-                    }
-                  },
-                  {
-                    "type": "Button",
-                    "props": {
-                      "children": "Dismiss",
-                      "variant": "secondary",
-                      "size": "sm",
-                      "onClickAction": "dismissAlert",
-                      "className": "mt-2"
                     }
                   }
                 ]

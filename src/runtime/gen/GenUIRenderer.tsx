@@ -183,7 +183,11 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     }
 
     const closeAction = p.onCloseAction as string | undefined;
-    if (closeAction && typeof closeAction === 'string' && (node.type === 'Modal' || node.type === 'Drawer')) {
+    if (
+      closeAction &&
+      typeof closeAction === 'string' &&
+      (node.type === 'Modal' || node.type === 'Drawer' || node.type === 'Alert')
+    ) {
       delete p.onCloseAction;
       const prevClose = p.onClose as (() => void) | undefined;
       p.onClose = () => {

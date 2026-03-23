@@ -49,8 +49,8 @@ export const GEN_UI_DSL_WIRING_ROWS: readonly GenUIDslWiringRow[] = [
   },
   {
     prop: 'onCloseAction',
-    components: 'Modal, Drawer',
-    description: 'Action id when overlay/drawer closes.',
+    components: 'Modal, Drawer, Alert',
+    description: 'Action id when overlay/drawer closes or dismiss (Alert → `onClose` / X).',
   },
   {
     prop: 'loadingKey',

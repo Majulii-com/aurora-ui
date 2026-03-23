@@ -206,7 +206,7 @@ Consumed **after** `resolveDeep` (not passed raw to components):
 | `onSortAction` | `Table` | `runAction(id, { column })` |
 | `onChangeAction` | After bind/tabBind | `runAction(id, { value }` or `{ value, checked }`) |
 | `filterBind` / `columnFiltersBind` | `Table` | Filter string / per-column filters map |
-| `onCloseAction` | `Modal`, `Drawer` | After close |
+| `onCloseAction` | `Modal`, `Drawer`, `Alert` | After close / dismiss (Alert shows X) |
 | `onPageChangeAction` | `Pagination` | `runAction(id, { page })` |
 | `loadingKey` | `ShowWhen` | Replaces `when`: true iff `loading[loadingKey] === true` |
 | `when` | `ShowWhen` without `loadingKey` | Resolved then coerced to boolean |

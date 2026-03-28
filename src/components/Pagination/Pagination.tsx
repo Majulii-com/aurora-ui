@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import { cn } from '../../utils';
 import { Button } from '../Button';
 import type { PaginationProps } from './Pagination.types';
@@ -17,6 +18,7 @@ export function Pagination({
   className,
   ...rest
 }: PaginationProps) {
+  const ent = useAuroraSurface();
   const items = useMemo(() => {
     const left = Math.max(1, page - siblingCount);
     const right = Math.min(totalPages, page + siblingCount);
@@ -27,7 +29,12 @@ export function Pagination({
   }, [page, totalPages, siblingCount]);
 
   return (
-    <nav role="navigation" aria-label="Pagination" className={cn('flex items-center gap-1', className)} {...rest}>
+    <nav
+      role="navigation"
+      aria-label="Pagination"
+      className={cn('flex items-center gap-1', ent.isAurora && ent.paginationNav, className)}
+      {...rest}
+    >
       {showFirstLast && (
         <Button
           variant="ghost"
@@ -53,7 +60,7 @@ export function Pagination({
           <Button variant="ghost" size="sm" onClick={() => onPageChange(1)}>
             1
           </Button>
-          <span className="px-2 text-gray-500">…</span>
+          <span className="px-2 text-gray-500 dark:text-teal-300/50">…</span>
         </>
       )}
       {items.pages.map((p) => (
@@ -69,7 +76,7 @@ export function Pagination({
       ))}
       {items.withRightEllipsis && (
         <>
-          <span className="px-2 text-gray-500">…</span>
+          <span className="px-2 text-gray-500 dark:text-teal-300/50">…</span>
           <Button variant="ghost" size="sm" onClick={() => onPageChange(totalPages)}>
             {totalPages}
           </Button>

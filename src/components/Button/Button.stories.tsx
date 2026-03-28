@@ -14,6 +14,7 @@ const meta: Meta<typeof Button> = {
     disabled: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     fullWidth: { control: 'boolean' },
+    ripple: { control: 'boolean' },
   },
 };
 
@@ -45,4 +46,13 @@ export const Loading: Story = {
 
 export const Disabled: Story = {
   args: { children: 'Disabled', disabled: true },
+};
+
+/** Press ripple — same interaction model as [Magic UI Ripple Button](https://magicui.design/docs/components/ripple-button) */
+export const WithRipple: Story = {
+  args: { children: 'Click me', variant: 'primary', ripple: true },
+};
+
+export const RippleOutline: Story = {
+  args: { children: 'Secondary ripple', variant: 'outline', ripple: true },
 };

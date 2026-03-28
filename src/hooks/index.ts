@@ -5,3 +5,4 @@ export { useDebounce } from './useDebounce';
 export { useClickOutside } from './useClickOutside';
 export { useLocalStorage } from './useLocalStorage';
 export { useMediaQuery } from './useMediaQuery';
+export { usePointerRipple, type PointerRippleOptions } from './usePointerRipple';

@@ -8,6 +8,8 @@ const variantClasses = {
   elevated: 'bg-white dark:bg-gray-800 shadow-md',
   outline: 'bg-transparent border-2 border-gray-200 dark:border-gray-700',
   filled: 'bg-gray-50 dark:bg-gray-800/50',
+  glass:
+    'border border-stone-200/80 bg-white/80 shadow-aurora-md backdrop-blur-md dark:border-stone-600/45 dark:bg-stone-900/55',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(

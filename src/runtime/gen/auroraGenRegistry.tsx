@@ -14,6 +14,7 @@ import { Radio } from '../../components/Radio';
 import { Switch } from '../../components/Switch';
 import { Slider } from '../../components/Slider';
 import { Button } from '../../components/Button';
+import { RippleButton } from '../../components/RippleButton';
 import { Alert } from '../../components/Alert';
 import { Label } from '../../components/Label';
 import { Tabs, TabList, Tab, TabPanel } from '../../components/Tabs';
@@ -190,6 +191,10 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
   },
   Label: { component: Label as unknown as ComponentType<Record<string, unknown>> },
   Button: { component: Button as unknown as ComponentType<Record<string, unknown>> },
+  RippleButton: {
+    component: RippleButton as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { children: 'Continue', variant: 'primary' },
+  },
 
   Card: { component: Card as unknown as ComponentType<Record<string, unknown>> },
   CardHeader: { component: CardHeader as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Header' } },

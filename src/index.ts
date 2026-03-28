@@ -4,6 +4,9 @@ import './styles.css';
 export { Button } from './components/Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button';
 
+export { RippleButton } from './components/RippleButton';
+export type { RippleButtonProps } from './components/RippleButton';
+
 export { Input } from './components/Input';
 export type { InputProps, InputSize } from './components/Input';
 
@@ -356,8 +359,13 @@ export {
   useClickOutside,
   useLocalStorage,
   useMediaQuery,
+  usePointerRipple,
 } from './hooks';
-export type { UseDisclosureReturn, UseClipboardReturn } from './hooks';
+export type {
+  UseDisclosureReturn,
+  UseClipboardReturn,
+  PointerRippleOptions,
+} from './hooks';
 
 // Icons
 export { AddIcon, SearchIcon, CloseIcon } from './icons';

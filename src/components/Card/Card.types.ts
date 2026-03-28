@@ -1,7 +1,8 @@
 import type { HTMLAttributes } from 'react';
 import type { AuroraSurfaceProps } from '../../types/auroraSurface';
 
-export type CardVariant = 'elevated' | 'outline' | 'filled';
+/** `glass` — frosted / Uiverse-style surface for dashboards and hero panels */
+export type CardVariant = 'elevated' | 'outline' | 'filled' | 'glass';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement>, AuroraSurfaceProps {
   variant?: CardVariant;

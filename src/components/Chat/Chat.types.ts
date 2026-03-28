@@ -16,6 +16,8 @@ export interface ChatProps {
   variant?: 'sidebar' | 'embedded' | 'floating';
   /** Fixed height (e.g. '400px', '100%') */
   height?: string | number;
+  /** Opt out of Aurora premium chat chrome (dense flat shell). */
+  plain?: boolean;
   className?: string;
   children?: React.ReactNode;
 }

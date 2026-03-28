@@ -1,6 +1,8 @@
+import type { AuroraSurfaceProps } from '../../types/auroraSurface';
+
 export type StatCardTrend = 'up' | 'down' | 'neutral';
 
-export interface StatCardProps {
+export interface StatCardProps extends AuroraSurfaceProps {
   /** Metric label (e.g. "Revenue", "Active users") */
   title: React.ReactNode;
   /** Main value to display */

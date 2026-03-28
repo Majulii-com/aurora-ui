@@ -43,8 +43,10 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         >
           <div
             className={cn(
-              'h-full rounded-full transition-all duration-300',
-              variantClasses[variant]
+              'h-full rounded-full transition-all duration-300 ease-out',
+              ent.isAurora && !plain && variant === 'primary' ?
+                ent.progressFillPrimary
+              : variantClasses[variant]
             )}
             style={{ width: `${pct}%` }}
           />

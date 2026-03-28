@@ -1,7 +1,20 @@
 import { forwardRef } from 'react';
+import { usePointerRipple } from '../../hooks/usePointerRipple';
 import { cn } from '../../utils';
 import { useAuroraSurface } from '../../theme/useAuroraSurface';
-import type { IconButtonProps } from './IconButton.types';
+import type { IconButtonProps, IconButtonVariant } from './IconButton.types';
+
+function iconRippleColor(variant: IconButtonVariant): string {
+  switch (variant) {
+    case 'solid':
+      return 'rgba(255, 255, 255, 0.35)';
+    case 'outline':
+      return 'rgba(13, 148, 136, 0.2)';
+    case 'ghost':
+    default:
+      return 'rgba(13, 148, 136, 0.16)';
+  }
+}
 
 const variantClasses: Record<NonNullable<IconButtonProps['variant']>, string> = {
   ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50',
@@ -30,27 +43,59 @@ const auroraIconSizeClasses: Record<NonNullable<IconButtonProps['size']>, string
 };
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ variant = 'ghost', size = 'md', className, children, plain, ...rest }, ref) => {
+  (
+    {
+      variant = 'ghost',
+      size = 'md',
+      className,
+      children,
+      plain,
+      ripple: rippleProp,
+      onPointerDown,
+      disabled,
+      ...rest
+    },
+    ref
+  ) => {
     const ent = useAuroraSurface(plain);
     const sizeKey = size ?? 'md';
     const sizeCn = ent.isAurora && !plain ? auroraIconSizeClasses[sizeKey] : sizeClasses[sizeKey];
     const variantCn =
       ent.isAurora && !plain ? auroraIconVariantClasses[variant] : variantClasses[variant];
+
+    const rippleOn = Boolean(rippleProp) && !disabled && !plain;
+    const rippleOpts =
+      typeof rippleProp === 'object' ?
+        { color: rippleProp.color ?? iconRippleColor(variant), durationMs: rippleProp.durationMs }
+      : rippleOn ? { color: iconRippleColor(variant) }
+      : undefined;
+    const { onPointerDown: rippleDown, rippleLayer, rippleHostClassName } = usePointerRipple(
+      rippleOn,
+      rippleOpts
+    );
+
     return (
       <button
         ref={ref}
         type="button"
+        disabled={disabled}
         className={cn(
           'inline-flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
           ent.isAurora && !plain ? 'rounded-xl' : 'rounded-lg',
           ent.iconButton,
           variantCn,
           sizeCn,
+          rippleHostClassName,
           className
         )}
+        onPointerDown={(e) => {
+          rippleDown(e);
+          onPointerDown?.(e);
+        }}
         {...rest}
       >
-        {children}
+        {rippleLayer}
+        <span className="relative z-[1] inline-flex items-center justify-center">{children}</span>
       </button>
     );
   }

@@ -1,7 +1,23 @@
 import { forwardRef } from 'react';
+import { usePointerRipple } from '../../hooks/usePointerRipple';
 import { cn } from '../../utils';
 import { useAuroraSurface } from '../../theme/useAuroraSurface';
-import type { ButtonProps } from './Button.types';
+import type { ButtonProps, ButtonVariant } from './Button.types';
+
+function defaultRippleColor(variant: ButtonVariant): string {
+  switch (variant) {
+    case 'primary':
+    case 'danger':
+    case 'success':
+      return 'rgba(255, 255, 255, 0.4)';
+    case 'outline':
+    case 'secondary':
+      return 'rgba(13, 148, 136, 0.22)';
+    case 'ghost':
+    default:
+      return 'rgba(15, 23, 42, 0.08)';
+  }
+}
 
 const variantClasses: Record<ButtonProps['variant'] & string, string> = {
   primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 border-transparent',
@@ -69,6 +85,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       disabled,
       plain,
+      ripple: rippleProp,
+      onPointerDown,
       ...rest
     },
     ref
@@ -81,6 +99,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ent.isAurora && !plain
         ? (auroraVariantClasses[v] ?? auroraVariantClasses.primary)
         : (variantClasses[v] ?? variantClasses.primary);
+
+    const rippleOn = Boolean(rippleProp) && !isLoading && !disabled && !plain;
+    const rippleOpts =
+      typeof rippleProp === 'object' ?
+        {
+          color: rippleProp.color ?? defaultRippleColor(v),
+          durationMs: rippleProp.durationMs,
+        }
+      : rippleOn ? { color: defaultRippleColor(v) }
+      : undefined;
+    const { onPointerDown: rippleDown, rippleLayer, rippleHostClassName } = usePointerRipple(
+      rippleOn,
+      rippleOpts
+    );
+
     return (
       <button
         ref={ref}
@@ -95,18 +128,32 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variantCn,
           sizeCn,
           fullWidth && 'w-full',
+          rippleHostClassName,
           className
         )}
         aria-busy={isLoading}
+        onPointerDown={(e) => {
+          rippleDown(e);
+          onPointerDown?.(e);
+        }}
         {...rest}
       >
-        {isLoading ? (
-          <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-        ) : (
-          leftIcon
-        )}
-        {children && <span>{children}</span>}
-        {!isLoading && rightIcon}
+        {rippleLayer}
+        <span
+          className={cn(
+            'relative z-[1] inline-flex items-center justify-center',
+            sizeKey === 'sm' ? 'gap-1.5' : 'gap-2',
+            fullWidth && 'w-full'
+          )}
+        >
+          {isLoading ? (
+            <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          ) : (
+            leftIcon
+          )}
+          {children && <span>{children}</span>}
+          {!isLoading && rightIcon}
+        </span>
       </button>
     );
   }

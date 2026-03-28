@@ -72,6 +72,24 @@ const OFF = {
   stepperDescription: '',
   fileUpload: '',
   copyButton: '',
+  statCard: '',
+  emptyStateIcon: '',
+  emptyStateTitle: '',
+  emptyStateBody: '',
+  chatShell: '',
+  chatHeaderBar: '',
+  chatTitle: '',
+  chatSubtitle: '',
+  chatBubbleUser: '',
+  chatBubbleAssistant: '',
+  chatBubbleSystem: '',
+  chatAvatar: '',
+  chatTypingBubble: '',
+  paginationNav: '',
+  chatOptionCard: '',
+  chatSuggestionChip: '',
+  chatWelcomePrompt: '',
+  progressFillPrimary: '',
 } as const;
 
 /**
@@ -215,5 +233,37 @@ export function useAuroraSurface(componentPlain?: boolean) {
       'rounded-2xl border-2 border-dashed border-stone-300/75 dark:border-teal-700/40 bg-gradient-to-b from-white/95 to-teal-50/25 dark:from-stone-900/70 dark:to-teal-950/30 shadow-[inset_0_2px_16px_rgba(15,23,42,0.04)] ring-1 ring-stone-900/[0.04] dark:ring-teal-800/20 hover:border-primary-400/55 hover:bg-teal-50/40 dark:hover:bg-teal-950/35 transition-colors duration-200',
     copyButton:
       'rounded-lg border border-stone-200/80 dark:border-teal-800/35 bg-white/90 dark:bg-stone-900/80 shadow-[var(--aurora-shadow-control)] hover:shadow-md ring-1 ring-white/50 dark:ring-white/[0.06]',
+    statCard:
+      'rounded-2xl border border-stone-200/72 dark:border-teal-900/32 bg-gradient-to-br from-white via-white to-teal-50/35 dark:from-stone-950 dark:via-stone-950 dark:to-teal-950/28 p-5 shadow-[var(--aurora-shadow-card)] ring-1 ring-white/75 dark:ring-teal-500/10 [box-shadow:var(--aurora-shadow-card),0_0_48px_-20px_rgba(13,148,136,0.1)]',
+    emptyStateIcon:
+      'rounded-2xl p-4 bg-gradient-to-br from-stone-100/95 to-teal-50/45 dark:from-stone-900 dark:to-teal-950/38 ring-1 ring-stone-200/55 dark:ring-teal-800/28 shadow-[var(--aurora-shadow-sm)]',
+    emptyStateTitle:
+      'text-lg font-semibold tracking-tight text-[#0a1620] dark:text-teal-50 [text-shadow:0_1px_0_rgba(255,255,255,0.4)] dark:[text-shadow:none]',
+    emptyStateBody: 'text-sm text-slate-600 dark:text-teal-200/78 max-w-sm leading-relaxed',
+    chatShell:
+      'flex flex-col rounded-2xl border border-stone-200/78 dark:border-teal-900/35 bg-gradient-to-b from-white via-teal-50/18 to-white dark:from-[#0c1218] dark:via-stone-950 dark:to-teal-950/22 overflow-hidden shadow-[var(--aurora-shadow-card)] ring-1 ring-white/65 dark:ring-teal-500/10',
+    chatHeaderBar:
+      'flex items-center gap-3 px-4 py-3.5 border-b border-stone-200/58 dark:border-white/[0.08] shrink-0 bg-gradient-to-r from-stone-50/98 via-teal-50/28 to-transparent dark:from-stone-900/98 dark:via-teal-950/32 dark:to-transparent backdrop-blur-sm',
+    chatTitle: 'text-base font-semibold text-[#0a1620] dark:text-teal-50 truncate tracking-tight',
+    chatSubtitle: 'text-xs text-slate-500 dark:text-teal-200/65 truncate',
+    chatBubbleUser:
+      'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-[0_6px_24px_-6px_rgba(13,148,136,0.5)] ring-1 ring-white/18',
+    chatBubbleAssistant:
+      'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm bg-white/96 dark:bg-stone-900/90 text-slate-800 dark:text-teal-50 border border-stone-200/72 dark:border-teal-800/28 shadow-[var(--aurora-shadow-sm)] ring-1 ring-white/55 dark:ring-white/[0.05]',
+    chatBubbleSystem:
+      'rounded-xl px-3 py-2 text-xs text-slate-600 dark:text-teal-200/68 bg-stone-100/92 dark:bg-stone-900/62 border border-stone-200/65 dark:border-teal-900/28',
+    chatAvatar:
+      'shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm ring-2 ring-white dark:ring-teal-500/22 shadow-md bg-gradient-to-br from-stone-100 to-teal-50 dark:from-stone-800 dark:to-teal-950 text-slate-700 dark:text-teal-100',
+    chatTypingBubble:
+      'flex gap-1 items-end px-3.5 py-2.5 rounded-2xl bg-white/95 dark:bg-stone-900/88 border border-stone-200/72 dark:border-teal-800/25 shadow-sm ring-1 ring-white/45 dark:ring-white/[0.04]',
+    paginationNav:
+      'flex items-center gap-1 p-1 rounded-2xl bg-stone-100/85 dark:bg-stone-900/55 ring-1 ring-stone-200/65 dark:ring-white/[0.06] shadow-[var(--aurora-shadow-sm)]',
+    chatOptionCard:
+      'block w-full text-left rounded-2xl border border-stone-200/78 dark:border-teal-800/28 p-4 transition-all duration-200 bg-white/65 dark:bg-stone-950/42 hover:border-primary-400/50 hover:bg-gradient-to-br hover:from-teal-50/85 hover:to-white dark:hover:from-teal-950/48 dark:hover:to-stone-950 shadow-[var(--aurora-shadow-sm)] hover:shadow-md ring-1 ring-white/45 dark:ring-white/[0.04]',
+    chatSuggestionChip:
+      'px-3.5 py-2 text-sm rounded-full border border-stone-200/82 dark:border-teal-800/32 bg-white/92 dark:bg-stone-900/82 text-slate-700 dark:text-teal-100/90 hover:border-primary-400/55 hover:bg-teal-50/95 dark:hover:bg-teal-950/42 transition-all duration-200 shadow-sm hover:shadow',
+    chatWelcomePrompt: 'text-sm text-slate-600 dark:text-teal-200/75 leading-relaxed',
+    progressFillPrimary:
+      'bg-gradient-to-r from-primary-600 via-primary-500 to-teal-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_0_14px_-2px_rgba(13,148,136,0.35)]',
   } as const;
 }

@@ -63,6 +63,7 @@ export const GEN_REGISTRY_TYPE_CATEGORY: Record<string, GenUIRegistryComponentCa
   DateField: 'form',
   FileUpload: 'form',
   Button: 'actions',
+  RippleButton: 'actions',
   IconButton: 'actions',
   Icon: 'actions',
   CopyButton: 'actions',

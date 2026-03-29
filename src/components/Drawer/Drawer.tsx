@@ -11,10 +11,10 @@ const placementClasses = {
 };
 
 const sizeClasses = {
-  sm: 'w-80 max-w-full',
-  md: 'w-96 max-w-full',
-  lg: 'w-[28rem] max-w-full',
-  full: 'w-full',
+  sm: 'w-full max-w-full sm:w-80 sm:max-w-[min(20rem,100vw-1rem)]',
+  md: 'w-full max-w-full sm:w-96 sm:max-w-[min(24rem,100vw-1rem)]',
+  lg: 'w-full max-w-full sm:w-[28rem] sm:max-w-[min(28rem,100vw-1rem)]',
+  full: 'w-full max-w-full',
 };
 
 const sizeClassesBottom = {
@@ -60,7 +60,12 @@ export function Drawer({
   const isBottom = placement === 'bottom';
   const content = (
     <div
-      className="fixed inset-0 z-50 flex"
+      className={cn(
+        'fixed inset-0 z-50 flex',
+        placement === 'left' && 'justify-start',
+        placement === 'right' && 'justify-end',
+        placement === 'bottom' && 'flex-col justify-end'
+      )}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'drawer-title' : undefined}
@@ -72,10 +77,11 @@ export function Drawer({
       />
       <div
         className={cn(
-          'relative flex flex-col bg-white dark:bg-gray-800 shadow-xl',
+          'relative flex flex-col bg-white dark:bg-gray-800 shadow-xl min-h-0 max-h-[100dvh]',
           ent.isAurora && ent.drawerPanel,
           placementClasses[placement],
           isBottom ? sizeClassesBottom[size] : sizeClasses[size],
+          !isBottom && 'h-full',
           className
         )}
         onClick={(e) => e.stopPropagation()}

@@ -1,5 +1,6 @@
 import { Children, useState, useCallback, useRef, useEffect } from 'react';
 import { cn } from '../../utils';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import type { SplitPaneProps } from './SplitPane.types';
 
 function clampFraction(n: number, fallback: number): number {
@@ -65,13 +66,24 @@ export function SplitPane({
     };
   }, [isDragging, direction, size, min, max]);
 
-  const isHorizontal = direction === 'horizontal';
   const safeSize = clampFraction(size, initial);
   const firstSize = `${safeSize * 100}%`;
 
   const panes = Children.toArray(children);
   const firstPane = panes[0];
   const secondPane = panes[1];
+
+  const isDesktopSplit = useMediaQuery('(min-width: 1024px)');
+  const isHorizontal = direction === 'horizontal';
+
+  if (isHorizontal && !isDesktopSplit && firstPane != null && secondPane != null) {
+    return (
+      <div className={cn('flex w-full min-w-0 flex-col gap-4', className)}>
+        <div className="min-h-0 min-w-0 w-full overflow-auto">{firstPane}</div>
+        <div className="min-h-0 min-w-0 w-full flex-1 overflow-auto">{secondPane}</div>
+      </div>
+    );
+  }
 
   return (
     <div

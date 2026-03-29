@@ -103,7 +103,7 @@ export function GenDataTable({
   return (
     <div className={cn('w-full min-w-0', ent.isAurora && ent.tableSurface, className)}>
       {onFilterChange ? (
-        <div className={cn('mb-4 w-full max-w-md py-0.5', filterRowClassName)}>
+        <div className={cn('mb-4 w-full max-w-full py-0.5 sm:max-w-md', filterRowClassName)}>
           <Input
             className={cn('w-full', filterClassName)}
             placeholder={filterPlaceholder}

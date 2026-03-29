@@ -25,7 +25,7 @@ export function SegmentedControl({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex p-1 gap-0.5',
+        'inline-flex max-w-full min-w-0 flex-nowrap gap-0.5 overflow-x-auto overscroll-x-contain p-1 [-webkit-overflow-scrolling:touch]',
         ent.isAurora ? ent.segmented : 'rounded-xl bg-gray-100 dark:bg-gray-800',
         className
       )}
@@ -42,7 +42,7 @@ export function SegmentedControl({
             disabled={opt.disabled}
             onClick={() => onChange(opt.value)}
             className={cn(
-              'rounded-lg font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 disabled:opacity-40',
+              'shrink-0 touch-manipulation rounded-lg font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 disabled:opacity-40',
               sizeBtn[size],
               selected
                 ? ent.isAurora

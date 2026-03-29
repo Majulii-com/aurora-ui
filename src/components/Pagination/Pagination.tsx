@@ -32,7 +32,11 @@ export function Pagination({
     <nav
       role="navigation"
       aria-label="Pagination"
-      className={cn('flex items-center gap-1', ent.isAurora && ent.paginationNav, className)}
+      className={cn(
+        'flex w-full max-w-full flex-wrap items-center justify-center gap-1 sm:flex-nowrap sm:justify-start',
+        ent.isAurora && ent.paginationNav,
+        className
+      )}
       {...rest}
     >
       {showFirstLast && (

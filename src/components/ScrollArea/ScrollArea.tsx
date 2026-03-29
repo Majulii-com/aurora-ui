@@ -7,7 +7,7 @@ export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
     <div
       ref={ref}
       className={cn(
-        'min-h-0 min-w-0',
+        'min-h-0 w-full min-w-0 max-w-full',
         horizontal
           ? 'overflow-x-auto overflow-y-hidden [scrollbar-width:thin]'
           : 'overflow-y-auto overflow-x-hidden [scrollbar-width:thin]',

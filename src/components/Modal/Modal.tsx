@@ -4,7 +4,12 @@ import { cn } from '../../utils';
 import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { ModalProps } from './Modal.types';
 
-const sizeClasses = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', full: 'max-w-[90vw] max-h-[90vh]' };
+const sizeClasses = {
+  sm: 'max-w-full sm:max-w-sm',
+  md: 'max-w-full sm:max-w-md',
+  lg: 'max-w-full sm:max-w-lg',
+  full: 'max-w-full sm:max-w-[min(90vw,100vw-2rem)] max-h-[100dvh] sm:max-h-[90vh]',
+};
 
 export function Modal({
   isOpen,
@@ -41,7 +46,7 @@ export function Modal({
 
   const content = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:items-center sm:p-4 sm:pb-4 aurora-safe-x"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
@@ -53,8 +58,9 @@ export function Modal({
       />
       <div
         className={cn(
-          'relative w-full rounded-lg bg-white dark:bg-gray-800 shadow-xl',
+          'relative w-full max-h-[min(100dvh,100vh)] overflow-y-auto overscroll-y-contain rounded-t-2xl sm:rounded-lg bg-white dark:bg-gray-800 shadow-xl touch-pan-y',
           ent.modalPanel,
+          size !== 'full' && 'sm:max-h-[min(90vh,90dvh)]',
           sizeClasses[size],
           className
         )}
@@ -72,7 +78,7 @@ export function Modal({
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+                className="ml-auto touch-manipulation rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 sm:p-1"
                 aria-label="Close modal"
               >
                 <span className="sr-only">Close</span>

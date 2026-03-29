@@ -1,5 +1,23 @@
 import '@testing-library/jest-dom';
 
+/** jsdom has no `matchMedia` — default to wide viewport so layout tests match desktop. */
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  configurable: true,
+  value(query: string) {
+    return {
+      matches: true,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+      onchange: null,
+    };
+  },
+});
+
 /** Recharts `ResponsiveContainer` expects ResizeObserver (not in jsdom). */
 globalThis.ResizeObserver = class ResizeObserver {
   observe(): void {}

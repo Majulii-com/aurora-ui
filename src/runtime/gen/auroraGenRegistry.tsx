@@ -97,7 +97,7 @@ function GenRow(props: Record<string, unknown>) {
       direction="row"
       gap={gap}
       align="center"
-      className={cn('w-full min-w-0', className as string | undefined)}
+      className={cn('w-full min-w-0 flex-wrap max-sm:flex-col max-sm:items-stretch', className as string | undefined)}
       {...rest}
     >
       {children as React.ReactNode}

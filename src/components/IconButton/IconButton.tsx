@@ -80,7 +80,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         type="button"
         disabled={disabled}
         className={cn(
-          'inline-flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex touch-manipulation items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
           ent.isAurora && !plain ? 'rounded-xl' : 'rounded-lg',
           ent.iconButton,
           variantCn,

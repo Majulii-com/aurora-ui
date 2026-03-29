@@ -28,7 +28,11 @@ export function Toaster({ className }: { className?: string }) {
       role="region"
       aria-label="Notifications"
       aria-live="polite"
-      className={cn('pointer-events-none fixed bottom-4 right-4 z-[200] flex max-w-sm flex-col gap-2 p-0', className)}
+      className={cn(
+        'pointer-events-none fixed inset-x-4 bottom-4 z-[200] flex flex-col gap-2 sm:inset-x-auto sm:right-4 sm:left-auto sm:max-w-sm',
+        'pb-[max(0.25rem,env(safe-area-inset-bottom,0px))]',
+        className
+      )}
     >
       {toasts.map((t) => (
         <div

@@ -120,7 +120,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         disabled={disabled || isLoading}
         className={cn(
-          'inline-flex items-center justify-center border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex touch-manipulation items-center justify-center border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
           ent.isAurora && !plain ? 'rounded-xl font-medium' : 'rounded-lg font-medium',
           /* Primary uses only `buttonPrimary` — `button` adds a strong top inset that reads as a white “gap” on solid teal */
           entChrome && v !== 'primary' && ent.button,

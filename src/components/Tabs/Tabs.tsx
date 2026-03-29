@@ -42,7 +42,7 @@ export function TabList({ className, ...rest }: TabListProps) {
     <div
       role="tablist"
       className={cn(
-        'flex',
+        'flex min-w-0 w-full flex-nowrap overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]',
         ent.isAurora ? auroraListVariants[variant] : listVariants[variant],
         className
       )}
@@ -65,7 +65,7 @@ export function Tab({ value, className, children, ...rest }: TabProps) {
       tabIndex={isSelected ? 0 : -1}
       onClick={() => onChange(value)}
       className={cn(
-        'px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1',
+        'shrink-0 px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 touch-manipulation',
         ent.isAurora && 'px-3 py-1.5 text-xs',
         variant === 'line' &&
           (ent.isAurora

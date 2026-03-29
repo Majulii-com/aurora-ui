@@ -20,7 +20,7 @@ export const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(
                     <span
                       key={`sep-${i}`}
                       className={cn(
-                        'text-gray-400 dark:text-gray-500',
+                        'shrink-0 text-gray-400 dark:text-gray-500',
                         ent.isAurora && ent.breadcrumbSeparator
                       )}
                       aria-hidden
@@ -34,7 +34,15 @@ export const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(
         : children;
     return (
       <BreadcrumbPlainContext.Provider value={plain}>
-        <nav ref={ref} aria-label="Breadcrumb" className={cn('flex items-center gap-2 text-sm', className)} {...rest}>
+        <nav
+          ref={ref}
+          aria-label="Breadcrumb"
+          className={cn(
+            'flex min-w-0 max-w-full items-center gap-2 overflow-x-auto text-sm [-webkit-overflow-scrolling:touch]',
+            className
+          )}
+          {...rest}
+        >
           {content}
         </nav>
       </BreadcrumbPlainContext.Provider>
@@ -54,6 +62,7 @@ export function BreadcrumbItem({ href, current, children, className }: Breadcrum
     return (
       <span
         className={cn(
+          'shrink-0',
           base,
           ent.isAurora ? ent.breadcrumbCurrent : 'font-medium text-gray-900 dark:text-gray-100',
           className
@@ -66,10 +75,10 @@ export function BreadcrumbItem({ href, current, children, className }: Breadcrum
   }
   if (href) {
     return (
-      <a href={href} className={cn(base, className)}>
+      <a href={href} className={cn('shrink-0 touch-manipulation', base, className)}>
         {children}
       </a>
     );
   }
-  return <span className={cn(className)}>{children}</span>;
+  return <span className={cn('shrink-0', className)}>{children}</span>;
 }

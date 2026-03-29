@@ -12,7 +12,17 @@ const maxWidthMap = {
 
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
   ({ maxWidth = 'lg', className, ...rest }, ref) => (
-    <div ref={ref} className={cn('w-full mx-auto px-4', maxWidthMap[maxWidth], className)} {...rest} />
+    <div
+      ref={ref}
+      className={cn(
+        'w-full min-w-0 max-w-full mx-auto',
+        'px-4 sm:px-6 lg:px-8',
+        'pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))]',
+        maxWidthMap[maxWidth],
+        className
+      )}
+      {...rest}
+    />
   )
 );
 Container.displayName = 'Container';

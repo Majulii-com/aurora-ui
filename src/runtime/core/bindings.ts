@@ -4,11 +4,14 @@
  * Use with SchemaRuntime or your own renderer.
  */
 
+import { isUnsafePathSegment } from '../../utils/safePath';
+
 export function getAtPath(data: Record<string, unknown>, path: string): unknown {
   if (!path) return data;
-  const keys = path.split('.');
+  const keys = path.split('.').filter(Boolean);
   let current: unknown = data;
   for (const key of keys) {
+    if (isUnsafePathSegment(key)) return undefined;
     if (current == null || typeof current !== 'object') return undefined;
     current = (current as Record<string, unknown>)[key];
   }
@@ -20,9 +23,11 @@ export function setAtPath(
   path: string,
   value: unknown
 ): Record<string, unknown> {
-  const keys = path.split('.');
+  const keys = path.split('.').filter(Boolean);
+  if (keys.length === 0) return data;
+  if (keys.some(isUnsafePathSegment)) return { ...data };
   if (keys.length === 1) {
-    return { ...data, [path]: value };
+    return { ...data, [keys[0]]: value };
   }
   const [head, ...rest] = keys;
   const restPath = rest.join('.');
@@ -107,23 +112,39 @@ export function injectStateHandlers(
   setData: (path: string, value: unknown) => void
 ): Record<string, unknown> {
   const out = { ...resolvedProps };
-  for (const [propKey, path] of Object.entries(twoWayBindings)) {
+  for (const [propKey, bindPath] of Object.entries(twoWayBindings)) {
+    if (bindPath.split('.').some(isUnsafePathSegment)) continue;
+
     const handlerName =
       STATE_HANDLER_NAMES[propKey] ??
       `on${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}Change`;
     if (propKey === 'value' || propKey === 'checked') {
+      const prev = out[handlerName] as
+        | ((e: { target: { value?: string; checked?: boolean } }) => void)
+        | undefined;
       (out as Record<string, unknown>)[handlerName] = (
         e: { target: { value?: string; checked?: boolean } }
       ) => {
         const val = propKey === 'checked' ? e.target.checked : e.target.value;
-        setData(path, val);
+        setData(bindPath, val);
+        prev?.(e);
       };
     } else if (propKey === 'isOpen') {
-      (out as Record<string, unknown>)[handlerName] = () => setData(path, false);
-      (out as Record<string, unknown>)['onOpenChange'] = (v: boolean) => setData(path, v);
+      const prevClose = out[handlerName] as (() => void) | undefined;
+      const prevOpenChange = out['onOpenChange'] as ((v: boolean) => void) | undefined;
+      (out as Record<string, unknown>)[handlerName] = () => {
+        setData(bindPath, false);
+        prevClose?.();
+      };
+      (out as Record<string, unknown>)['onOpenChange'] = (v: boolean) => {
+        setData(bindPath, v);
+        prevOpenChange?.(v);
+      };
     } else {
+      const prev = out[handlerName] as ((newValue: unknown) => void) | undefined;
       (out as Record<string, unknown>)[handlerName] = (newValue: unknown) => {
-        setData(path, newValue);
+        setData(bindPath, newValue);
+        prev?.(newValue);
       };
     }
   }

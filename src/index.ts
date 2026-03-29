@@ -99,6 +99,24 @@ export type { ContainerProps } from './components/Container';
 export { Page } from './components/Page';
 export type { PageProps } from './components/Page';
 
+export { ScrollArea } from './components/ScrollArea';
+export type { ScrollAreaProps } from './components/ScrollArea';
+
+export { AspectRatio } from './components/AspectRatio';
+export type { AspectRatioProps } from './components/AspectRatio';
+
+export { VisuallyHidden } from './components/VisuallyHidden';
+export type { VisuallyHiddenProps } from './components/VisuallyHidden';
+
+export { Heading } from './components/Heading';
+export type { HeadingProps, HeadingLevel } from './components/Heading';
+
+export { Collapsible } from './components/Collapsible';
+export type { CollapsibleProps } from './components/Collapsible';
+
+export { ToastProvider, useToast, useOptionalToast, Toaster } from './components/Toast';
+export type { ToastInput, ToastRecord, ToastVariant } from './components/Toast';
+
 export { ShowWhen } from './components/ShowWhen';
 export type { ShowWhenProps } from './components/ShowWhen';
 
@@ -254,7 +272,16 @@ export type { ChatWelcomeProps } from './components/Chat';
 
 // Schema & UI Renderer (AI-ready)
 export { UIRenderer } from './schema';
-export type { UINode, UISchema, UIRegistry, UIRegistryEntry, UIRendererProps } from './schema';
+export type {
+  UINode,
+  UISchema,
+  UIRegistry,
+  UIRegistryEntry,
+  UIRendererProps,
+  UnknownComponentInfo,
+  SchemaUnknownReason,
+} from './schema';
+export { DEFAULT_MAX_UI_TREE_DEPTH, MAX_SCHEMA_NODE_ID_LENGTH } from './schema';
 export type {
   GenUINode,
   GenUIDocument,
@@ -392,4 +419,4 @@ export type { AuroraSurfaceProps } from './types/auroraSurface';
 // Utils
 export { cn, compose, pipe, variant, createVariant } from './utils';
 export type { VariantMap } from './utils';
-export { canUseDOM, getActiveElement, isFocusable, focusElement } from './utils';
+export { canUseDOM, getActiveElement, isFocusable, focusElement, isUnsafePathSegment } from './utils';

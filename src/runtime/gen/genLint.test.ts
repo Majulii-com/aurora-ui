@@ -52,6 +52,24 @@ describe('lintGenUIDocument', () => {
     const { issues } = lintGenUIDocument(doc, { limits: { maxDepth: 64, maxNodes: 2000 } });
     expect(issues.some((i) => i.code === 'DEPTH_EXCEEDED')).toBe(true);
   });
+
+  it('errors when the same id repeats on a root-to-leaf path', () => {
+    const doc = minimalDoc({
+      type: 'Stack',
+      id: 'dup',
+      props: {},
+      children: [
+        {
+          type: 'Stack',
+          id: 'dup',
+          props: {},
+          children: [{ type: 'Text', props: { children: 'x' } }],
+        },
+      ],
+    });
+    const { issues } = lintGenUIDocument(doc);
+    expect(issues.some((i) => i.code === 'UI_TREE_CYCLE')).toBe(true);
+  });
 });
 
 describe('parseAndLintGenUIDocument', () => {

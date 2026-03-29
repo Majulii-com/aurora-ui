@@ -36,10 +36,19 @@ export const GEN_LINT_ACTION_PROP_KEYS = [
 
 const ACTION_PROP_KEYS = new Set<string>(GEN_LINT_ACTION_PROP_KEYS);
 
+const MAX_ID_LEN = 256;
+
 function walkUi(
   node: GenUINode,
   depth: number,
-  acc: { nodeCount: number; maxDepth: number; types: string[]; actionRefs: string[] }
+  idStack: string[],
+  acc: {
+    nodeCount: number;
+    maxDepth: number;
+    types: string[];
+    actionRefs: string[];
+    cycleReported: boolean;
+  }
 ): void {
   acc.nodeCount += 1;
   acc.maxDepth = Math.max(acc.maxDepth, depth);
@@ -54,8 +63,17 @@ function walkUi(
     }
   }
 
+  const nid =
+    typeof node.id === 'string' && node.id.length > 0 && node.id.length <= MAX_ID_LEN
+      ? node.id
+      : undefined;
+  if (nid && idStack.includes(nid)) {
+    acc.cycleReported = true;
+  }
+  const nextStack = nid ? [...idStack, nid] : idStack;
+
   for (const child of node.children ?? []) {
-    walkUi(child, depth + 1, acc);
+    walkUi(child, depth + 1, nextStack, acc);
   }
 }
 
@@ -78,9 +96,19 @@ export function lintGenUIDocument(
     maxDepth: 0,
     types: [] as string[],
     actionRefs: [] as string[],
+    cycleReported: false,
   };
 
-  walkUi(doc.ui, 1, acc);
+  walkUi(doc.ui, 1, [], acc);
+
+  if (acc.cycleReported) {
+    issues.push({
+      level: 'error',
+      code: 'UI_TREE_CYCLE',
+      message: 'Duplicate node `id` in the same root-to-leaf path (infinite render risk)',
+      path: '/ui',
+    });
+  }
 
   if (acc.maxDepth > limits.maxDepth) {
     issues.push({

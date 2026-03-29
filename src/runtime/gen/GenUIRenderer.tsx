@@ -8,6 +8,7 @@ import type { ExpressionContext } from '../../schema/genDocumentTypes';
 import { useGenUI, useGenUIState, useRunAction } from './GenUIProvider';
 import { PoweredByMajuliiBar } from './PoweredByMajuliiBar';
 import { cn } from '../../utils';
+import { DEFAULT_MAX_UI_TREE_DEPTH, MAX_SCHEMA_NODE_ID_LENGTH } from '../../schema/schemaLimits';
 
 function coerceBoolean(v: unknown): boolean {
   if (v === true || v === 'true') return true;
@@ -17,9 +18,15 @@ function coerceBoolean(v: unknown): boolean {
 
 const BOOL_BIND_TYPES = new Set(['Checkbox', 'Switch']);
 
+/** Stable empty set for root `id` ancestry (never mutated). */
+const ROOT_ANCESTOR_IDS = new Set<string>();
+
 interface NodeRendererProps {
   node: GenUINode;
   registry: Record<string, GenRegistryEntry>;
+  depth: number;
+  maxDepth: number;
+  ancestorIds: Set<string>;
 }
 
 export function GenUIRenderer({
@@ -32,13 +39,23 @@ export function GenUIRenderer({
    * Set to false for white-label or fully custom chrome.
    */
   showMajuliiBranding = true,
+  maxDepth = DEFAULT_MAX_UI_TREE_DEPTH,
 }: {
   root: GenUINode;
   registry?: Record<string, GenRegistryEntry>;
   className?: string;
   showMajuliiBranding?: boolean;
+  maxDepth?: number;
 }) {
-  const inner = <NodeRenderer node={root} registry={registry} />;
+  const inner = (
+    <NodeRenderer
+      node={root}
+      registry={registry}
+      depth={1}
+      maxDepth={maxDepth}
+      ancestorIds={ROOT_ANCESTOR_IDS}
+    />
+  );
   const body = className ? <div className={className}>{inner}</div> : inner;
 
   if (!showMajuliiBranding) {
@@ -55,11 +72,47 @@ export function GenUIRenderer({
   );
 }
 
-function NodeRenderer({ node, registry }: NodeRendererProps) {
+function structuralErrorMessage(
+  kind: 'depth' | 'cycle' | 'invalid',
+  node: GenUINode
+): React.ReactElement {
+  const msg =
+    kind === 'depth'
+      ? 'Maximum UI tree depth exceeded.'
+      : kind === 'cycle'
+        ? `Duplicate node id in ancestor chain: "${node.id ?? ''}".`
+        : 'Schema node has no valid component type.';
+  return (
+    <div
+      className={cn(
+        'rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-800 dark:text-red-200'
+      )}
+    >
+      {msg}
+    </div>
+  );
+}
+
+function NodeRenderer({ node, registry, depth, maxDepth, ancestorIds }: NodeRendererProps) {
   const { getStore, document } = useGenUI();
   const state = useGenUIState((s) => s.state);
   const loadingMap = useGenUIState((s) => s.loading);
   const run = useRunAction();
+
+  const trimmedType = typeof node.type === 'string' ? node.type.trim() : '';
+  const idKey =
+    typeof node.id === 'string' && node.id.length > 0 && node.id.length <= MAX_SCHEMA_NODE_ID_LENGTH
+      ? node.id
+      : undefined;
+  const isOverDepth = depth > maxDepth;
+  const isInvalidType = !trimmedType;
+  const isCycle = Boolean(idKey && ancestorIds.has(idKey));
+  const structuralFail = isOverDepth || isInvalidType || isCycle;
+
+  const nextAncestors = useMemo(
+    () => (idKey ? new Set([...ancestorIds, idKey]) : ancestorIds),
+    [idKey, ancestorIds]
+  );
 
   const resolvedBindings = useMemo(
     () =>
@@ -81,24 +134,27 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     [state, resolvedBindings]
   );
 
-  const entry = registry[node.type];
+  const entry = structuralFail ? undefined : registry[trimmedType];
   const defaultProps = entry?.defaultProps ?? {};
   const rawProps = { ...defaultProps, ...(node.props ?? {}) } as Record<string, unknown>;
 
-  const resolved = resolveDeep(rawProps, ctx) as Record<string, unknown>;
+  const resolved = structuralFail
+    ? ({} as Record<string, unknown>)
+    : (resolveDeep(rawProps, ctx) as Record<string, unknown>);
 
   const finalProps = useMemo(() => {
+    if (structuralFail) return {};
     const p = { ...resolved };
 
     const bindPath = p.bind as string | undefined;
     if (bindPath && typeof bindPath === 'string') {
       delete p.bind;
-      if (BOOL_BIND_TYPES.has(node.type)) {
+      if (BOOL_BIND_TYPES.has(trimmedType)) {
         p.checked = Boolean(getAtPath(state as Record<string, unknown>, bindPath));
         p.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           getStore().setState(bindPath, e.target.checked);
         };
-      } else if (node.type === 'MultiSelect') {
+      } else if (trimmedType === 'MultiSelect') {
         const raw = getAtPath(state as Record<string, unknown>, bindPath);
         p.value = Array.isArray(raw) ? raw.map(String) : [];
         p.onChange = (next: string[]) => {
@@ -115,7 +171,7 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     }
 
     const tabBind = p.tabBind as string | undefined;
-    if (node.type === 'Tabs' && tabBind && typeof tabBind === 'string') {
+    if (trimmedType === 'Tabs' && tabBind && typeof tabBind === 'string') {
       delete p.tabBind;
       const cur = getAtPath(state as Record<string, unknown>, tabBind);
       p.value = cur != null ? String(cur) : '';
@@ -141,7 +197,7 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     }
 
     const pageChangeAction = p.onPageChangeAction as string | undefined;
-    if (pageChangeAction && typeof pageChangeAction === 'string' && node.type === 'Pagination') {
+    if (pageChangeAction && typeof pageChangeAction === 'string' && trimmedType === 'Pagination') {
       delete p.onPageChangeAction;
       p.onPageChange = (page: number) => {
         void run(pageChangeAction, { page });
@@ -174,7 +230,7 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     if (
       closeAction &&
       typeof closeAction === 'string' &&
-      (node.type === 'Modal' || node.type === 'Drawer' || node.type === 'Alert')
+      (trimmedType === 'Modal' || trimmedType === 'Drawer' || trimmedType === 'Alert')
     ) {
       delete p.onCloseAction;
       const prevClose = p.onClose as (() => void) | undefined;
@@ -184,7 +240,7 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
       };
     }
 
-    if (node.type === 'ShowWhen') {
+    if (trimmedType === 'ShowWhen') {
       const lk = p.loadingKey as string | undefined;
       if (lk && typeof lk === 'string') {
         delete p.loadingKey;
@@ -214,7 +270,17 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
     }
 
     return p;
-  }, [resolved, state, node.type, loadingMap, getStore, run]);
+  }, [structuralFail, resolved, state, trimmedType, loadingMap, getStore, run]);
+
+  if (isOverDepth) {
+    return structuralErrorMessage('depth', node);
+  }
+  if (isInvalidType) {
+    return structuralErrorMessage('invalid', node);
+  }
+  if (isCycle) {
+    return structuralErrorMessage('cycle', node);
+  }
 
   if (!entry) {
     return (
@@ -248,7 +314,14 @@ function NodeRenderer({ node, registry }: NodeRendererProps) {
       <Component {...restFinal}>
         {fromPropsText}
         {childNodes.map((child, i) => (
-          <NodeRenderer key={child.id ?? `${child.type}-${i}`} node={child} registry={registry} />
+          <NodeRenderer
+            key={child.id ?? `${child.type}-${depth}-${i}`}
+            node={child}
+            registry={registry}
+            depth={depth + 1}
+            maxDepth={maxDepth}
+            ancestorIds={nextAncestors}
+          />
         ))}
       </Component>
     );

@@ -69,6 +69,11 @@ import { Stepper } from '../../components/Stepper';
 import { DateField } from '../../components/DateField';
 import { FileUpload } from '../../components/FileUpload';
 import { CopyButton } from '../../components/CopyButton';
+import { Heading } from '../../components/Heading';
+import { VisuallyHidden } from '../../components/VisuallyHidden';
+import { ScrollArea } from '../../components/ScrollArea';
+import { AspectRatio } from '../../components/AspectRatio';
+import { Collapsible } from '../../components/Collapsible';
 import {
   GenFragment,
   GenDropdown,
@@ -122,7 +127,24 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
   Container: { component: Container as unknown as ComponentType<Record<string, unknown>> },
   Page: { component: Page as unknown as ComponentType<Record<string, unknown>> },
 
+  ScrollArea: {
+    component: ScrollArea as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { className: 'max-h-48 rounded-lg border border-gray-200 dark:border-gray-700 p-2' },
+  },
+  AspectRatio: {
+    component: AspectRatio as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { ratio: 16 / 9, className: 'rounded-lg bg-gray-100 dark:bg-gray-800' },
+  },
+
   Text: { component: GenText as unknown as ComponentType<Record<string, unknown>> },
+  Heading: {
+    component: Heading as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { level: 2, children: 'Heading' },
+  },
+  VisuallyHidden: {
+    component: VisuallyHidden as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { children: 'Screen reader only' },
+  },
   Input: { component: Input as unknown as ComponentType<Record<string, unknown>> },
   Textarea: { component: Textarea as unknown as ComponentType<Record<string, unknown>> },
   Select: {
@@ -254,6 +276,11 @@ export const auroraGenUIRegistry: Record<string, GenRegistryEntry> = {
     defaultProps: { children: 'Section' },
   },
   AccordionContent: { component: AccordionContent as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Content' } },
+
+  Collapsible: {
+    component: Collapsible as unknown as ComponentType<Record<string, unknown>>,
+    defaultProps: { trigger: 'More details', children: 'Hidden content goes here.' },
+  },
 
   Breadcrumb: { component: Breadcrumb as unknown as ComponentType<Record<string, unknown>> },
   BreadcrumbItem: { component: BreadcrumbItem as unknown as ComponentType<Record<string, unknown>>, defaultProps: { children: 'Home' } },

@@ -170,7 +170,10 @@ export async function runAction(
     if (typeof actionRef === 'string') {
       def = actionsRegistry?.[actionRef];
       if (!def) {
-        console.warn(`Action not found: ${actionRef}`);
+        reportEngineError(opts, new Error(`Action not found: ${actionRef}`), {
+          phase: 'runAction',
+          actionId: actionRef,
+        });
         return;
       }
     } else {

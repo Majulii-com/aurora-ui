@@ -1,3 +1,5 @@
+import { isUnsafePathSegment } from '../../utils/safePath';
+
 export function setAtPathImmutable(
   data: Record<string, unknown>,
   path: string,
@@ -5,6 +7,7 @@ export function setAtPathImmutable(
 ): Record<string, unknown> {
   const keys = path.split('.').filter(Boolean);
   if (keys.length === 0) return data;
+  if (keys.some(isUnsafePathSegment)) return { ...data };
   if (keys.length === 1) {
     return { ...data, [keys[0]]: value };
   }

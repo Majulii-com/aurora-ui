@@ -32,34 +32,46 @@ const variantClasses: Record<ButtonProps['variant'] & string, string> = {
 const auroraVariantClasses: Record<ButtonProps['variant'] & string, string> = {
   primary:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-primary-500 to-primary-600 ' +
-    'hover:from-primary-600 hover:to-primary-700 active:from-primary-700 active:to-primary-800 ' +
+    'bg-gradient-to-b from-teal-400 via-primary-500 to-primary-600 ' +
+    'hover:from-teal-300 hover:via-teal-400 hover:to-primary-500 ' +
+    'active:from-primary-600 active:to-primary-700 ' +
+    'hover:-translate-y-px active:translate-y-0 ' +
     'focus:ring-primary-500/80 ' +
-    'dark:from-primary-500 dark:to-primary-600 dark:hover:from-primary-400 dark:hover:to-primary-500 dark:active:from-primary-600 dark:active:to-primary-700',
+    'dark:from-teal-400 dark:via-primary-500 dark:to-primary-600 ' +
+    'dark:hover:from-teal-300 dark:hover:via-teal-400 dark:hover:to-primary-500 ' +
+    'dark:active:from-primary-600 dark:active:to-primary-700',
   secondary:
     'border-transparent text-slate-800 dark:text-stone-100 antialiased font-semibold tracking-wide ' +
     'bg-gradient-to-b from-white to-stone-100/90 ' +
-    'hover:from-stone-50 hover:to-stone-150/90 ' +
+    'hover:from-white hover:to-stone-50 ' +
     'dark:from-stone-800/95 dark:to-stone-900 ' +
-    'dark:hover:from-stone-700/95 dark:hover:to-stone-800',
+    'dark:hover:from-stone-700/95 dark:hover:to-stone-800 ' +
+    'hover:-translate-y-px backdrop-blur-sm',
   ghost:
     'border-transparent text-slate-700 dark:text-stone-200 antialiased font-medium tracking-wide ' +
     'hover:bg-stone-100/90 dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white ' +
-    'active:bg-stone-200/80 dark:active:bg-white/[0.10]',
+    'active:bg-stone-200/80 dark:active:bg-white/[0.10] ' +
+    'hover:-translate-y-px',
   outline:
     'border border-primary-500/80 dark:border-primary-400/65 bg-white/92 dark:bg-stone-900/60 ' +
     'text-primary-700 dark:text-primary-300 antialiased font-semibold tracking-wide ' +
     'backdrop-blur-[2px] ' +
-    'hover:bg-primary-50/95 hover:border-primary-500 dark:hover:bg-primary-950/32 dark:hover:border-primary-300/80',
+    'hover:bg-primary-50/95 hover:border-primary-500 ' +
+    'dark:hover:bg-primary-950/32 dark:hover:border-primary-300/80 ' +
+    'hover:-translate-y-px',
   danger:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-rose-500 to-rose-600 ' +
-    'hover:from-rose-600 hover:to-rose-700 active:from-rose-700 active:to-rose-800 ' +
+    'bg-gradient-to-b from-rose-400 via-rose-500 to-rose-600 ' +
+    'hover:from-rose-300 hover:via-rose-400 hover:to-rose-500 ' +
+    'active:from-rose-600 active:to-rose-700 ' +
+    'hover:-translate-y-px active:translate-y-0 ' +
     'focus:ring-rose-500/80',
   success:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-emerald-500 to-emerald-600 ' +
-    'hover:from-emerald-600 hover:to-emerald-700 active:from-emerald-700 active:to-emerald-800 ' +
+    'bg-gradient-to-b from-emerald-400 via-emerald-500 to-emerald-600 ' +
+    'hover:from-emerald-300 hover:via-emerald-400 hover:to-emerald-500 ' +
+    'active:from-emerald-600 active:to-emerald-700 ' +
+    'hover:-translate-y-px active:translate-y-0 ' +
     'focus:ring-emerald-500/80',
 };
 

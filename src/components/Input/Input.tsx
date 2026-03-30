@@ -58,10 +58,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={id}
             className={cn(
-              'w-full rounded-lg px-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50',
+              'w-full px-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none disabled:opacity-50',
+              ent.isAurora && !plain ? 'rounded-xl' : 'rounded-lg',
+              ent.isAurora && !plain
+                ? 'focus:ring-2 focus:ring-primary-500/45 focus:border-primary-400/65'
+                : 'focus:ring-2 focus:ring-primary-500 focus:border-transparent',
               ent.input,
               inputSizeCn,
-              variantClasses[variant],
+              (!ent.isAurora || plain) && variantClasses[variant],
               leftAddon && 'pl-10',
               rightAddon && 'pr-10',
               error && 'border-red-500 focus:ring-red-500',

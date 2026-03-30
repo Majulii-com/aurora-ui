@@ -121,11 +121,11 @@ export function useAuroraSurface(componentPlain?: boolean) {
 
     /* Primary — teal bloom: deep glow layers + subtle white inset, lifts on hover */
     buttonPrimary:
-      'shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_1px_3px_rgba(13,148,136,0.18),0_4px_12px_-2px_rgba(13,148,136,0.32),0_10px_32px_-6px_rgba(13,148,136,0.26),0_0_0_1px_rgba(13,148,136,0.16)] ' +
-      'hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_2px_6px_rgba(13,148,136,0.20),0_8px_24px_-3px_rgba(13,148,136,0.40),0_18px_52px_-10px_rgba(45,212,191,0.30)] ' +
-      'dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_4px_16px_-3px_rgba(13,148,136,0.40),0_0_0_1px_rgba(45,212,191,0.16)] ' +
-      'dark:hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_6px_24px_-4px_rgba(45,212,191,0.38),0_14px_48px_-10px_rgba(45,212,191,0.24)] ' +
-      'ring-1 ring-teal-400/[0.28] dark:ring-teal-500/[0.32]',
+      'shadow-[inset_0_1px_0_rgba(255,255,255,0.26),0_1px_3px_rgba(13,148,136,0.22),0_4px_14px_-2px_rgba(13,148,136,0.38),0_12px_36px_-6px_rgba(45,212,191,0.28),0_0_0_1px_rgba(13,148,136,0.20)] ' +
+      'hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.32),0_2px_8px_rgba(45,212,191,0.28),0_10px_28px_-2px_rgba(13,148,136,0.48),0_22px_56px_-8px_rgba(45,212,191,0.36)] ' +
+      'dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_4px_18px_-3px_rgba(45,212,191,0.44),0_0_0_1px_rgba(45,212,191,0.20)] ' +
+      'dark:hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_28px_-4px_rgba(45,212,191,0.52),0_16px_52px_-8px_rgba(45,212,191,0.30)] ' +
+      'ring-1 ring-teal-300/[0.36] dark:ring-teal-400/[0.40]',
 
     /* ─── Form controls ─── */
     input:
@@ -303,14 +303,17 @@ export function useAuroraSurface(componentPlain?: boolean) {
 
     /* ─── Gen text ─── */
     genTextTitle:
-      'text-2xl sm:text-[1.875rem] font-bold tracking-[-0.024em] text-[#040c14] dark:text-[#ebfdf6] antialiased [text-wrap:balance] ' +
-      '[text-shadow:0_1px_0_rgba(255,255,255,0.48)] dark:[text-shadow:0_1px_32px_rgba(45,212,191,0.15)]',
+      'text-2xl sm:text-[1.875rem] font-bold tracking-[-0.032em] antialiased [text-wrap:balance] ' +
+      'bg-gradient-to-br from-teal-900 via-primary-700 to-teal-800 ' +
+      'dark:from-teal-100 dark:via-teal-200 dark:to-emerald-200 ' +
+      'bg-clip-text text-transparent ' +
+      'dark:[filter:drop-shadow(0_0_28px_rgba(45,212,191,0.20))]',
 
     genTextBody:
-      'text-[15px] leading-[1.70] text-slate-600 dark:text-teal-100/82 antialiased font-[440]',
+      'text-[15px] leading-[1.72] text-slate-700 dark:text-teal-50/88 antialiased font-[440] tracking-[0.006em]',
 
     genTextMuted:
-      'text-[13.5px] text-slate-500 dark:text-teal-200/65 leading-relaxed antialiased tracking-[0.014em]',
+      'text-[13.5px] text-slate-500/90 dark:text-teal-200/60 leading-relaxed antialiased tracking-[0.016em]',
 
     /* ─── Checkbox / Switch / Radio ─── */
     checkbox:

@@ -25,7 +25,12 @@ export const Divider = forwardRef<HTMLHRElement, DividerProps>(
       return (
         <div className={cn('flex items-center gap-3 w-full', className)}>
           <hr className={cn('flex-1 border-0 border-t', ent.isAurora ? ent.divider : 'border-gray-200 dark:border-gray-700')} />
-          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">{label}</span>
+          <span className={cn(
+            'text-sm shrink-0',
+            ent.isAurora
+              ? 'font-medium text-teal-800/70 dark:text-teal-200/62 tracking-[0.01em]'
+              : 'text-gray-500 dark:text-gray-400'
+          )}>{label}</span>
           <hr className={cn('flex-1 border-0 border-t', ent.isAurora ? ent.divider : 'border-gray-200 dark:border-gray-700')} />
         </div>
       );

@@ -60,9 +60,18 @@ export function FileUpload({
         onChange={(e) => onFilesChange(e.target.files)}
         aria-label={typeof title === 'string' ? title : 'File upload'}
       />
-      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{title}</p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
-      <span className="text-sm font-medium text-primary-600 dark:text-teal-400">{buttonLabel}</span>
+      <p className={cn(
+        'text-sm font-semibold',
+        ent.isAurora ? 'text-[#08141e] dark:text-teal-50/95' : 'text-gray-900 dark:text-gray-100'
+      )}>{title}</p>
+      <p className={cn(
+        'text-xs',
+        ent.isAurora ? 'text-slate-500 dark:text-teal-200/65' : 'text-gray-500 dark:text-gray-400'
+      )}>{description}</p>
+      <span className={cn(
+        'text-sm font-semibold',
+        ent.isAurora ? 'text-primary-600 dark:text-teal-400 tracking-[0.01em]' : 'text-primary-600 dark:text-teal-400'
+      )}>{buttonLabel}</span>
     </div>
   );
 }

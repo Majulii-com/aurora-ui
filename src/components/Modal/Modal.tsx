@@ -68,9 +68,21 @@ export function Modal({
         {...rest}
       >
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <div className={cn(
+            'flex items-center justify-between border-b shrink-0',
+            ent.isAurora
+              ? 'px-5 py-4 border-stone-200/50 dark:border-white/[0.07]'
+              : 'px-4 py-3 border-gray-200 dark:border-gray-700'
+          )}>
             {title && (
-              <h2 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h2
+                id="modal-title"
+                className={cn(
+                  ent.isAurora
+                    ? 'text-[15px] font-semibold tracking-tight text-[#08141e] dark:text-teal-50'
+                    : 'text-lg font-semibold text-gray-900 dark:text-gray-100'
+                )}
+              >
                 {title}
               </h2>
             )}
@@ -78,18 +90,23 @@ export function Modal({
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto touch-manipulation rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 sm:p-1"
+                className={cn(
+                  'ml-auto touch-manipulation rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40',
+                  ent.isAurora
+                    ? 'p-1.5 sm:p-1.5 hover:bg-stone-100/85 dark:hover:bg-white/[0.07] text-stone-500 dark:text-stone-400'
+                    : 'p-2 sm:p-1 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500'
+                )}
                 aria-label="Close modal"
               >
                 <span className="sr-only">Close</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             )}
           </div>
         )}
-        <div className="p-4">{children}</div>
+        <div className={ent.isAurora ? 'p-5' : 'p-4'}>{children}</div>
       </div>
     </div>
   );

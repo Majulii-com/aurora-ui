@@ -39,7 +39,16 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             aria-hidden
           />
         </div>
-        {label != null && <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>}
+        {label != null && (
+          <span className={cn(
+            'text-sm',
+            ent.isAurora
+              ? 'font-medium text-[#08141e] dark:text-teal-50/90'
+              : 'text-gray-700 dark:text-gray-300'
+          )}>
+            {label}
+          </span>
+        )}
       </label>
     );
   }

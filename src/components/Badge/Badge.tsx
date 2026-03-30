@@ -15,14 +15,30 @@ const variantClasses: Record<BadgeProps['variant'] & string, string> = {
 
 const auroraBadgeVariants: Record<BadgeProps['variant'] & string, string> = {
   primary:
-    'text-white font-semibold tracking-wide antialiased bg-gradient-to-b from-primary-500 to-primary-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]',
-  secondary: 'bg-stone-200/95 text-stone-800 dark:bg-stone-800 dark:text-stone-100 font-medium',
-  success: variantClasses.success,
-  danger: variantClasses.danger,
-  warning: variantClasses.warning,
+    'text-white font-semibold tracking-wide antialiased ' +
+    'bg-gradient-to-b from-primary-500 to-primary-700 ' +
+    'shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_3px_rgba(13,148,136,0.20)]',
+  secondary:
+    'bg-gradient-to-b from-stone-100 to-stone-200/90 dark:from-stone-800 dark:to-stone-900 ' +
+    'text-stone-700 dark:text-stone-100 font-semibold',
+  success:
+    'bg-gradient-to-b from-emerald-100/95 to-emerald-200/80 dark:from-emerald-950/80 dark:to-emerald-900/70 ' +
+    'text-emerald-800 dark:text-emerald-200 font-semibold ' +
+    'border border-emerald-300/60 dark:border-emerald-700/40',
+  danger:
+    'bg-gradient-to-b from-rose-100/95 to-rose-200/80 dark:from-rose-950/80 dark:to-rose-900/70 ' +
+    'text-rose-700 dark:text-rose-200 font-semibold ' +
+    'border border-rose-300/60 dark:border-rose-800/40',
+  warning:
+    'bg-gradient-to-b from-amber-100/95 to-amber-200/80 dark:from-amber-950/80 dark:to-amber-900/70 ' +
+    'text-amber-800 dark:text-amber-200 font-semibold ' +
+    'border border-amber-300/65 dark:border-amber-700/40',
   outline:
-    'border border-primary-500/80 text-primary-700 dark:text-primary-300 bg-white/90 dark:bg-stone-900/60 font-semibold',
-  ghost: 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-200 font-medium',
+    'border border-primary-500/75 dark:border-primary-400/55 ' +
+    'text-primary-700 dark:text-primary-300 bg-white/88 dark:bg-stone-900/55 font-semibold',
+  ghost:
+    'bg-stone-100/90 dark:bg-stone-800/90 text-stone-700 dark:text-stone-200 font-medium ' +
+    'border border-stone-200/60 dark:border-stone-700/40',
 };
 
 const sizeClasses = { sm: 'px-1.5 py-0 text-xs', md: 'px-2.5 py-0.5 text-sm', lg: 'px-3 py-1 text-base' };

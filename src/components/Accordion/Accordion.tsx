@@ -118,7 +118,11 @@ export function AccordionTrigger({ className, children, ...rest }: AccordionTrig
       className={cn(
         'w-full flex items-center justify-between px-4 py-3 text-left font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500',
         ent.isAurora && ent.accordionTrigger,
-        ctx.variant === 'bordered' && 'border-b border-gray-200 dark:border-gray-700 last:border-b-0',
+        ctx.variant === 'bordered' && (
+          ent.isAurora
+            ? 'border-b border-stone-200/50 dark:border-white/[0.065] last:border-b-0'
+            : 'border-b border-gray-200 dark:border-gray-700 last:border-b-0'
+        ),
         className
       )}
       aria-expanded={isOpen}

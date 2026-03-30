@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { cn } from '../../utils';
+import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { CollapsibleProps } from './Collapsible.types';
 
 /**
@@ -17,6 +18,7 @@ export function Collapsible({
   panelClassName,
 }: CollapsibleProps) {
   const panelId = useId();
+  const ent = useAuroraSurface();
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const controlled = openProp !== undefined;
   const open = controlled ? openProp : uncontrolled;
@@ -30,7 +32,13 @@ export function Collapsible({
     <div className={cn('min-w-0', className)}>
       <button
         type="button"
-        className={cn('w-full text-left', triggerClassName)}
+        className={cn(
+          'w-full text-left transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40',
+          ent.isAurora
+            ? 'text-[#08141e] dark:text-teal-50/95 hover:text-teal-900 dark:hover:text-teal-50'
+            : '',
+          triggerClassName
+        )}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen(!open)}
@@ -38,7 +46,14 @@ export function Collapsible({
         {trigger}
       </button>
       {open ? (
-        <div id={panelId} className={cn('min-w-0 pt-2', panelClassName)}>
+        <div
+          id={panelId}
+          className={cn(
+            'min-w-0 pt-2',
+            ent.isAurora ? 'text-slate-600 dark:text-teal-100/78 text-[14.5px] leading-relaxed' : '',
+            panelClassName
+          )}
+        >
           {children}
         </div>
       ) : null}

@@ -28,8 +28,11 @@ export function Stepper({ steps, activeIndex, plain, className, showCompleted = 
                 >
                   {isDone ? '✓' : i + 1}
                 </div>
-                <div className={cn('mt-2 text-center px-1 w-full', ent.isAurora && ent.stepperLabel)}>
-                  <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{step.title}</div>
+                <div className="mt-2 text-center px-1 w-full">
+                  <div className={cn(
+                    'text-sm font-semibold truncate',
+                    ent.isAurora ? ent.stepperLabel : 'text-gray-900 dark:text-gray-100'
+                  )}>{step.title}</div>
                   {step.description != null && (
                     <div
                       className={cn(

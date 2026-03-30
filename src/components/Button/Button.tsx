@@ -28,35 +28,39 @@ const variantClasses: Record<ButtonProps['variant'] & string, string> = {
   success: 'bg-green-500 text-white hover:bg-green-600 border-transparent',
 };
 
-/** Majulii / Aurora: solid teal primary (enterprise — avoids loud “pill gradient”) */
+/** Majulii / Aurora: premium enterprise variants — teal-primary gradient with rich bloom */
 const auroraVariantClasses: Record<ButtonProps['variant'] & string, string> = {
   primary:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-primary-600 ' +
-    'hover:bg-primary-700 active:bg-primary-800 ' +
-    'focus:ring-primary-500/90 dark:bg-primary-600 dark:hover:bg-primary-500 dark:active:bg-primary-700',
+    'bg-gradient-to-b from-primary-500 to-primary-600 ' +
+    'hover:from-primary-600 hover:to-primary-700 active:from-primary-700 active:to-primary-800 ' +
+    'focus:ring-primary-500/80 ' +
+    'dark:from-primary-500 dark:to-primary-600 dark:hover:from-primary-400 dark:hover:to-primary-500 dark:active:from-primary-600 dark:active:to-primary-700',
   secondary:
     'border-transparent text-slate-800 dark:text-stone-100 antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-stone-100 to-stone-200/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] ' +
-    'hover:from-stone-200 hover:to-stone-300/90 ' +
-    'dark:from-stone-800 dark:to-stone-900 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ' +
-    'dark:hover:from-stone-700 dark:hover:to-stone-800',
+    'bg-gradient-to-b from-white to-stone-100/90 ' +
+    'hover:from-stone-50 hover:to-stone-150/90 ' +
+    'dark:from-stone-800/95 dark:to-stone-900 ' +
+    'dark:hover:from-stone-700/95 dark:hover:to-stone-800',
   ghost:
     'border-transparent text-slate-700 dark:text-stone-200 antialiased font-medium tracking-wide ' +
-    'hover:bg-stone-100/95 dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white',
+    'hover:bg-stone-100/90 dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white ' +
+    'active:bg-stone-200/80 dark:active:bg-white/[0.10]',
   outline:
-    'border border-primary-500/85 dark:border-primary-400/70 bg-white/90 dark:bg-stone-900/60 ' +
+    'border border-primary-500/80 dark:border-primary-400/65 bg-white/92 dark:bg-stone-900/60 ' +
     'text-primary-700 dark:text-primary-300 antialiased font-semibold tracking-wide ' +
-    'backdrop-blur-[2px] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:shadow-none ' +
-    'hover:bg-primary-50/95 hover:border-primary-600 dark:hover:bg-primary-950/35 dark:hover:border-primary-300',
+    'backdrop-blur-[2px] ' +
+    'hover:bg-primary-50/95 hover:border-primary-500 dark:hover:bg-primary-950/32 dark:hover:border-primary-300/80',
   danger:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-rose-500 to-rose-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] ' +
-    'hover:from-rose-600 hover:to-rose-800 focus:ring-rose-500',
+    'bg-gradient-to-b from-rose-500 to-rose-600 ' +
+    'hover:from-rose-600 hover:to-rose-700 active:from-rose-700 active:to-rose-800 ' +
+    'focus:ring-rose-500/80',
   success:
     'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] ' +
-    'hover:from-emerald-600 hover:to-emerald-800 focus:ring-emerald-500',
+    'bg-gradient-to-b from-emerald-500 to-emerald-600 ' +
+    'hover:from-emerald-600 hover:to-emerald-700 active:from-emerald-700 active:to-emerald-800 ' +
+    'focus:ring-emerald-500/80',
 };
 
 const sizeClasses: Record<ButtonProps['size'] & string, string> = {

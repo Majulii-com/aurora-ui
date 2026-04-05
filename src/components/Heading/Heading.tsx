@@ -2,7 +2,7 @@ import { cn } from '../../utils';
 import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { HeadingProps, HeadingLevel } from './Heading.types';
 
-/** Mobile-first type scale — avoids oversized display text on narrow viewports. */
+/** Plain mode / non-aurora type scale */
 const neutralSize: Record<HeadingLevel, string> = {
   1: 'text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-3xl md:text-4xl',
   2: 'text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-50 sm:text-2xl md:text-3xl',
@@ -12,14 +12,17 @@ const neutralSize: Record<HeadingLevel, string> = {
   6: 'text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200 sm:text-sm',
 };
 
-/** Aurora per-level overrides applied on top of genTextTitle */
+/**
+ * Enterprise type scale — tight negative tracking, authoritative weights.
+ * Applied on top of genTextTitle (which carries color + antialiasing).
+ */
 const auroraLevelClass: Record<HeadingLevel, string> = {
-  1: 'text-[1.75rem] font-extrabold tracking-[-0.036em] sm:text-4xl md:text-5xl',
-  2: 'text-[1.4rem] font-bold tracking-[-0.028em] sm:text-[1.75rem] md:text-3xl',
-  3: 'text-xl font-bold tracking-[-0.022em] sm:text-[1.4rem] md:text-2xl',
-  4: 'text-lg font-semibold tracking-[-0.016em] sm:text-xl',
-  5: 'text-base font-semibold tracking-[-0.01em] sm:text-lg',
-  6: 'text-sm font-semibold uppercase tracking-[0.06em] sm:text-base',
+  1: 'text-[1.875rem] font-extrabold tracking-[-0.036em] sm:text-[2.5rem] md:text-[3rem]',
+  2: 'text-2xl font-bold tracking-[-0.028em] sm:text-[1.875rem] md:text-[2.25rem]',
+  3: 'text-xl font-bold tracking-[-0.022em] sm:text-2xl',
+  4: 'text-lg font-semibold tracking-[-0.014em] sm:text-xl',
+  5: 'text-base font-semibold tracking-[-0.008em]',
+  6: 'text-xs font-semibold uppercase tracking-[0.06em]',
 };
 
 export function Heading({ level = 2, className, children, ...rest }: HeadingProps) {

@@ -4,8 +4,8 @@ import { useAuroraSurface } from '../../theme/useAuroraSurface';
 import type { InputProps } from './Input.types';
 
 const sizeClasses = { sm: 'h-8 text-sm', md: 'h-10 text-base', lg: 'h-12 text-lg' };
+const auroraInputSizeClasses = { sm: 'h-8 text-xs', md: 'h-9 text-sm', lg: 'h-10 text-sm' };
 
-const auroraInputSizeClasses = { sm: 'h-9 text-sm', md: 'h-10 text-[15px]', lg: 'h-11 text-base' };
 const variantClasses = {
   default: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800',
   outline: 'border-2 border-primary-500 bg-transparent',
@@ -41,8 +41,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={id}
             className={cn(
-              'block mb-1 text-gray-700 dark:text-gray-300',
-              ent.isAurora ? ent.label : 'text-sm font-medium'
+              'block mb-1',
+              ent.isAurora ? ent.label : 'text-sm font-medium text-gray-700 dark:text-gray-300'
             )}
           >
             {label}
@@ -50,7 +50,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative flex">
           {leftAddon && (
-            <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3 text-gray-500">
+            <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3 text-zinc-400 dark:text-zinc-500">
               {leftAddon}
             </div>
           )}
@@ -58,14 +58,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={id}
             className={cn(
-              'w-full px-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none disabled:opacity-50',
-              ent.isAurora && !plain ? 'rounded-xl' : 'rounded-lg',
+              'w-full px-3 focus:outline-none disabled:opacity-50',
               ent.isAurora && !plain
-                ? 'focus:ring-2 focus:ring-primary-500/45 focus:border-primary-400/65'
-                : 'focus:ring-2 focus:ring-primary-500 focus:border-transparent',
-              ent.input,
-              inputSizeCn,
-              (!ent.isAurora || plain) && variantClasses[variant],
+                ? cn('text-zinc-900 dark:text-zinc-100', ent.input, inputSizeCn)
+                : cn('rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent', inputSizeCn, variantClasses[variant]),
               leftAddon && 'pl-10',
               rightAddon && 'pr-10',
               error && 'border-red-500 focus:ring-red-500',
@@ -76,7 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...rest}
           />
           {rightAddon && (
-            <div className="absolute right-0 top-0 bottom-0 flex items-center pr-3 text-gray-500">
+            <div className="absolute right-0 top-0 bottom-0 flex items-center pr-3 text-zinc-400 dark:text-zinc-500">
               {rightAddon}
             </div>
           )}
@@ -84,7 +80,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {msg && (
           <p
             id={`${id}-desc`}
-            className={cn('mt-1', ent.isAurora && !plain ? 'text-xs' : 'text-sm', error ? 'text-red-600' : 'text-gray-500')}
+            className={cn(
+              'mt-1.5 text-xs',
+              error ? 'text-red-500 dark:text-red-400' : 'text-zinc-500 dark:text-zinc-500'
+            )}
           >
             {msg}
           </p>

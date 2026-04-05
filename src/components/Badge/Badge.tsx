@@ -13,40 +13,38 @@ const variantClasses: Record<BadgeProps['variant'] & string, string> = {
   ghost: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
 };
 
+/**
+ * Enterprise badges — flat solid status chips. GitHub, Linear, Stripe style.
+ * No gradients. Color fills the background directly at low opacity, border at full opacity.
+ */
 const auroraBadgeVariants: Record<BadgeProps['variant'] & string, string> = {
   primary:
-    'text-white font-semibold tracking-wide antialiased ' +
-    'bg-gradient-to-b from-primary-500 to-primary-700 ' +
-    'shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_3px_rgba(13,148,136,0.20)]',
+    'bg-teal-600 text-white font-medium antialiased',
   secondary:
-    'bg-gradient-to-b from-stone-100 to-stone-200/90 dark:from-stone-800 dark:to-stone-900 ' +
-    'text-stone-700 dark:text-stone-100 font-semibold',
+    'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 ' +
+    'border border-zinc-200 dark:border-zinc-700/60',
   success:
-    'bg-gradient-to-b from-emerald-100/95 to-emerald-200/80 dark:from-emerald-950/80 dark:to-emerald-900/70 ' +
-    'text-emerald-800 dark:text-emerald-200 font-semibold ' +
-    'border border-emerald-300/60 dark:border-emerald-700/40',
+    'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 ' +
+    'border border-emerald-200 dark:border-emerald-800/60',
   danger:
-    'bg-gradient-to-b from-rose-100/95 to-rose-200/80 dark:from-rose-950/80 dark:to-rose-900/70 ' +
-    'text-rose-700 dark:text-rose-200 font-semibold ' +
-    'border border-rose-300/60 dark:border-rose-800/40',
+    'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400 ' +
+    'border border-red-200 dark:border-red-800/60',
   warning:
-    'bg-gradient-to-b from-amber-100/95 to-amber-200/80 dark:from-amber-950/80 dark:to-amber-900/70 ' +
-    'text-amber-800 dark:text-amber-200 font-semibold ' +
-    'border border-amber-300/65 dark:border-amber-700/40',
+    'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-500 ' +
+    'border border-amber-200 dark:border-amber-800/60',
   outline:
-    'border border-primary-500/75 dark:border-primary-400/55 ' +
-    'text-primary-700 dark:text-primary-300 bg-white/88 dark:bg-stone-900/55 font-semibold',
+    'border border-teal-600/60 dark:border-teal-500/50 ' +
+    'text-teal-700 dark:text-teal-400 bg-transparent',
   ghost:
-    'bg-stone-100/90 dark:bg-stone-800/90 text-stone-700 dark:text-stone-200 font-medium ' +
-    'border border-stone-200/60 dark:border-stone-700/40',
+    'bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400',
 };
 
 const sizeClasses = { sm: 'px-1.5 py-0 text-xs', md: 'px-2.5 py-0.5 text-sm', lg: 'px-3 py-1 text-base' };
 
 const auroraBadgeSizeClasses = {
-  sm: 'px-1.5 py-px text-[10px] leading-tight',
-  md: 'px-2 py-0.5 text-xs',
-  lg: 'px-2.5 py-0.5 text-xs',
+  sm: 'h-[18px] px-1.5 text-[10px] font-medium',
+  md: 'h-5 px-2 text-[11px] font-medium',
+  lg: 'h-6 px-2.5 text-xs font-medium',
 } as const;
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
@@ -62,8 +60,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center font-medium rounded-full',
-          ent.badge,
+          'inline-flex items-center rounded-full antialiased',
           variantCn,
           sizeCn,
           className

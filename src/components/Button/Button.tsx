@@ -9,13 +9,13 @@ function defaultRippleColor(variant: ButtonVariant): string {
     case 'primary':
     case 'danger':
     case 'success':
-      return 'rgba(255, 255, 255, 0.4)';
+      return 'rgba(255, 255, 255, 0.35)';
     case 'outline':
     case 'secondary':
-      return 'rgba(13, 148, 136, 0.22)';
+      return 'rgba(13, 148, 136, 0.18)';
     case 'ghost':
     default:
-      return 'rgba(15, 23, 42, 0.08)';
+      return 'rgba(0, 0, 0, 0.06)';
   }
 }
 
@@ -28,51 +28,39 @@ const variantClasses: Record<ButtonProps['variant'] & string, string> = {
   success: 'bg-green-500 text-white hover:bg-green-600 border-transparent',
 };
 
-/** Majulii / Aurora: premium enterprise variants — teal-primary gradient with rich bloom */
+/** Enterprise grade — clean, intentional. Solid gradients for depth, zinc for neutrals. */
 const auroraVariantClasses: Record<ButtonProps['variant'] & string, string> = {
   primary:
-    'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-teal-400 via-primary-500 to-primary-600 ' +
-    'hover:from-teal-300 hover:via-teal-400 hover:to-primary-500 ' +
-    'active:from-primary-600 active:to-primary-700 ' +
-    'hover:-translate-y-px active:translate-y-0 ' +
-    'focus:ring-primary-500/80 ' +
-    'dark:from-teal-400 dark:via-primary-500 dark:to-primary-600 ' +
-    'dark:hover:from-teal-300 dark:hover:via-teal-400 dark:hover:to-primary-500 ' +
-    'dark:active:from-primary-600 dark:active:to-primary-700',
+    'border-transparent text-white antialiased font-semibold tracking-[-0.01em] ' +
+    'bg-gradient-to-b from-teal-500 to-teal-700 ' +
+    'hover:from-teal-400 hover:to-teal-600 active:from-teal-700 active:to-teal-800 ' +
+    'focus:ring-teal-500/40 ' +
+    'dark:from-teal-500 dark:to-teal-700 ' +
+    'dark:hover:from-teal-400 dark:hover:to-teal-600 ' +
+    'dark:active:from-teal-700 dark:active:to-teal-800',
   secondary:
-    'border-transparent text-slate-800 dark:text-stone-100 antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-white to-stone-100/90 ' +
-    'hover:from-white hover:to-stone-50 ' +
-    'dark:from-stone-800/95 dark:to-stone-900 ' +
-    'dark:hover:from-stone-700/95 dark:hover:to-stone-800 ' +
-    'hover:-translate-y-px backdrop-blur-sm',
+    'border-transparent text-zinc-800 dark:text-zinc-100 antialiased font-medium tracking-[-0.01em] ' +
+    'bg-white dark:bg-zinc-800/90 ' +
+    'hover:bg-zinc-50 dark:hover:bg-zinc-700/80',
   ghost:
-    'border-transparent text-slate-700 dark:text-stone-200 antialiased font-medium tracking-wide ' +
-    'hover:bg-stone-100/90 dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white ' +
-    'active:bg-stone-200/80 dark:active:bg-white/[0.10] ' +
-    'hover:-translate-y-px',
+    'border-transparent text-zinc-600 dark:text-zinc-400 antialiased font-medium ' +
+    'hover:bg-zinc-100/80 dark:hover:bg-white/[0.06] ' +
+    'hover:text-zinc-900 dark:hover:text-zinc-100 active:bg-zinc-200/70',
   outline:
-    'border border-primary-500/80 dark:border-primary-400/65 bg-white/92 dark:bg-stone-900/60 ' +
-    'text-primary-700 dark:text-primary-300 antialiased font-semibold tracking-wide ' +
-    'backdrop-blur-[2px] ' +
-    'hover:bg-primary-50/95 hover:border-primary-500 ' +
-    'dark:hover:bg-primary-950/32 dark:hover:border-primary-300/80 ' +
-    'hover:-translate-y-px',
+    'border border-zinc-300/80 dark:border-zinc-600/60 bg-transparent ' +
+    'text-zinc-800 dark:text-zinc-200 antialiased font-medium ' +
+    'hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 ' +
+    'hover:border-zinc-400 dark:hover:border-zinc-500',
   danger:
-    'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-rose-400 via-rose-500 to-rose-600 ' +
-    'hover:from-rose-300 hover:via-rose-400 hover:to-rose-500 ' +
-    'active:from-rose-600 active:to-rose-700 ' +
-    'hover:-translate-y-px active:translate-y-0 ' +
-    'focus:ring-rose-500/80',
+    'border-transparent text-white antialiased font-semibold tracking-[-0.01em] ' +
+    'bg-gradient-to-b from-red-500 to-red-700 ' +
+    'hover:from-red-400 hover:to-red-600 active:from-red-700 active:to-red-800 ' +
+    'focus:ring-red-500/40',
   success:
-    'border-transparent text-white antialiased font-semibold tracking-wide ' +
-    'bg-gradient-to-b from-emerald-400 via-emerald-500 to-emerald-600 ' +
-    'hover:from-emerald-300 hover:via-emerald-400 hover:to-emerald-500 ' +
-    'active:from-emerald-600 active:to-emerald-700 ' +
-    'hover:-translate-y-px active:translate-y-0 ' +
-    'focus:ring-emerald-500/80',
+    'border-transparent text-white antialiased font-semibold tracking-[-0.01em] ' +
+    'bg-gradient-to-b from-emerald-500 to-emerald-700 ' +
+    'hover:from-emerald-400 hover:to-emerald-600 active:from-emerald-700 active:to-emerald-800 ' +
+    'focus:ring-emerald-500/40',
 };
 
 const sizeClasses: Record<ButtonProps['size'] & string, string> = {
@@ -81,11 +69,11 @@ const sizeClasses: Record<ButtonProps['size'] & string, string> = {
   lg: 'px-6 py-3 text-lg gap-2',
 };
 
-/** Slightly larger type — rounded-xl shells (see className merge) */
+/** Enterprise scale: fixed heights, tight type, no excess padding */
 const auroraButtonSizeClasses: Record<ButtonProps['size'] & string, string> = {
-  sm: 'px-3 py-1.5 text-xs gap-1.5 min-h-[32px] font-semibold tracking-wide',
-  md: 'px-4 py-2.5 text-sm gap-2 leading-snug min-h-[38px] font-semibold tracking-wide',
-  lg: 'px-5 py-3 text-base gap-2 min-h-[44px] font-semibold tracking-wide',
+  sm: 'h-7 px-3 text-xs gap-1.5 font-medium',
+  md: 'h-9 px-3.5 text-sm gap-2 font-semibold',
+  lg: 'h-11 px-5 text-sm gap-2 font-semibold',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -136,9 +124,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         disabled={disabled || isLoading}
         className={cn(
-          'inline-flex touch-manipulation items-center justify-center border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
-          ent.isAurora && !plain ? 'rounded-xl font-medium' : 'rounded-lg font-medium',
-          /* Primary uses only `buttonPrimary` — `button` adds a strong top inset that reads as a white “gap” on solid teal */
+          'inline-flex cursor-pointer touch-manipulation items-center justify-center border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+          ent.isAurora && !plain ? 'rounded-lg' : 'rounded-md',
           entChrome && v !== 'primary' && ent.button,
           entChrome && v === 'primary' && ent.buttonPrimary,
           variantCn,
@@ -163,7 +150,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           )}
         >
           {isLoading ? (
-            <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span className="inline-block w-3.5 h-3.5 border-[1.5px] border-current border-t-transparent rounded-full animate-spin" />
           ) : (
             leftIcon
           )}

@@ -58,13 +58,14 @@ export function Tab({ value, className, children, ...rest }: TabProps) {
       tabIndex={isSelected ? 0 : -1}
       onClick={() => onChange(value)}
       className={cn(
-        'shrink-0 px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 touch-manipulation',
-        ent.isAurora && 'px-3.5 py-1.5 text-[13px]',
+        'shrink-0 px-3.5 py-2 text-[13px] font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:ring-offset-1 touch-manipulation',
         variant === 'line' &&
           (ent.isAurora
             ? cn(
-                ent.tabLine,
-                isSelected && 'border-b-2 -mb-px border-primary-500 text-primary-700 dark:text-primary-400 font-semibold'
+                'text-zinc-500 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 ',
+                isSelected
+                  ? 'border-b-2 -mb-px border-teal-600 text-zinc-900 dark:text-zinc-100 font-semibold'
+                  : 'border-b-2 -mb-px border-transparent'
               )
             : cn(
                 'border-b-2 -mb-px border-transparent text-gray-500 hover:text-gray-700',
@@ -72,7 +73,12 @@ export function Tab({ value, className, children, ...rest }: TabProps) {
               )),
         variant === 'pills' &&
           (ent.isAurora
-            ? cn(ent.tabPills, isSelected && cn('font-semibold', ent.tabPillsActive))
+            ? cn(
+                'rounded-md text-zinc-500 dark:text-zinc-500 px-3 py-1.5',
+                isSelected
+                  ? cn('font-semibold', ent.tabPillsActive)
+                  : 'hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-white/[0.04]'
+              )
             : cn(
                 'rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700',
                 isSelected && 'bg-white dark:bg-gray-700 text-primary-600 shadow'
@@ -80,9 +86,10 @@ export function Tab({ value, className, children, ...rest }: TabProps) {
         variant === 'enclosed' &&
           (ent.isAurora
             ? cn(
-                'rounded-t-xl border border-transparent border-b-0 -mb-px text-stone-500 dark:text-stone-400 transition-all duration-150',
+                'rounded-t-md border border-transparent border-b-0 -mb-px transition-all duration-150 ',
+                'text-zinc-500 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200',
                 isSelected &&
-                  'bg-white dark:bg-stone-900/70 border-stone-200/80 dark:border-stone-700/50 text-primary-700 dark:text-primary-300 font-semibold shadow-[0_2px_8px_rgba(15,23,42,0.06)]'
+                  'bg-white dark:bg-zinc-900/80 border-zinc-200/80 dark:border-zinc-700/50 text-zinc-900 dark:text-zinc-100 font-semibold'
               )
             : cn(
                 'rounded-t border border-transparent border-b-0 -mb-px bg-gray-50 dark:bg-gray-800 text-gray-500',
@@ -110,7 +117,7 @@ export function TabPanel({ value, className, children, ...rest }: TabPanelProps)
       tabIndex={0}
       className={cn(
         ent.isAurora
-          ? ent.tabPanel
+          ? 'rounded-b-lg border border-t-0 border-zinc-200/80 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-5'
           : 'p-4 border border-gray-200 dark:border-gray-700 border-t-0 rounded-b-lg',
         className
       )}
